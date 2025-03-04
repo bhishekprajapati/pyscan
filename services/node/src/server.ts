@@ -8,8 +8,7 @@ async function run() {
   const opts: FastifyListenOptions = {
     host: env.SERVER_HOST,
     port: env.SERVER_PORT,
-    listenTextResolver: (address) =>
-      `node service running on ${address}`,
+    listenTextResolver: (address) => `node service running on ${address}`,
   };
 
   app.listen(opts, (err) => {
