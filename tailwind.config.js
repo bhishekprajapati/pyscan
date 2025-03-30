@@ -13,5 +13,31 @@ module.exports = {
     extend: {},
   },
   darkMode: "class",
-  plugins: [heroui()],
+  plugins: [
+    heroui({
+      themes: {
+        dark: {
+          extend: "dark", // <- inherit default values from dark theme
+          colors: {
+            /**
+             *  #FF9100 (Orange)
+             *  #AAFF00 (Lime)
+             */
+            primary: {
+              DEFAULT: "#FF9100",
+            },
+            secondary: {
+              DEFAULT: "#AAFF00",
+            },
+            content1: {
+              DEFAULT: "#010101",
+            },
+            divider: {
+              DEFAULT: "#555",
+            },
+          },
+        },
+      },
+    }),
+  ],
 };

@@ -1,11 +1,7 @@
-import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
-
-export const metadata: Metadata = {
-  title: "Pyscan",
-  description: "",
-};
+import type { Metadata } from "next";
+import AppNavBar from "@/components/navbar";
 
 export default function RootLayout({
   children,
@@ -14,8 +10,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="container mx-auto antialiased">
-        <Providers>{children}</Providers>
+      <body className="container mx-auto border-x border-x-divider antialiased">
+        <Providers>
+          <div className="sticky top-0">
+            <AppNavBar />
+          </div>
+          {children}
+        </Providers>
       </body>
     </html>
   );
