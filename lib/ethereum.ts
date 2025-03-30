@@ -1,57 +1,29 @@
 import { CONTRACT_ADDRESS, IMPLEMENTATION_ABI } from "@/constants/pyusd";
-import {
-  createPublicClient,
-  formatUnits,
-  http,
-  webSocket,
-  type Abi,
-  type WatchContractEventOnLogsFn,
-  isAddress,
-} from "viem";
+import env from "@/env";
+import { createPublicClient, formatUnits, http, isAddress } from "viem";
 import { mainnet } from "viem/chains";
 
-type UnsubscribeFn = () => void;
-
-export type EthereumPluginOptions = {
+export type CreateClientOption = {
   ETHEREUM_MAINNET_JSON_RPC_URL: string;
   ETHEREUM_MAINNET_WSS_URL: string;
   ETHEREUM_HOLESKY_JSON_RPC_URL: string;
   ETHEREUM_HOLESKY_WSS_URL: string;
 };
 
-const createEthereumClients = (opts: EthereumPluginOptions) => {
+export const createClient = (opts: CreateClientOption) => {
   const abi = IMPLEMENTATION_ABI;
 
-  const mainnetHttpClient = createPublicClient({
+  const client = createPublicClient({
     chain: mainnet,
     transport: http(opts.ETHEREUM_MAINNET_JSON_RPC_URL),
   });
 
-  const mainnetWsClient = createPublicClient({
-    chain: mainnet,
-    transport: webSocket(opts.ETHEREUM_MAINNET_WSS_URL),
-  });
-
-  function watchEvent(
-    onLogs: WatchContractEventOnLogsFn<
-      Abi | readonly unknown[],
-      string,
-      undefined
-    >,
-  ): UnsubscribeFn {
-    return mainnetWsClient.watchContractEvent({
-      abi,
-      address: CONTRACT_ADDRESS,
-      onLogs,
-    });
-  }
-
   const createContractMethods = () => {
-    const client = mainnetHttpClient;
     const read = client.readContract.bind(client);
+
     const baseArgs = {
-      address: CONTRACT_ADDRESS,
       abi,
+      address: CONTRACT_ADDRESS,
     } as const;
 
     const getSymbol = () =>
@@ -81,22 +53,36 @@ const createEthereumClients = (opts: EthereumPluginOptions) => {
       return formatUnits(total, await getDecimals());
     };
 
+    const getLogs = async (from: "latest" | bigint = "latest", count = 5) => {
+      const latestBlock = await client.getBlockNumber();
+      const startBlock = latestBlock - BigInt(5);
+
+      const logs = await client.getLogs({
+        address: CONTRACT_ADDRESS,
+        fromBlock: startBlock,
+        toBlock: latestBlock,
+      });
+
+      return logs;
+    };
+
     return {
       getName,
       getSymbol,
       getDecimals,
       getTotalSupply,
+      getLogs,
     };
   };
 
   return {
     CONTRACT_ADDRESS,
     mainnet: {
-      httpClient: mainnetHttpClient,
-      wsClient: mainnetWsClient,
-      watchEvent,
+      httpClient: client,
       ...createContractMethods(),
     } as const,
     isAddress,
   } as const;
 };
+
+export default createClient({ ...env });

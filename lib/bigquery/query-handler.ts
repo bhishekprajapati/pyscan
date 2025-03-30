@@ -1,5 +1,5 @@
 import type { BigQuery, Query } from "@google-cloud/bigquery";
-import { data, error } from "./helper.js";
+import { data, error } from "./helper";
 
 export function makeQueryHandler(bigQueryInstance: BigQuery) {
   return async function query(q: Query) {
