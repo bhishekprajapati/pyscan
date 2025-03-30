@@ -5,7 +5,7 @@ import { TransfersTable } from "@/components/tables";
 
 export default function Home() {
   return (
-    <div className="py-16">
+    <div>
       <Tabs>
         <Tab key="transfers" title="Transfers">
           <TransfersTable />

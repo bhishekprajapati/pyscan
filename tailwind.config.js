@@ -35,6 +35,9 @@ module.exports = {
             divider: {
               DEFAULT: "#555",
             },
+            focus: {
+              DEFAULT: "#AAFF00",
+            },
           },
         },
       },
