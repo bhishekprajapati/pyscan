@@ -51,14 +51,7 @@ export default function Home() {
     <div>
       <Overview />
       <Divider />
-      <section>
-        <header className="border-e border-e-divider bg-default/50 p-4 text-default-foreground">
-          <h2 className="text-xl">Token Transfers</h2>
-        </header>
-        <div>
-          <TransfersTable />
-        </div>
-      </section>
+      <TransfersTable />
     </div>
   );
 }

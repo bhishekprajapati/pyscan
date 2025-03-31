@@ -63,6 +63,11 @@ const AppNavBar = () => {
             <Link href="/Calculators">Calculator</Link>
           </li>
         </ul>
+        <span className="hidden md:inline-block">
+          <Chip variant="dot" color="success" className="me-4">
+            Eth - Mainnet
+          </Chip>
+        </span>
         <SearchInput />
         <ThemeSwitcher />
       </header>

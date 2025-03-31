@@ -44,37 +44,40 @@ export const TransfersTable = () => {
   const data = query.data ?? [];
 
   return (
-    <Table
-      aria-label="pyusd transfers table"
-      classNames={{
-        th: "bg-transparent border-b border-b-divider text-sm",
-        tbody: "[&>tr:nth-child(2n+1)]:bg-default/40",
-        thead: "py-8",
-      }}
-      removeWrapper
-    >
-      <TableHeader columns={columns}>
-        {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
-      </TableHeader>
-      <TableBody>
-        {data.map((transfer) => (
-          <TableRow key={transfer.transaction_hash + transfer.event_index}>
-            <TableCell>
-              <TextTruncate className="max-w-32">
-                {transfer.transaction_hash}
-                <TextClipboardCopy content={transfer.transaction_hash} />
-              </TextTruncate>
-            </TableCell>
-            <TableCell>{transfer.block_number.toString()}</TableCell>
-            <TableCell>
-              <TimeAgo date={transfer.block_timestamp.value} />
-            </TableCell>
-            <TableCell>{transfer.from_address}</TableCell>
-            <TableCell>{transfer.to_address}</TableCell>
-            <TableCell>{transfer.quantity}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="m-1">
+      <Table
+        aria-label="pyusd transfers table"
+        className="overflow-x-auto bg-default"
+        classNames={{
+          th: "bg-transparent border-b border-b-divider text-sm",
+          tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",
+          thead: "py-8",
+        }}
+        removeWrapper
+      >
+        <TableHeader columns={columns}>
+          {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
+        </TableHeader>
+        <TableBody>
+          {data.map((transfer) => (
+            <TableRow key={transfer.transaction_hash + transfer.event_index}>
+              <TableCell>
+                <TextTruncate className="max-w-32">
+                  {transfer.transaction_hash}
+                  <TextClipboardCopy content={transfer.transaction_hash} />
+                </TextTruncate>
+              </TableCell>
+              <TableCell>{transfer.block_number.toString()}</TableCell>
+              <TableCell>
+                <TimeAgo date={transfer.block_timestamp.value} />
+              </TableCell>
+              <TableCell>{transfer.from_address}</TableCell>
+              <TableCell>{transfer.to_address}</TableCell>
+              <TableCell>{transfer.quantity}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
