@@ -1,7 +1,34 @@
 import { CONTRACT_ADDRESS, IMPLEMENTATION_ABI } from "@/constants/pyusd";
 import env from "@/env";
-import { createPublicClient, formatUnits, http, isAddress } from "viem";
+import {
+  createPublicClient,
+  formatUnits,
+  http,
+  isAddress,
+  Hash,
+  InvalidParamsRpcError,
+} from "viem";
 import { mainnet } from "viem/chains";
+
+const data = <T>(data: T) => ({
+  success: true as const,
+  data,
+});
+
+type ClientError<T extends string> = {
+  name: T;
+  message?: string;
+  isInternal?: boolean;
+};
+
+const error = <T extends string>(err: ClientError<T>) => ({
+  success: false as const,
+  err: {
+    name: err.name,
+    message: err.message === undefined ? "Failed to fetch data" : err.message,
+    isInternal: err.isInternal ?? true,
+  },
+});
 
 export type CreateClientOption = {
   ETHEREUM_MAINNET_JSON_RPC_URL: string;
@@ -79,6 +106,36 @@ export const createClient = (opts: CreateClientOption) => {
       return logs;
     };
 
+    const getTransaction = async (hash: Hash) => {
+      try {
+        const tx = await client.getTransaction({
+          hash,
+        });
+        const block = await client.getBlock({ blockNumber: tx.blockNumber });
+        const latestBlock = await client.getBlockNumber();
+
+        return data({
+          ...tx,
+          timestamp: block.timestamp,
+          blockConfirmation: latestBlock - block.number,
+        });
+      } catch (err) {
+        if (err instanceof InvalidParamsRpcError) {
+          return error({
+            name: "ValidationError",
+            message: "Invalid transaction hash provided",
+            isInternal: false,
+          });
+        }
+
+        return error({
+          name: "ServerError",
+          message: "Something Went wrong",
+          isInternal: false,
+        });
+      }
+    };
+
     return {
       httpClient: client,
       getName,
@@ -87,6 +144,7 @@ export const createClient = (opts: CreateClientOption) => {
       getTotalSupply,
       getLogs,
       getBlockInfo,
+      getTransaction,
     } as const;
   };
 

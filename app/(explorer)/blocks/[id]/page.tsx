@@ -1,8 +1,10 @@
+export const dynamic = "force-dynamic";
+
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
 import ObjectKeys from "@/components/ui/object-keys";
 import ethereum from "@/lib/ethereum";
-import { Button, ButtonGroup, Chip, Code, Tooltip } from "@heroui/react";
+import { Chip, Code, Tooltip } from "@heroui/react";
 import {
   Check,
   ChevronLeft,

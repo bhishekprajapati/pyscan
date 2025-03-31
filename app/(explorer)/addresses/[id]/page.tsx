@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import LinkButton from "@/components/ui/link-button";
 import { isAddress } from "@/lib/ethereum";
 import { Code } from "@heroui/react";
