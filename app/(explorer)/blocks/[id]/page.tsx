@@ -42,6 +42,7 @@ const BlockPage: FC = async ({ params }) => {
   };
 
   // TODO: enable or disable next and prev button based on the block number
+  // TODO: fix ui on mobile
 
   return (
     <section className="p-4">
