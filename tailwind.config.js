@@ -41,7 +41,7 @@ module.exports = {
               DEFAULT: "#010101",
             },
             divider: {
-              DEFAULT: "#555",
+              DEFAULT: "#777",
             },
             focus: {
               DEFAULT: "#AAFF00",
