@@ -1,22 +1,33 @@
 "use client";
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import { Chip, Input, Link } from "@heroui/react";
 import { usePathname } from "next/navigation";
 import { ThemeSwitcher } from "./theme-switcher";
-import { Fuel } from "lucide-react";
+import { Fuel, Search } from "lucide-react";
+
+const SearchInput = () => {
+  return (
+    <Input
+      startContent={<Search size={16} />}
+      variant="bordered"
+      color="default"
+      className="hidden w-[25%] md:flex"
+      placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
+    />
+  );
+};
 
 const AppNavBar = () => {
   const path = usePathname();
   // TODO: add loading bar
 
   return (
-    <nav className="border-b border-b-divider bg-background">
+    <nav className="border-y border-y-divider bg-background">
       <header className="flex items-center">
         <div className="me-auto border-e border-e-divider p-4 md:me-0">
-          <span className="text-xl font-bold text-secondary">PyScan</span>
+          <span className="text-xl font-bold text-primary">PyScan</span>
         </div>
-        <div className="me-auto border-e border-e-divider p-4">
+        <div className="border-e border-e-divider p-4">
           <div className="rounded-lg bg-zinc-900 p-1">
             <Chip
               color="default"
@@ -39,18 +50,20 @@ const AppNavBar = () => {
             </Chip>
           </div>
         </div>
-        <ul className="hidden gap-4 border-e border-e-divider p-4 md:flex">
+        <ul className="me-auto hidden gap-4 border-e border-e-divider p-4 md:flex">
           <li>
             <Link color="foreground" href="/">
               Explorer
             </Link>
           </li>
           <li>
-            <Link aria-current="page" href="/analytics">
-              Analytics
-            </Link>
+            <Link href="/analytics">Analytics</Link>
+          </li>
+          <li>
+            <Link href="/Calculators">Calculator</Link>
           </li>
         </ul>
+        <SearchInput />
         <ThemeSwitcher />
       </header>
     </nav>
