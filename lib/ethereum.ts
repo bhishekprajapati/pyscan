@@ -13,40 +13,53 @@ export type CreateClientOption = {
 export const createClient = (opts: CreateClientOption) => {
   const abi = IMPLEMENTATION_ABI;
 
-  const client = createPublicClient({
-    chain: mainnet,
-    transport: http(opts.ETHEREUM_MAINNET_JSON_RPC_URL),
-  });
+  const createMainnetMethods = () => {
+    const client = createPublicClient({
+      chain: mainnet,
+      transport: http(opts.ETHEREUM_MAINNET_JSON_RPC_URL),
+    });
 
-  const createContractMethods = () => {
-    const read = client.readContract.bind(client);
+    const getBlockInfo = async (num: bigint) => {
+      const [block, finalizedBlock] = await Promise.all([
+        client.getBlock({
+          blockNumber: num,
+        }),
+        client.getBlock({
+          blockTag: "finalized",
+        }),
+      ]);
 
-    const baseArgs = {
-      abi,
-      address: CONTRACT_ADDRESS,
-    } as const;
+      return {
+        ...block,
+        isFinalized: block.number <= finalizedBlock.number,
+      };
+    };
 
     const getSymbol = () =>
-      read({
-        ...baseArgs,
+      client.readContract({
+        abi,
+        address: CONTRACT_ADDRESS,
         functionName: "symbol",
       });
 
     const getDecimals = () =>
-      read({
-        ...baseArgs,
+      client.readContract({
+        abi,
+        address: CONTRACT_ADDRESS,
         functionName: "decimals",
       });
 
     const getName = () =>
-      read({
-        ...baseArgs,
+      client.readContract({
+        abi,
+        address: CONTRACT_ADDRESS,
         functionName: "name",
       });
 
     const getTotalSupply = async () => {
-      const total = await read({
-        ...baseArgs,
+      const total = await client.readContract({
+        abi,
+        address: CONTRACT_ADDRESS,
         functionName: "totalSupply",
       });
 
@@ -67,22 +80,21 @@ export const createClient = (opts: CreateClientOption) => {
     };
 
     return {
+      httpClient: client,
       getName,
       getSymbol,
       getDecimals,
       getTotalSupply,
       getLogs,
-    };
+      getBlockInfo,
+    } as const;
   };
 
   return {
     CONTRACT_ADDRESS,
-    mainnet: {
-      httpClient: client,
-      ...createContractMethods(),
-    } as const,
-    isAddress,
+    mainnet: createMainnetMethods(),
   } as const;
 };
 
 export default createClient({ ...env });
+export { isAddress };
