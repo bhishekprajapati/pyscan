@@ -4,6 +4,7 @@ import { address, order } from "./schema";
 import { data, error } from "../helper";
 import type { QueryHandler } from "../query-handler";
 import type { BigQueryTimestamp } from "@google-cloud/bigquery";
+import { Address } from "viem";
 
 export default function ethereumMainnet(query: QueryHandler) {
   const getTransactions = (() => {
@@ -171,11 +172,38 @@ export default function ethereumMainnet(query: QueryHandler) {
 
   const getGasTrend = (() => {})();
 
+  const getTransactionsByAddress = (address: Address) =>
+    query({
+      query: `
+        SELECT
+          block_number,
+          block_timestamp,
+          transaction_hash,
+          nonce,
+          from_address,
+          to_address,
+          value,
+          gas,
+          gas_price,
+          transaction_type
+        FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.transactions
+        WHERE
+          from_address = @address OR
+          to_address = @address
+        ORDER BY block_timestamp DESC
+        LIMIT 10;
+    `,
+      params: {
+        address,
+      },
+    });
+
   return {
     getTransactions,
     getTokenTransfers,
     getTopHolders,
     getTokenTransferCount,
     getGasTrend,
+    getTransactionsByAddress,
   };
 }

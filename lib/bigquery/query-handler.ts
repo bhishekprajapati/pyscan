@@ -6,6 +6,7 @@ export function makeQueryHandler(bigQueryInstance: BigQuery) {
     try {
       return data(await bigQueryInstance.query(q));
     } catch (err) {
+      console.error(err);
       if (
         err !== null &&
         typeof err === "object" &&
@@ -49,6 +50,8 @@ export function makeQueryHandler(bigQueryInstance: BigQuery) {
         }
       }
 
+      // TODO: handle auth errors
+      // currently auth errors are marked as non fatal
       return error({
         reason: "Something went wrong",
         retry: true,
