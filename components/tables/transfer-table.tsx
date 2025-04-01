@@ -10,7 +10,7 @@ import {
 } from "@heroui/table";
 import TimeAgo from "react-timeago";
 
-import { TextClipboardCopy, TextTruncate } from "../text";
+import { FMono, TextClipboardCopy, TextTruncate } from "../text";
 import type { TransfersApiResponse } from "@/pages/api/mainnet/transfers";
 import { isServer, useQuery } from "@tanstack/react-query";
 
@@ -40,6 +40,7 @@ const columns = [
 ];
 
 export const TransfersTable = () => {
+  // TODO: fetch on 15 min intervals
   const query = useTransfers();
   const data = query.data ?? [];
 
@@ -56,14 +57,18 @@ export const TransfersTable = () => {
         removeWrapper
       >
         <TableHeader columns={columns}>
-          {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
+          {(col) => (
+            <TableColumn key={col.uid} className="font-serif">
+              {col.name}
+            </TableColumn>
+          )}
         </TableHeader>
         <TableBody>
           {data.map((transfer) => (
             <TableRow key={transfer.transaction_hash + transfer.event_index}>
               <TableCell>
                 <TextTruncate className="max-w-32">
-                  {transfer.transaction_hash}
+                  <FMono>{transfer.transaction_hash}</FMono>
                   <TextClipboardCopy content={transfer.transaction_hash} />
                 </TextTruncate>
               </TableCell>
@@ -71,8 +76,12 @@ export const TransfersTable = () => {
               <TableCell>
                 <TimeAgo date={transfer.block_timestamp.value} />
               </TableCell>
-              <TableCell>{transfer.from_address}</TableCell>
-              <TableCell>{transfer.to_address}</TableCell>
+              <TableCell>
+                <FMono>{transfer.from_address}</FMono>
+              </TableCell>
+              <TableCell>
+                <FMono>{transfer.to_address}</FMono>
+              </TableCell>
               <TableCell>{transfer.quantity}</TableCell>
             </TableRow>
           ))}
