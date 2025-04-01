@@ -1,5 +1,6 @@
 import { CONTRACT_ADDRESS, IMPLEMENTATION_ABI } from "@/constants/pyusd";
 import env from "@/env";
+import { pick } from "remeda";
 import {
   createPublicClient,
   formatUnits,
@@ -111,13 +112,22 @@ export const createClient = (opts: CreateClientOption) => {
         const tx = await client.getTransaction({
           hash,
         });
+
+        const receipt = await client.getTransactionReceipt({
+          hash: tx.hash,
+        });
+
+        const confirmation = await client.getTransactionConfirmations({
+          hash: tx.hash,
+        });
+
         const block = await client.getBlock({ blockNumber: tx.blockNumber });
-        const latestBlock = await client.getBlockNumber();
 
         return data({
+          confirmation,
           ...tx,
-          timestamp: block.timestamp,
-          blockConfirmation: latestBlock - block.number,
+          ...pick(block, ["timestamp"]),
+          ...pick(receipt, ["status", "logs", "logsBloom"]),
         });
       } catch (err) {
         if (err instanceof InvalidParamsRpcError) {
