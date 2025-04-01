@@ -4,12 +4,13 @@ import { Chip, Input, Link } from "@heroui/react";
 import { usePathname } from "next/navigation";
 import { ThemeSwitcher } from "./theme-switcher";
 import { Fuel, Search } from "lucide-react";
+import LinkButton from "./ui/link-button";
 
 const SearchInput = () => {
   return (
     <Input
       startContent={<Search size={16} />}
-      variant="bordered"
+      variant="flat"
       color="default"
       className="hidden w-[25%] md:flex"
       placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
@@ -25,7 +26,11 @@ const AppNavBar = () => {
     <nav className="border-y border-y-divider bg-background">
       <header className="flex items-center">
         <div className="me-auto border-e border-e-divider p-4 md:me-0">
-          <span className="text-xl font-bold text-primary">PyScan</span>
+          <LinkButton href="/" variant="light" size="sm">
+            <span className="font-serif text-xl font-bold text-primary">
+              PyScan
+            </span>
+          </LinkButton>
         </div>
         <div className="border-e border-e-divider p-4">
           <div className="rounded-lg bg-zinc-900 p-1">

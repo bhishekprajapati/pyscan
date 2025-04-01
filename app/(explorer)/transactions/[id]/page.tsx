@@ -11,6 +11,7 @@ import ethereum from "@/lib/ethereum";
 import { Chip, Code, Textarea, Tooltip } from "@heroui/react";
 import { Check, X } from "lucide-react";
 import { Hash } from "viem";
+import { FMono } from "@/components/text";
 
 type Transaction = Extract<
   Awaited<ReturnType<typeof ethereum.mainnet.getTransaction>>,
@@ -33,7 +34,7 @@ const Overview = ({ tx }: { tx: Transaction }) => {
               label: "Transaction Hash",
               helpText:
                 "A TxHash or transaction hash is a unique 66-character identifier that is generated whenever a transaction is executed.",
-              renderValue: ({ hash }) => hash,
+              renderValue: ({ hash }) => <FMono>{hash}</FMono>,
             },
             {
               label: "status",
@@ -94,13 +95,13 @@ const Overview = ({ tx }: { tx: Transaction }) => {
             {
               label: "From",
               helpText: "The sending party of the transaction.",
-              renderValue: ({ from }) => from,
+              renderValue: ({ from }) => <FMono>{from}</FMono>,
             },
             {
               label: "To",
               helpText:
                 "The receiving party of the transaction (could be a contract address).",
-              renderValue: ({ to }) => to,
+              renderValue: ({ to }) => <FMono>{to}</FMono>,
             },
             {
               label: "Value",
@@ -126,12 +127,14 @@ const Overview = ({ tx }: { tx: Transaction }) => {
               helpText:
                 "Additional data included for this transaction. Commonly used as part of contract interaction or as a message sent to the recipient.",
               renderValue: ({ input }) => (
-                <Textarea
-                  variant="bordered"
-                  color="default"
-                  value={input}
-                  isDisabled
-                />
+                <FMono>
+                  <Textarea
+                    variant="bordered"
+                    color="default"
+                    value={input}
+                    isDisabled
+                  />
+                </FMono>
               ),
             },
           ]}
@@ -156,7 +159,9 @@ const Logs = ({ tx }: { tx: Transaction }) => (
             label: "Logs Bloom",
             helpText: "",
             renderValue: ({ logsBloom }) => (
-              <Textarea variant="bordered" value={logsBloom} isDisabled />
+              <FMono>
+                <Textarea variant="bordered" value={logsBloom} isDisabled />
+              </FMono>
             ),
           },
         ]}

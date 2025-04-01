@@ -1,4 +1,5 @@
-import { Button } from "@heroui/react";
+"use client";
+
 import { LineChart, Line, Tooltip, ResponsiveContainer } from "recharts";
 
 interface CongestionData {

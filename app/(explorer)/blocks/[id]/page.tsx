@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { FMono } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
 import ObjectKeys from "@/components/ui/object-keys";
@@ -75,7 +76,7 @@ const BlockPage: FC = async ({ params }) => {
 
   return (
     <section className="p-4">
-      <header className="mb-4 text-2xl">
+      <header className="mb-4 font-serif text-2xl">
         <span className="me-2 font-bold">Block </span>
         <span className="text-lg text-gray-400">#{blockNumber.toString()}</span>
       </header>
@@ -163,7 +164,7 @@ const BlockPage: FC = async ({ params }) => {
                 label: "Fee Recipient",
                 helpText:
                   "Address receiving fees from transactions in this block",
-                renderValue: ({ miner }) => miner,
+                renderValue: ({ miner }) => <FMono>{miner}</FMono>,
               },
               {
                 label: "Total Difficulty",
@@ -215,7 +216,7 @@ const BlockPage: FC = async ({ params }) => {
               {
                 label: "Extra Data",
                 helpText: "'Extra data' field of this block",
-                renderValue: ({ extraData }) => extraData,
+                renderValue: ({ extraData }) => <FMono>{extraData}</FMono>,
               },
             ]}
           />
@@ -227,23 +228,25 @@ const BlockPage: FC = async ({ params }) => {
               {
                 label: "Hash",
                 helpText: "The hash of the block header of the current block.",
-                renderValue: ({ hash }) => hash,
+                renderValue: ({ hash }) => <FMono>{hash}</FMono>,
               },
               {
                 label: "Parent Hash",
                 helpText:
                   "The hash of the block from which this block was generated, also known as its parent block.",
-                renderValue: ({ parentHash }) => parentHash,
+                renderValue: ({ parentHash }) => <FMono>{parentHash}</FMono>,
               },
               {
                 label: "State Root",
                 helpText: "The root of the state trie",
-                renderValue: ({ stateRoot }) => stateRoot,
+                renderValue: ({ stateRoot }) => <FMono>{stateRoot}</FMono>,
               },
               {
                 label: "Withdrawals Root",
                 helpText: "Block header withdrawal root hash",
-                renderValue: ({ withdrawalsRoot }) => withdrawalsRoot,
+                shouldRender: ({ withdrawalsRoot }) => !!withdrawalsRoot,
+                renderValue: ({ withdrawalsRoot }) =>
+                  withdrawalsRoot && <FMono>{withdrawalsRoot}</FMono>,
               },
               {
                 label: "Nonce",

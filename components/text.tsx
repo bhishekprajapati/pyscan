@@ -46,3 +46,14 @@ export const TextClipboardCopy = ({ content }: { content: string }) => {
     </Tooltip>
   );
 };
+
+type FMonoProps = React.HTMLProps<HTMLSpanElement>;
+export const FMono: React.FC<FMonoProps> = ({
+  children,
+  className,
+  ...restProps
+}) => (
+  <span className={cn("font-mono", className)} {...restProps}>
+    {children}
+  </span>
+);

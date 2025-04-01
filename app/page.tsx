@@ -1,5 +1,3 @@
-"use client";
-
 import { Chip, Divider } from "@heroui/react";
 import NetworkCongestionChart from "@/components/charts/network-congestion";
 import { CONTRACT_ADDRESS } from "@/constants/pyusd";
