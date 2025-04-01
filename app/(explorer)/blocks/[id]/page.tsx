@@ -4,7 +4,7 @@ import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
 import ObjectKeys from "@/components/ui/object-keys";
 import ethereum from "@/lib/ethereum";
-import { Chip, Code, Tooltip } from "@heroui/react";
+import { Chip, Code, Skeleton, Tooltip } from "@heroui/react";
 import {
   Check,
   ChevronLeft,
@@ -12,7 +12,32 @@ import {
   Info,
   LoaderCircle,
 } from "lucide-react";
+import { Suspense } from "react";
+import { BlockNumber } from "viem";
 import { z } from "zod";
+
+const BlockFinalityStatus = async ({ number }: { number: BlockNumber }) => {
+  const result = await ethereum.mainnet.getIsBlockFinalized(number);
+  if (!result.success)
+    return <span className="text-danger">Failed to fetch status...</span>;
+
+  const isFinalized = result.data;
+  return isFinalized ? (
+    <Chip variant="flat" color="success" startContent={<Check size={16} />}>
+      Finalized
+    </Chip>
+  ) : (
+    <Chip
+      variant="flat"
+      color="warning"
+      startContent={
+        <LoaderCircle size={16} className="animate-spinner-ease-spin" />
+      }
+    >
+      Unfinalized
+    </Chip>
+  );
+};
 
 type FC = React.FC<PageProps<{ id: string }>>;
 
@@ -35,7 +60,9 @@ const BlockPage: FC = async ({ params }) => {
   }
 
   const blockNumber = validation.data;
-  const block = await ethereum.mainnet.getBlockInfo(blockNumber);
+  const result = await ethereum.mainnet.getBlockInfo(blockNumber);
+  if (!result.success) return <>error occured...</>;
+  const { data: block } = result;
   const burntFees = Number(block.baseFeePerGas ?? 0) * Number(block.gasUsed);
 
   const data = {
@@ -92,29 +119,15 @@ const BlockPage: FC = async ({ params }) => {
               {
                 label: "status",
                 helpText: "The finality status of the block. ",
-                renderValue: ({ isFinalized }) =>
-                  isFinalized ? (
-                    <Chip
-                      variant="flat"
-                      color="success"
-                      startContent={<Check size={16} />}
-                    >
-                      Finalized
-                    </Chip>
-                  ) : (
-                    <Chip
-                      variant="flat"
-                      color="warning"
-                      startContent={
-                        <LoaderCircle
-                          size={16}
-                          className="animate-spinner-ease-spin"
-                        />
-                      }
-                    >
-                      Unfinalized
-                    </Chip>
-                  ),
+                renderValue: ({ number }) => (
+                  <Suspense
+                    fallback={
+                      <Skeleton className="h-7 w-[5.75rem] rounded-full" />
+                    }
+                  >
+                    <BlockFinalityStatus number={number} />
+                  </Suspense>
+                ),
               },
               {
                 label: "Timestamp",

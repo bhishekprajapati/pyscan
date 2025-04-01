@@ -49,19 +49,33 @@ export const createClient = (opts: CreateClientOption) => {
     });
 
     const getBlockInfo = async (num: bigint) => {
-      const [block, finalizedBlock] = await Promise.all([
-        client.getBlock({
+      try {
+        const block = await client.getBlock({
           blockNumber: num,
-        }),
-        client.getBlock({
-          blockTag: "finalized",
-        }),
-      ]);
+        });
+        return data(block);
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "failed to fetch",
+          isInternal: false,
+        });
+      }
+    };
 
-      return {
-        ...block,
-        isFinalized: block.number <= finalizedBlock.number,
-      };
+    const getIsBlockFinalized = async (blockNumber: bigint) => {
+      try {
+        const latest = await client.getBlock({
+          blockTag: "finalized",
+        });
+        return data(blockNumber <= latest.number);
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "failed to fetch",
+          isInternal: false,
+        });
+      }
     };
 
     const getSymbol = () =>
@@ -180,6 +194,7 @@ export const createClient = (opts: CreateClientOption) => {
       getTransaction,
       getAddressInfo,
       getEnsInfo,
+      getIsBlockFinalized,
     } as const;
   };
 
