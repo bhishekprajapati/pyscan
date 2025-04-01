@@ -8,6 +8,7 @@ import {
   isAddress,
   Hash,
   InvalidParamsRpcError,
+  Address,
 } from "viem";
 import { mainnet } from "viem/chains";
 
@@ -146,6 +147,28 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
+    const getAddressInfo = async (address: Address) => {};
+
+    const getEnsInfo = async (address: Address) => {
+      try {
+        const name = await client.getEnsName({
+          address,
+        });
+        if (name === null) return data(null);
+        const [avatar, resolvedAddress] = await Promise.all([
+          client.getEnsAvatar({ name }),
+          client.getEnsAddress({ name }),
+        ]);
+        return data({ name, avatar, resolvedAddress });
+      } catch (err) {
+        return error({
+          name: "unknown",
+          isInternal: false,
+          message: "failed to fetch",
+        });
+      }
+    };
+
     return {
       httpClient: client,
       getName,
@@ -155,6 +178,8 @@ export const createClient = (opts: CreateClientOption) => {
       getLogs,
       getBlockInfo,
       getTransaction,
+      getAddressInfo,
+      getEnsInfo,
     } as const;
   };
 

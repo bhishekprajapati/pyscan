@@ -18,6 +18,7 @@
     "@tanstack/react-query": "^5.66.11",
     "@tanstack/react-query-devtools": "^5.66.11",
     "@uiw/react-json-view": "2.0.0-alpha.30",
+    "boring-avatars": "^1.11.2",
     "client-only": "^0.0.1",
     "copy-to-clipboard": "^3.3.3",
     "framer-motion": "^12.4.7",

@@ -1,8 +1,44 @@
 export const dynamic = "force-dynamic";
 
+import CopyButton from "@/components/copy-button";
+import { AddressLink } from "@/components/links";
 import LinkButton from "@/components/ui/link-button";
-import { isAddress } from "@/lib/ethereum";
-import { Code } from "@heroui/react";
+import ethereum, { isAddress } from "@/lib/ethereum";
+
+import { Chip, Code, Skeleton } from "@heroui/react";
+import BoringAvatar from "boring-avatars";
+import { SquareArrowOutUpRight } from "lucide-react";
+import { Suspense } from "react";
+import { Address } from "viem";
+
+const EnsInfo = async ({ address }: { address: Address }) => {
+  const result = await ethereum.mainnet.getEnsInfo(address);
+  if (!result.success) return <></>;
+  const { data: ens } = result;
+  if (!ens) return <></>;
+
+  return (
+    <>
+      <span>{ens.avatar}</span>
+      <Chip
+        size="lg"
+        variant="bordered"
+        className="ms-auto"
+        endContent={
+          ens.resolvedAddress ? (
+            <AddressLink address={ens.resolvedAddress}>
+              <SquareArrowOutUpRight size={16} />
+            </AddressLink>
+          ) : (
+            <></>
+          )
+        }
+      >
+        {ens.name}
+      </Chip>
+    </>
+  );
+};
 
 type FC = React.FC<PageProps<{ id: string }>>;
 
@@ -22,7 +58,29 @@ const AddressPage: FC = async ({ params }) => {
     );
   }
 
-  return <></>;
+  return (
+    <section>
+      <header className="border-e border-e-divider p-4 text-default-foreground">
+        <div className="flex items-center gap-2">
+          <BoringAvatar name={id} size={24} />
+          <h2 className="text-lg">Address</h2>
+          <Code className="bg-default">{id}</Code>
+          <CopyButton
+            text={id}
+            tooltipText="Click to copy address"
+            onCopyToast={{
+              title: "Copied!",
+              color: "success",
+            }}
+          />
+          <span className="ms-auto" />
+          <Suspense fallback={<Skeleton className="h-6 w-40 rounded-full" />}>
+            <EnsInfo address={id} />
+          </Suspense>
+        </div>
+      </header>
+    </section>
+  );
 };
 
 export default AddressPage;

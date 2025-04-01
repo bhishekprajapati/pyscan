@@ -31,7 +31,7 @@ export const AddressLink = ({
   ...props
 }: AddressLinkProps) => (
   <Link
-    href={`/addresses/${address}}`}
+    href={`/addresses/${address}`}
     className={cn(className, "text-blue-400")}
     {...props}
   />
