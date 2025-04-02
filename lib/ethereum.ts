@@ -183,6 +183,85 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
+    const getLatestBlocks = async () => {
+      const LIMIT = 10; // No. of block to fetch
+      try {
+        const latest = await client.getBlockNumber();
+        // step 1: fetch last LIMIT + 1 Blocks
+        const blocks = await Promise.all(
+          Array.from({ length: LIMIT + 1 }, (_, i) =>
+            client.getBlock({ blockNumber: latest - BigInt(i + 1) }),
+          ),
+        );
+
+        // Step 2: calculate block generation time
+        const slice = blocks.slice(0, LIMIT).map((block, idx) => ({
+          ...block,
+          duration: block.timestamp - blocks[idx + 1].timestamp,
+        }));
+
+        // step 3: get ens name for sliced blocks
+        const slicedBlocks = await Promise.all(
+          slice.map((bk) =>
+            client
+              .getEnsName({ address: bk.miner })
+              .then((name) => ({ ...bk, ensName: name })),
+          ),
+        );
+
+        // step 4: transform block data
+        const transformed = slicedBlocks.map((bk) => ({
+          transactionCount: bk.transactions.length,
+          ...pick(bk, ["number", "timestamp", "duration", "miner", "ensName"]),
+        }));
+        return data(transformed);
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "Failed to fetch",
+          isInternal: false,
+        });
+      }
+    };
+
+    const getLatestTransactions = async () => {
+      try {
+        const block = await client.getBlock({
+          blockTag: "latest",
+          includeTransactions: true,
+        });
+        const txns = block.transactions.slice(0, 10);
+        return data({ txns, timestamp: block.timestamp });
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "Failed to fetch",
+          isInternal: false,
+        });
+      }
+    };
+
+    const getBlockTransactions = async (number: string) => {
+      try {
+        const block = await client.getBlock({
+          blockNumber: BigInt(number),
+          includeTransactions: true,
+        });
+        return data(
+          block.transactions.map((tx) => ({
+            timestamp: block.timestamp,
+            ...pick(tx, ["hash", "from", "to", "value", "blockNumber"]),
+          })),
+        );
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "Failed to fetch",
+          isInternal: false,
+        });
+      }
+    };
+
     return {
       httpClient: client,
       getName,
@@ -195,6 +274,9 @@ export const createClient = (opts: CreateClientOption) => {
       getAddressInfo,
       getEnsInfo,
       getIsBlockFinalized,
+      getLatestBlocks,
+      getLatestTransactions,
+      getBlockTransactions,
     } as const;
   };
 

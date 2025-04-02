@@ -36,3 +36,16 @@ export const AddressLink = ({
     {...props}
   />
 );
+
+type BlockTransactionsLinkProps = { number: bigint } & BaseLinkProps;
+export const BlockTransactionsLink = ({
+  number,
+  className,
+  ...props
+}: BlockTransactionsLinkProps) => (
+  <Link
+    href={`/blocks/${number}/transactions`}
+    className={cn(className, "text-blue-400")}
+    {...props}
+  />
+);

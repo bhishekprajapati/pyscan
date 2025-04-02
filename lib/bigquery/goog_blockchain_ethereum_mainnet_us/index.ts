@@ -6,6 +6,8 @@ import type { QueryHandler } from "../query-handler";
 import type { BigQueryTimestamp } from "@google-cloud/bigquery";
 import { Address } from "viem";
 
+const limit = z.enum(["10", "25", "50", "100"]);
+
 export default function ethereumMainnet(query: QueryHandler) {
   const getTransactions = (() => {
     const optionsSchema = z.object({
@@ -198,6 +200,90 @@ export default function ethereumMainnet(query: QueryHandler) {
       },
     });
 
+  const getBlocks = (() => {
+    const schema = z.object({
+      limit: limit.default("25"),
+      cursor: z.string().datetime().default(new Date().toISOString()),
+    });
+
+    async function queryFn(param: z.infer<typeof schema>) {
+      const validation = schema.safeParse(param);
+
+      if (!validation.success) {
+        return error({
+          reason: "validation-failed",
+          retry: true,
+          isInternal: false,
+          error: validation.error,
+        });
+      }
+
+      const { data } = validation;
+      const { limit, cursor } = data;
+
+      const result = await query({
+        query: `
+          SELECT
+            block_number,
+            block_timestamp,
+            transaction_count,
+            miner,
+            gas_used,
+            gas_limit,
+            base_fee_per_gas,
+          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.blocks
+          WHERE DATE(block_timestamp) >= 
+              DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH)
+            AND DATE(block_timestamp) < 
+              DATE_ADD(DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH), INTERVAL 1 MONTH)
+            AND (block_timestamp < TIMESTAMP(@cursor) OR @cursor IS NULL)  -- Cursor logic
+          ORDER BY block_timestamp DESC
+          LIMIT @limit
+        `,
+        params: {
+          limit: Number(limit),
+          cursor,
+        },
+      });
+
+      if (!result.success) return result;
+
+      type TData = {
+        block_number: number;
+        block_timestamp: {
+          value: string;
+        };
+        transaction_count: number;
+        miner: string;
+        gas_used: number;
+        gas_limit: number;
+        base_fee_per_gas: number;
+      };
+
+      return {
+        success: result.success,
+        data: result.data[0] as TData[],
+      };
+    }
+
+    return queryFn;
+  })();
+
+  const getBlocksCount = async () => {
+    const result = await query({
+      query: `
+        SELECT
+          COUNT(*) as count,
+        FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.blocks
+      `,
+    });
+    if (!result.success) return result;
+    return {
+      success: true as const,
+      data: result.data[0],
+    };
+  };
+
   return {
     getTransactions,
     getTokenTransfers,
@@ -205,5 +291,7 @@ export default function ethereumMainnet(query: QueryHandler) {
     getTokenTransferCount,
     getGasTrend,
     getTransactionsByAddress,
+    getBlocks,
+    getBlocksCount,
   };
 }

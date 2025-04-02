@@ -9,26 +9,10 @@ import {
   TableCell,
 } from "@heroui/table";
 import TimeAgo from "react-timeago";
+import { ErrorBoundary } from "react-error-boundary";
 
 import { FMono, TextClipboardCopy, TextTruncate } from "../text";
-import type { TransfersApiResponse } from "@/pages/api/mainnet/transfers";
-import { isServer, useQuery } from "@tanstack/react-query";
-
-const useTransfers = () =>
-  useQuery({
-    queryKey: ["mainnet", "transfers"],
-    queryFn: async ({ signal }) => {
-      const res = await fetch("/api/mainnet/transfers", {
-        signal,
-      });
-      const json = (await res.json()) as TransfersApiResponse;
-      if (!json.ok) {
-        throw Error(json.error.message);
-      }
-      return json.data;
-    },
-    enabled: !isServer,
-  });
+import { useTransfers } from "@/hooks/table";
 
 const columns = [
   { name: "Transaction Hash", uid: "transaction_hash" },
@@ -39,8 +23,7 @@ const columns = [
   { name: "Amount", uid: "quantity" },
 ];
 
-export const TransfersTable = () => {
-  // TODO: fetch on 15 min intervals
+const _Table = () => {
   const query = useTransfers();
   const data = query.data ?? [];
 
@@ -90,3 +73,11 @@ export const TransfersTable = () => {
     </div>
   );
 };
+
+const TransfersTable = () => (
+  <ErrorBoundary fallback={<>error occured</>}>
+    <_Table />
+  </ErrorBoundary>
+);
+
+export default TransfersTable;
