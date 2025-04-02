@@ -95,7 +95,6 @@ const Fallback = () => (
 );
 
 const LatestBlocks = async () => {
-  await new Promise((a) => setTimeout(a, 1000));
   const results = await ethereum.mainnet.getLatestBlocks();
   if (!results.success) return <>errro occured</>;
   const blocks = results.data;
@@ -164,7 +163,6 @@ const LatestBlocks = async () => {
 };
 
 const LatestTransactions = async () => {
-  await new Promise((a) => setTimeout(a, 3000));
   const results = await ethereum.mainnet.getLatestTransactions();
   if (!results.success) return <>errro occured</>;
   const { txns, timestamp } = results.data;
