@@ -262,6 +262,18 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
+    const getGasPrice = async () => {
+      try {
+        return data(await client.getGasPrice());
+      } catch (err) {
+        return error({
+          name: "unknown",
+          message: "Failed to fetch",
+          isInternal: false,
+        });
+      }
+    };
+
     return {
       httpClient: client,
       getName,
@@ -277,6 +289,7 @@ export const createClient = (opts: CreateClientOption) => {
       getLatestBlocks,
       getLatestTransactions,
       getBlockTransactions,
+      getGasPrice,
     } as const;
   };
 
