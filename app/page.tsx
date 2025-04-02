@@ -20,6 +20,7 @@ import {
   TransactionLink,
 } from "@/components/links";
 import { FMono, TextTruncate } from "@/components/text";
+import CopyButton from "@/components/copy-button";
 
 const Overview = () => (
   <div className="md:flex">
@@ -44,7 +45,15 @@ const Overview = () => (
         <div className="m-1 flex-1 p-4">
           <div>
             <h3 className="text-foreground-500">Token Contract</h3>
-            <p className="mb-4">{CONTRACT_ADDRESS}</p>
+            <p className="mb-4 flex items-center gap-4">
+              <TextTruncate className="w-[90%]">
+                <FMono>{CONTRACT_ADDRESS}</FMono>
+              </TextTruncate>
+              <CopyButton
+                value={CONTRACT_ADDRESS}
+                tooltipText="Copy PYUSD contract address"
+              />
+            </p>
             <Chip className="me-4" variant="dot" color="primary">
               ERC-20
             </Chip>
