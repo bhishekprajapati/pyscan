@@ -19,7 +19,7 @@ export const Quote = async () => {
       <FMono>{round(price)}</FMono> USD{" "}
       <span
         className={change > 0 ? "text-success" : "text-danger"}
-      >{`${change < 0 ? "-" : change === 0 ? "" : "+"}${round(change)}%`}</span>
+      >{`${change > 0 ? "+" : ""}${round(change)}%`}</span>
     </span>
   );
 };
