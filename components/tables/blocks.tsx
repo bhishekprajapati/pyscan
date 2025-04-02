@@ -11,13 +11,16 @@ import {
 import TimeAgo from "react-timeago";
 import { ErrorBoundary } from "react-error-boundary";
 
-import { FMono, TextClipboardCopy, TextTruncate } from "../text";
+import { FMono } from "../text";
 import { useBlocks } from "@/hooks/table";
+import { AddressLink, BlockLink, BlockTransactionsLink } from "../links";
+import CopyButton from "../copy-button";
 
 const columns = [
   { name: "Block", uid: "block_number" },
   { name: "Age", uid: "block_timestamp" },
   { name: "Txn", uid: "transaction_count" },
+  { name: "Fee Recipient", uid: "miner" },
   { name: "Gas Used", uid: "gas_used" },
   { name: "Gas Limit", uid: "gas_limit" },
 ];
@@ -27,7 +30,7 @@ const _Table = () => {
   const data = query.data ?? [];
 
   return (
-    <div className="m-1">
+    <div className="m-4 overflow-hidden rounded-xl">
       <Table
         aria-label="eth blocks table"
         className="overflow-x-auto bg-default"
@@ -48,12 +51,24 @@ const _Table = () => {
         <TableBody>
           {data.map((bk) => (
             <TableRow key={bk.block_number}>
-              <TableCell>{bk.block_number}</TableCell>
+              <TableCell>
+                <BlockLink number={BigInt(bk.block_number)}>
+                  <FMono>{bk.block_number}</FMono>
+                </BlockLink>
+              </TableCell>
               <TableCell>
                 <TimeAgo date={bk.block_timestamp.value} />
               </TableCell>
               <TableCell>
-                <FMono>{bk.transaction_count}</FMono>
+                <BlockTransactionsLink number={BigInt(bk.block_number)}>
+                  <FMono>{bk.transaction_count}</FMono>
+                </BlockTransactionsLink>
+              </TableCell>
+              <TableCell>
+                <AddressLink address={bk.miner}>
+                  <FMono>{bk.miner}</FMono>
+                </AddressLink>
+                <CopyButton value={bk.miner} />
               </TableCell>
               <TableCell>
                 <FMono>{bk.gas_used}</FMono>
