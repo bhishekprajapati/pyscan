@@ -11,17 +11,10 @@ import { FMono, TextTruncate } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
 import { CONTRACT_ADDRESS } from "@/constants/pyusd";
+import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";
 import ethereum from "@/lib/ethereum";
 
-import {
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Chip,
-  Divider,
-  Spinner,
-} from "@heroui/react";
+import { Chip, Divider, Spinner } from "@heroui/react";
 import { ArrowRight, Box, ReceiptText } from "lucide-react";
 import { Suspense } from "react";
 
@@ -100,12 +93,12 @@ const LatestBlocks = async () => {
   const blocks = results.data;
 
   return (
-    <Card className="rounded-none">
-      <CardHeader className="rounded-none bg-default p-6 text-default-foreground">
-        <h2 className="font-serif text-xl font-bold">Latest Blocks</h2>
+    <Card>
+      <CardHeader>
+        <h2>Latest Blocks</h2>
       </CardHeader>
       <Divider />
-      <CardBody className="bg-default/50 p-0 text-default-foreground">
+      <CardBody>
         <ScrollContainer>
           <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
             {blocks.map((block) => (
@@ -150,12 +143,15 @@ const LatestBlocks = async () => {
         </ScrollContainer>
       </CardBody>
       <Divider />
-      <CardFooter className="justify-center">
-        <LinkButton href="/blocks" variant="light">
-          <span className="font-serif uppercase dark:text-gray-400">
+      <CardFooter>
+        <LinkButton href="/blocks" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
             View All Blocks
           </span>
-          <ArrowRight size={16} className="dark:text-gray-400" />
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
         </LinkButton>
       </CardFooter>
     </Card>
@@ -168,12 +164,12 @@ const LatestTransactions = async () => {
   const { txns, timestamp } = results.data;
 
   return (
-    <Card className="rounded-none">
-      <CardHeader className="rounded-none bg-default p-6 text-default-foreground">
-        <h2 className="font-serif text-xl font-bold">Latest Transactions</h2>
+    <Card>
+      <CardHeader>
+        <h2>Latest Transactions</h2>
       </CardHeader>
       <Divider />
-      <CardBody className="bg-default/50 p-0 text-default-foreground">
+      <CardBody>
         <ScrollContainer>
           <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
             {txns.map((txn) => (
@@ -223,17 +219,44 @@ const LatestTransactions = async () => {
         </ScrollContainer>
       </CardBody>
       <Divider />
-      <CardFooter className="justify-center">
-        <LinkButton href="/transactions" variant="light">
-          <span className="font-serif uppercase dark:text-gray-400">
+      <CardFooter>
+        <LinkButton href="/transactions" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
             View All Transactions
           </span>
-          <ArrowRight size={16} className="dark:text-gray-400" />
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
         </LinkButton>
       </CardFooter>
     </Card>
   );
 };
+
+const PyusdTransfersTable = () => (
+  <Card>
+    <CardHeader>
+      <h2>PYUSD Token Transfers</h2>
+    </CardHeader>
+    <Divider />
+    <CardBody>
+      <TransfersTable />
+    </CardBody>
+    <Divider />
+    <CardFooter>
+      <LinkButton href="/pyusd-transfers" variant="light" className="group">
+        <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
+          View All PYUSD Transfers
+        </span>
+        <ArrowRight
+          size={16}
+          className="dark:text-gray-400 dark:group-hover:text-secondary"
+        />
+      </LinkButton>
+    </CardFooter>
+  </Card>
+);
 
 /**
  * TODO:
@@ -247,9 +270,10 @@ export default function Home() {
     <div>
       <Overview />
       <Divider />
-      <div>
-        <TransfersTable />
+      <div className="m-2">
+        <PyusdTransfersTable />
       </div>
+      <Divider />
       <div className="m-2 flex flex-col gap-2 md:m-0 md:flex-row md:gap-0 md:[&>*]:flex-1">
         <div className="md:border-e md:border-divider">
           <div className="md:m-2">
