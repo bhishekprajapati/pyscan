@@ -37,7 +37,7 @@ const Overview = () => (
   <div className="md:flex">
     <div className="flex-[0.25] border-e border-e-divider">
       <div className="h-full md:flex md:flex-col">
-        <div className="m-2 flex-1 bg-secondary bg-opacity-5 p-4">
+        <div className="m-2 flex-1 rounded-md bg-secondary bg-opacity-5 p-4">
           <h3 className="text-foreground-500">Max Total Supply</h3>
           <p className="mb-4">
             <FMono>672,119,685.918257</FMono> PYUSD
@@ -52,7 +52,7 @@ const Overview = () => (
           </p>
         </div>
         <Divider />
-        <div className="m-2 flex-1 bg-default p-4">
+        <div className="m-2 flex-1 rounded-md bg-default p-4">
           <h3 className="text-foreground-500">OnChain Market Cap</h3>
           <p className="mb-4">
             <FMono>$672,119,685.92</FMono>
@@ -63,7 +63,7 @@ const Overview = () => (
           </p>
         </div>
         <Divider />
-        <div className="m-2 flex-1 bg-default/40 p-4">
+        <div className="m-2 flex-1 rounded-md bg-default/40 p-4">
           <div>
             <h3 className="text-foreground-500">Token Contract</h3>
             <p className="mb-4 flex items-center gap-4">
@@ -273,6 +273,7 @@ const LatestPyusdTransfers = async () => {
     ? quoteResult.data.PYUSD["0"].quote.USD.price
     : undefined;
 
+  // TODO: switch data source to rpc provider
   return (
     <Card>
       <CardHeader>
@@ -325,8 +326,8 @@ const LatestPyusdTransfers = async () => {
                 </AddressLink>
               </Tooltip>
               <CopyButton text={txn.from_address} />
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-success bg-success/10">
-                <ArrowRight size={12} className="text-success" />
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-secondary/15 bg-secondary/10">
+                <ArrowRight size={12} className="text-secondary" />
               </span>
               <Tooltip content="To address">
                 <AddressLink address={txn.to_address}>

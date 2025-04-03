@@ -12,7 +12,7 @@ type CardBodyProps = React.ComponentPropsWithoutRef<typeof HCardBody>;
 type CardHeaderProps = React.ComponentPropsWithoutRef<typeof HCardHeader>;
 
 export const Card: React.FC<CardProps> = ({ className, ...rest }) => (
-  <HCard className={cn("rounded-none", className)} {...rest} />
+  <HCard className={cn("rounded-md", className)} {...rest} />
 );
 
 export const CardBody: React.FC<CardBodyProps> = ({ className, ...rest }) => (
