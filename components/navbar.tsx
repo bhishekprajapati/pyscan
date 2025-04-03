@@ -19,7 +19,7 @@ const SearchInput = () => {
 };
 
 const AppNavBar = () => (
-  <nav className="border-y border-y-divider bg-background">
+  <nav className="border-y border-y-divider bg-background/75 backdrop-blur-xl">
     <header className="flex items-center">
       <div className="me-auto border-e border-e-divider p-4 md:me-0">
         <LinkButton href="/" variant="light" size="sm">
