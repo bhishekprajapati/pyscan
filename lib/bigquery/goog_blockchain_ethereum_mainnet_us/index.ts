@@ -72,9 +72,20 @@ export default function ethereumMainnet(query: QueryHandler) {
 
       const res = await query({
         query: `
-          SELECT block_number, block_timestamp, transaction_hash, from_address, event_hash, to_address, quantity, event_index
-          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
-          WHERE LOWER(address) = LOWER(@address) AND  block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
+          SELECT
+            block_number,
+            block_timestamp,
+            transaction_hash,
+            from_address,
+            event_hash,
+            to_address,
+            quantity,
+            event_index
+          FROM
+            bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
+          WHERE
+            LOWER(address) = LOWER(@address)
+            AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 HOUR)
           ORDER BY block_timestamp DESC
           LIMIT @limit;
         `,

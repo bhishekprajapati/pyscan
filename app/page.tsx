@@ -1,22 +1,37 @@
+export const dynamic = "force-dynamic";
+
+import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";
 import NetworkCongestionChart from "@/components/charts/network-congestion";
+import PyusdDominance from "@/components/charts/pyusd-dominance";
 import CopyButton from "@/components/copy-button";
+import { ComponentErrorFallback } from "@/components/errors";
+import { RealTimeIndicator } from "@/components/indicator";
 import {
   AddressLink,
   BlockLink,
   BlockTransactionsLink,
   TransactionLink,
 } from "@/components/links";
-import TransfersTable from "@/components/tables/transfers";
 import { FMono, TextTruncate } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
+
 import { CONTRACT_ADDRESS } from "@/constants/pyusd";
-import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";
+import bigquery from "@/lib/bigquery";
+import { getStablecoins, pyusd } from "@/lib/coinmarketcap";
+import { microToPyusd } from "@/lib/converters";
 import ethereum from "@/lib/ethereum";
 
-import { Chip, Divider, Spinner } from "@heroui/react";
-import { ArrowRight, Box, ReceiptText } from "lucide-react";
+import { Chip, Divider, Spinner, Tooltip } from "@heroui/react";
+import { ArrowRight, Box, Circle, ReceiptText } from "lucide-react";
 import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+
+const PyusdDominanceTreemap = async () => {
+  const result = await getStablecoins();
+  if (!result.success) return <></>;
+  return <PyusdDominance data={result.data} />;
+};
 
 const Overview = () => (
   <div className="md:flex">
@@ -72,7 +87,10 @@ const Overview = () => (
     </div>
     <Divider className="md:hidden" />
     <div className="flex-[0.75]">
-      <NetworkCongestionChart />
+      <ErrorBoundary fallback={<ComponentErrorFallback />}>
+        {/* <PyusdDominanceTreemap /> */}
+        <NetworkCongestionChart />
+      </ErrorBoundary>
     </div>
   </div>
 );
@@ -81,7 +99,7 @@ const ScrollContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="md:h-[50rem] md:overflow-auto">{children}</div>
 );
 
-const Fallback = () => (
+const SuspendedComponentFallback = () => (
   <div className="flex h-[60rem] items-center justify-center">
     <Spinner color="secondary" />
   </div>
@@ -96,6 +114,7 @@ const LatestBlocks = async () => {
     <Card>
       <CardHeader>
         <h2>Latest Blocks</h2>
+        <RealTimeIndicator />
       </CardHeader>
       <Divider />
       <CardBody>
@@ -119,11 +138,13 @@ const LatestBlocks = async () => {
                       <FMono>{block.number}</FMono>
                     </BlockLink>
                   </div>
-                  <Timestamp
-                    stamp={block.timestamp}
-                    icon={false}
-                    string={false}
-                  />
+                  <div className="text-sm">
+                    <Timestamp
+                      stamp={block.timestamp}
+                      icon={false}
+                      string={false}
+                    />
+                  </div>
                 </div>
                 <div>
                   <div>
@@ -167,6 +188,7 @@ const LatestTransactions = async () => {
     <Card>
       <CardHeader>
         <h2>Latest Transactions</h2>
+        <RealTimeIndicator />
       </CardHeader>
       <Divider />
       <CardBody>
@@ -193,7 +215,13 @@ const LatestTransactions = async () => {
                         </TextTruncate>
                       </TransactionLink>
                     </div>
-                    <Timestamp stamp={timestamp} icon={false} string={false} />
+                    <div className="text-sm">
+                      <Timestamp
+                        stamp={timestamp}
+                        icon={false}
+                        string={false}
+                      />
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -234,35 +262,114 @@ const LatestTransactions = async () => {
   );
 };
 
-const PyusdTransfersTable = () => (
-  <Card>
-    <CardHeader>
-      <h2>PYUSD Token Transfers</h2>
-    </CardHeader>
-    <Divider />
-    <CardBody>
-      <TransfersTable />
-    </CardBody>
-    <Divider />
-    <CardFooter>
-      <LinkButton href="/pyusd-transfers" variant="light" className="group">
-        <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
-          View All PYUSD Transfers
-        </span>
-        <ArrowRight
-          size={16}
-          className="dark:text-gray-400 dark:group-hover:text-secondary"
-        />
-      </LinkButton>
-    </CardFooter>
-  </Card>
-);
+const LatestPyusdTransfers = async () => {
+  const { CONTRACT_ADDRESS } = ethereum;
+  const eth = bigquery.ethereum.mainnet;
+  const result = await eth.getTokenTransfers(CONTRACT_ADDRESS, 10);
+  if (!result.success) return <ComponentErrorFallback />;
+  const txns = result.data;
+  const quoteResult = await pyusd.getQuote();
+  const price = quoteResult.success
+    ? quoteResult.data.PYUSD["0"].quote.USD.price
+    : undefined;
+
+  return (
+    <Card>
+      <CardHeader>
+        <h2>PYUSD Token Transfers</h2>
+        <RealTimeIndicator />
+      </CardHeader>
+      <Divider />
+      <CardBody>
+        <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
+          {txns.map((txn) => (
+            <li
+              key={txn.transaction_hash + txn.event_index}
+              className="group flex items-center gap-4 p-4"
+            >
+              <span>
+                <img src="/pyusd.webp" />
+              </span>
+              <div className="mx-4">
+                <div>
+                  <BlockLink number={BigInt(txn.block_number)}>
+                    <FMono>{txn.block_number}</FMono>
+                  </BlockLink>
+                </div>
+                <div className="text-sm">
+                  <Timestamp
+                    stamp={txn.block_timestamp.value}
+                    icon={false}
+                    string={false}
+                  />
+                </div>
+              </div>
+              <div className="me-16">
+                <div className="rounded-xl border border-divider px-1">
+                  <TransactionLink
+                    className="align-middle"
+                    hash={txn.transaction_hash}
+                  >
+                    <TextTruncate className="w-48">
+                      <FMono>{txn.transaction_hash}</FMono>
+                    </TextTruncate>
+                  </TransactionLink>
+                  <CopyButton text={txn.transaction_hash} />
+                </div>
+              </div>
+              <Tooltip content="From address">
+                <AddressLink address={txn.from_address}>
+                  <TextTruncate className="md:w-64">
+                    <FMono>{txn.from_address}</FMono>
+                  </TextTruncate>
+                </AddressLink>
+              </Tooltip>
+              <CopyButton text={txn.from_address} />
+              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-success bg-success/10">
+                <ArrowRight size={12} className="text-success" />
+              </span>
+              <Tooltip content="To address">
+                <AddressLink address={txn.to_address}>
+                  <TextTruncate className="md:w-64">
+                    <FMono>{txn.to_address}</FMono>
+                  </TextTruncate>
+                </AddressLink>
+              </Tooltip>
+              <CopyButton text={txn.to_address} />
+              {price === undefined ? (
+                <span className="text-success-700">
+                  <FMono>{microToPyusd(txn.quantity).toFixed(2)} </FMono>
+                  <span className="text-sm">PYUSD</span>
+                </span>
+              ) : (
+                <Chip variant="light">
+                  <FMono className="text-success-700">
+                    ${(microToPyusd(txn.quantity) * price).toFixed(2)} USD
+                  </FMono>
+                </Chip>
+              )}
+            </li>
+          ))}
+        </ul>
+      </CardBody>
+      <Divider />
+      <CardFooter>
+        <LinkButton href="/pyusd-transfers" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
+            View All PYUSD Transfers
+          </span>
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
+        </LinkButton>
+      </CardFooter>
+    </Card>
+  );
+};
 
 /**
- * TODO:
- * 1. add loading skeleton
- * 2. fix ui issues
- * 3. real-time update on client side
+ * TODO: real-time update on client side
  */
 
 export default function Home() {
@@ -270,23 +377,49 @@ export default function Home() {
     <div>
       <Overview />
       <Divider />
-      <div className="m-2">
-        <PyusdTransfersTable />
+      <div>
+        <div className="grid gap-2 md:grid-cols-[4fr_auto_1fr] md:gap-0">
+          <div className="m-2">
+            <ErrorBoundary
+              fallback={<ComponentErrorFallback className="h-[59rem]" />}
+            >
+              <Suspense fallback={<SuspendedComponentFallback />}>
+                <LatestPyusdTransfers />
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+          <div className="h-full w-[1px] border-e border-e-divider" />
+          <div className="m-2">
+            <ErrorBoundary
+              fallback={<ComponentErrorFallback className="p-16" />}
+            >
+              <PyusdDominanceTreemap />
+            </ErrorBoundary>
+          </div>
+        </div>
       </div>
       <Divider />
       <div className="m-2 flex flex-col gap-2 md:m-0 md:flex-row md:gap-0 md:[&>*]:flex-1">
         <div className="md:border-e md:border-divider">
           <div className="md:m-2">
-            <Suspense fallback={<Fallback />}>
-              <LatestBlocks />
-            </Suspense>
+            <ErrorBoundary
+              fallback={<ComponentErrorFallback className="h-[59rem]" />}
+            >
+              <Suspense fallback={<SuspendedComponentFallback />}>
+                <LatestBlocks />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
         <div>
           <div className="md:m-2">
-            <Suspense fallback={<Fallback />}>
-              <LatestTransactions />
-            </Suspense>
+            <ErrorBoundary
+              fallback={<ComponentErrorFallback className="h-[59rem]" />}
+            >
+              <Suspense fallback={<SuspendedComponentFallback />}>
+                <LatestTransactions />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
       </div>

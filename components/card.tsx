@@ -29,12 +29,14 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 }) => (
   <HCardHeader
     className={cn(
-      "rounded-none bg-default p-6 text-default-foreground",
+      "block rounded-none bg-default p-6 text-default-foreground",
       className,
     )}
     {...rest}
   >
-    <div className="font-serif text-xl font-bold">{children}</div>
+    <div className="flex items-center justify-between font-serif text-xl font-bold">
+      {children}
+    </div>
   </HCardHeader>
 );
 

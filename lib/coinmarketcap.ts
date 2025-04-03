@@ -1,4 +1,5 @@
 import env from "@/env";
+import { pick } from "remeda";
 
 const data = <T>(data: T) => ({
   success: true as const,
@@ -97,54 +98,59 @@ const cmc = (() => {
   };
 })();
 
+const getQuote = async <T extends string>(symbols: T[]) => {
+  const url = new URL("/v2/cryptocurrency/quotes/latest?symbol", BASE_URL);
+  url.searchParams.set("symbol", symbols.join(","));
+
+  type Data = Record<
+    T,
+    [
+      {
+        id: number;
+        name: string;
+        symbol: string;
+        slug: string;
+        is_active: 1 | 0;
+        is_fiat: 1 | 0;
+        circulating_supply: number;
+        total_supply: number;
+        max_supply: number;
+        date_added: string;
+        num_market_pairs: number;
+        cmc_rank: number;
+        last_updated: string;
+        tags: string[];
+        platform: null;
+        self_reported_circulating_supply: null;
+        self_reported_market_cap: null;
+        quote: {
+          USD: {
+            price: number;
+            volume_24h: number;
+            volume_change_24h: number;
+            percent_change_1h: number;
+            percent_change_24h: number;
+            percent_change_7d: number;
+            percent_change_30d: number;
+            market_cap: number;
+            market_cap_dominance: number;
+            fully_diluted_market_cap: number;
+            last_updated: string;
+          };
+        };
+      },
+    ]
+  >;
+
+  return cmc<Data>(url, {
+    next: {
+      revalidate: 300,
+    },
+  });
+};
+
 export const pyusd = (() => {
   const SYMBOL = "PYUSD";
-
-  const getQuote = async () => {
-    const url = new URL("/v2/cryptocurrency/quotes/latest?symbol", BASE_URL);
-    url.searchParams.set("symbol", SYMBOL);
-
-    type Data = {
-      PYUSD: [
-        {
-          id: number;
-          name: string;
-          symbol: string;
-          slug: string;
-          is_active: 1 | 0;
-          is_fiat: 1 | 0;
-          circulating_supply: number;
-          total_supply: number;
-          max_supply: number;
-          date_added: string;
-          num_market_pairs: number;
-          cmc_rank: number;
-          last_updated: string;
-          tags: string[];
-          platform: null;
-          self_reported_circulating_supply: null;
-          self_reported_market_cap: null;
-          quote: {
-            USD: {
-              price: number;
-              volume_24h: number;
-              volume_change_24h: number;
-              percent_change_1h: number;
-              percent_change_24h: number;
-              percent_change_7d: number;
-              percent_change_30d: number;
-              market_cap: number;
-              market_cap_dominance: number;
-              fully_diluted_market_cap: number;
-              last_updated: string;
-            };
-          };
-        },
-      ];
-    };
-
-    return cmc<Data>(url);
-  };
 
   const getInfo = async () => {
     const url = new URL("/v2/cryptocurrency/info", BASE_URL);
@@ -153,7 +159,49 @@ export const pyusd = (() => {
   };
 
   return {
-    getQuote,
+    getQuote: () => getQuote(["PYUSD"]),
     getInfo,
   } as const;
 })();
+
+export const getStablecoins = async () => {
+  const result = await getQuote([
+    "USDT",
+    "USDC",
+    "USDS",
+    "DAI",
+    "PYUSD",
+    "PAXG",
+    "TUSD",
+    "RLUSD",
+    "USDD",
+    "USDG",
+    "UST",
+    "EURT",
+    "EURR",
+    "USDQ",
+    "USDR",
+    "EURQ",
+  ]);
+
+  if (!result.success) return result;
+  const { data } = result;
+  const coins = Object.values(data)
+    .flat()
+    .map((coin) => ({
+      quote_currency: "USD",
+      ...pick(coin.quote.USD, [
+        "market_cap",
+        "market_cap_dominance",
+        "fully_diluted_market_cap",
+        "volume_24h",
+        "percent_change_24h",
+      ]),
+      ...pick(coin, ["id", "name", "symbol"]),
+    }));
+
+  return {
+    success: true,
+    data: coins,
+  };
+};
