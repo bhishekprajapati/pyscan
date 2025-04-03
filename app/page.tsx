@@ -19,7 +19,7 @@ import LinkButton from "@/components/ui/link-button";
 import { CONTRACT_ADDRESS } from "@/constants/pyusd";
 import bigquery from "@/lib/bigquery";
 import { getStablecoins, pyusd } from "@/lib/coinmarketcap";
-import { microToPyusd } from "@/lib/converters";
+import { microToPyusd, weiToEth } from "@/lib/converters";
 import ethereum from "@/lib/ethereum";
 
 import { Chip, Divider, Spinner, Tooltip } from "@heroui/react";
@@ -195,7 +195,7 @@ const LatestTransactions = async () => {
         <ScrollContainer>
           <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
             {txns.map((txn) => (
-              <li key={txn.hash} className="group flex gap-4 p-4">
+              <li key={txn.hash} className="group flex items-center gap-4 p-4">
                 <TransactionLink
                   hash={txn.hash}
                   className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300"
@@ -224,7 +224,7 @@ const LatestTransactions = async () => {
                     </div>
                   </div>
                 </div>
-                <div>
+                <div className="me-4">
                   <div>
                     From{" "}
                     <AddressLink address={txn.from}>
@@ -240,7 +240,12 @@ const LatestTransactions = async () => {
                     </div>
                   )}
                 </div>
-                <span>{txn.value.toString()}</span>
+                <Chip
+                  variant="bordered"
+                  className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
+                >
+                  <FMono>{Number(weiToEth(txn.value)).toFixed(6)} Eth</FMono>
+                </Chip>
               </li>
             ))}
           </ul>
@@ -337,18 +342,21 @@ const LatestPyusdTransfers = async () => {
                 </AddressLink>
               </Tooltip>
               <CopyButton text={txn.to_address} />
-              {price === undefined ? (
-                <span className="text-success-700">
-                  <FMono>{microToPyusd(txn.quantity).toFixed(2)} </FMono>
-                  <span className="text-sm">PYUSD</span>
-                </span>
-              ) : (
-                <Chip variant="light">
+              <Chip
+                variant="bordered"
+                className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
+              >
+                {price === undefined ? (
+                  <span className="text-success-700">
+                    <FMono>{microToPyusd(txn.quantity).toFixed(2)} </FMono>
+                    <span className="text-sm">PYUSD</span>
+                  </span>
+                ) : (
                   <FMono className="text-success-700">
                     ${(microToPyusd(txn.quantity) * price).toFixed(2)} USD
                   </FMono>
-                </Chip>
-              )}
+                )}
+              </Chip>
             </li>
           ))}
         </ul>
