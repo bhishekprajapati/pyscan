@@ -192,64 +192,50 @@ const LatestTransactions = async () => {
       </CardHeader>
       <Divider />
       <CardBody>
-        <ScrollContainer>
-          <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
-            {txns.map((txn) => (
-              <li key={txn.hash} className="group flex items-center gap-4 p-4">
-                <TransactionLink
-                  hash={txn.hash}
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300"
-                >
-                  <ReceiptText
-                    size={20}
-                    strokeWidth={1.5}
-                    className="group-hover:text-primary"
-                  />
+        <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
+          {txns.map((txn) => (
+            <li key={txn.hash} className="group flex items-center gap-4 p-4">
+              <TransactionLink
+                hash={txn.hash}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300"
+              >
+                <ReceiptText
+                  size={20}
+                  strokeWidth={1.5}
+                  className="group-hover:text-primary"
+                />
+              </TransactionLink>
+              <div>
+                <TransactionLink hash={txn.hash}>
+                  <TextTruncate className="w-64">
+                    <FMono>{txn.hash}</FMono>
+                  </TextTruncate>
                 </TransactionLink>
-                <div>
-                  <div>
-                    <div>
-                      <TransactionLink hash={txn.hash}>
-                        <TextTruncate className="w-24">
-                          <FMono>{txn.hash}</FMono>
-                        </TextTruncate>
-                      </TransactionLink>
-                    </div>
-                    <div className="text-sm">
-                      <Timestamp
-                        stamp={timestamp}
-                        icon={false}
-                        string={false}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="me-4">
-                  <div>
-                    From{" "}
-                    <AddressLink address={txn.from}>
-                      <FMono>{txn.from}</FMono>
-                    </AddressLink>
-                  </div>
-                  {txn.to && (
-                    <div>
-                      To{" "}
-                      <AddressLink address={txn.to}>
-                        <FMono>{txn.to}</FMono>
-                      </AddressLink>
-                    </div>
-                  )}
-                </div>
-                <Chip
-                  variant="bordered"
-                  className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
-                >
-                  <FMono>{Number(weiToEth(txn.value)).toFixed(6)} Eth</FMono>
-                </Chip>
-              </li>
-            ))}
-          </ul>
-        </ScrollContainer>
+                <CopyButton text={txn.hash} />
+              </div>
+              <div className="me-16 text-sm">
+                <Timestamp stamp={timestamp} icon={false} string={false} />
+              </div>
+              <AddressLink address={txn.from}>
+                <FMono>{txn.from}</FMono>
+              </AddressLink>
+              <span className="mx-2 flex h-6 w-6 items-center justify-center rounded-full border border-secondary/15 bg-secondary/10">
+                <ArrowRight size={12} className="text-secondary" />
+              </span>
+              {txn.to && (
+                <AddressLink address={txn.to}>
+                  <FMono>{txn.to}</FMono>
+                </AddressLink>
+              )}
+              <Chip
+                variant="bordered"
+                className="ms-auto rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
+              >
+                <FMono>{Number(weiToEth(txn.value)).toFixed(6)} Eth</FMono>
+              </Chip>
+            </li>
+          ))}
+        </ul>
       </CardBody>
       <Divider />
       <CardFooter>
@@ -408,9 +394,9 @@ export default function Home() {
         </div>
       </div>
       <Divider />
-      <div className="m-2 flex flex-col gap-2 md:m-0 md:flex-row md:gap-0 md:[&>*]:flex-1">
-        <div className="md:border-e md:border-divider">
-          <div className="md:m-2">
+      <div>
+        <div className="grid gap-2 md:grid-cols-[4fr_auto_1fr] md:gap-0">
+          <div className="m-2">
             <ErrorBoundary
               fallback={<ComponentErrorFallback className="h-[59rem]" />}
             >
@@ -419,18 +405,23 @@ export default function Home() {
               </Suspense>
             </ErrorBoundary>
           </div>
-        </div>
-        <div>
-          <div className="md:m-2">
+          <div className="h-full w-[1px] border-e border-e-divider" />
+          <div className="m-2">
             <ErrorBoundary
-              fallback={<ComponentErrorFallback className="h-[59rem]" />}
-            >
-              <Suspense fallback={<SuspendedComponentFallback />}>
-                <LatestTransactions />
-              </Suspense>
-            </ErrorBoundary>
+              fallback={<ComponentErrorFallback className="p-16" />}
+            ></ErrorBoundary>
           </div>
         </div>
+      </div>
+      <Divider />
+      <div className="m-2">
+        <ErrorBoundary
+          fallback={<ComponentErrorFallback className="h-[59rem]" />}
+        >
+          <Suspense fallback={<SuspendedComponentFallback />}>
+            <LatestTransactions />
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   );
