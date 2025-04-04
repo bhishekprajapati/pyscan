@@ -35,7 +35,7 @@ const PyusdVolumeChart: React.FC<Props> = ({ data, timestamp, price }) => {
 
   return (
     <div className="h-full">
-      <div className="flex items-center gap-2 bg-default p-4">
+      <div className="flex items-center gap-2 border-b border-divider bg-default p-4">
         <FMono className="inline-block text-lg dark:text-default-600">
           <PYUSDIcon className="inline-block h-6 w-6" /> PYUSD Volume
         </FMono>

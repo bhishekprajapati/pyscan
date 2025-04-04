@@ -19,7 +19,7 @@ type Props = {
 
 const NetworkCongestionChart: React.FC<Props> = ({ data, timestamp }) => (
   <div className="h-full">
-    <div className="flex items-center gap-2 bg-default p-4">
+    <div className="flex items-center gap-2 border-b border-divider bg-default p-4">
       <FMono className="text-lg dark:text-default-600">
         Network Congestion
       </FMono>

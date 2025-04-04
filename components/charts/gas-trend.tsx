@@ -43,7 +43,7 @@ const GasTrend: React.FC<GasTrendProps> = ({ data, timestamp }) => {
 
   return (
     <div className="h-full">
-      <div className="flex items-center gap-2 bg-default p-4">
+      <div className="flex items-center gap-2 border-b border-divider bg-default p-4">
         <FMono className="text-lg dark:text-default-600">Gas Trend</FMono>
         <FMono className="ms-auto dark:text-default-200">
           <TimeAgo date={new Date(timestamp)} />

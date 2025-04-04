@@ -40,25 +40,25 @@ export default function Home() {
   return (
     <div className="m-2 grid auto-rows-max gap-2 sm:m-4 sm:grid-cols-2 sm:gap-4 lg:grid-cols-12">
       <div className="h-full sm:col-span-2 lg:col-span-4">
-        <GridItem className="bg-secondary bg-opacity-5">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025]">
           <PyusdSupply />
         </GridItem>
       </div>
 
       <div className="h-full lg:col-span-4">
-        <GridItem className="bg-default">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025]">
           <PyusdHolderInfo />
         </GridItem>
       </div>
 
       <div className="h-full lg:col-span-4">
-        <GridItem className="bg-default/50">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025]">
           <PyusdTokenInfo />
         </GridItem>
       </div>
 
       <div className="h-full sm:col-span-2 lg:col-span-12 xl:col-span-8 xl:row-span-2">
-        <GridItem className="bg-default/50 p-0">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <PyusdVolume />
           </ErrorBoundary>
@@ -66,7 +66,7 @@ export default function Home() {
       </div>
 
       <div className="h-full lg:col-span-6 xl:col-span-4">
-        <GridItem className="bg-default/50 p-0">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <Suspense
               fallback={<SuspendedComponentFallback className="h-full" />}
@@ -78,7 +78,7 @@ export default function Home() {
       </div>
 
       <div className="h-full lg:col-span-6 xl:col-span-4">
-        <GridItem className="bg-default/50 p-0">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <NetworkCongestion />
           </ErrorBoundary>
@@ -97,7 +97,7 @@ export default function Home() {
         </ErrorBoundary>
       </div>
       <div className="sm:col-span-2 lg:col-span-3">
-        <GridItem className="bg-default/50 p-0">
+        <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback className="p-16" />}>
             <StablecoinDominance />
           </ErrorBoundary>
