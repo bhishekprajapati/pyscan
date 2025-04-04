@@ -59,11 +59,11 @@ const GasTrend: React.FC<GasTrendProps> = ({ data, timestamp }) => {
         <AreaChart data={sorted}>
           <defs>
             <linearGradient id="networkGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={NETWORK_COLOR} stopOpacity={0.75} />
+              <stop offset="5%" stopColor={NETWORK_COLOR} stopOpacity={0.05} />
               <stop offset="95%" stopColor={NETWORK_COLOR} stopOpacity={0} />
             </linearGradient>
             <linearGradient id="pyusdGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={PYUSD_COLOR} stopOpacity={0.5} />
+              <stop offset="5%" stopColor={PYUSD_COLOR} stopOpacity={0.05} />
               <stop offset="95%" stopColor={PYUSD_COLOR} stopOpacity={0} />
             </linearGradient>
           </defs>
