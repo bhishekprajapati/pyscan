@@ -201,7 +201,7 @@ export const getStablecoins = async () => {
     }));
 
   return {
-    success: true,
+    success: true as const,
     data: coins,
   };
 };

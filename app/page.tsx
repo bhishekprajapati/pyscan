@@ -20,6 +20,7 @@ import {
   PyusdTokenInfo,
 } from "./_components/pyusd";
 import PyusdVolume from "./_components/pyusd-volume";
+import StablecoinDominance from "./_components/stablecoin-dominance";
 
 const GridItem: React.FC<React.HTMLProps<HTMLDivElement>> = ({
   className,
@@ -84,7 +85,7 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-9 xl:col-span-8">
+      <div className="sm:col-span-2 lg:col-span-9 xl:col-span-9">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
@@ -94,9 +95,11 @@ export default function Home() {
         </ErrorBoundary>
       </div>
       <div className="sm:col-span-2 lg:col-span-3">
-        <ErrorBoundary
-          fallback={<ComponentErrorFallback className="p-16" />}
-        ></ErrorBoundary>
+        <GridItem className="bg-default/50 p-0">
+          <ErrorBoundary fallback={<ComponentErrorFallback className="p-16" />}>
+            <StablecoinDominance />
+          </ErrorBoundary>
+        </GridItem>
       </div>
 
       <div className="sm:col-span-2 lg:col-span-9">
