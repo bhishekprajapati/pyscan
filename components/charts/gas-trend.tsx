@@ -9,10 +9,10 @@ import {
   Area,
   Legend,
 } from "recharts";
-import { FMono } from "../text";
 import TimeAgo from "react-timeago";
 import { CircleHelp } from "lucide-react";
 import { Tooltip as HTooltip } from "@heroui/react";
+import { FMono } from "../text";
 
 export type GasTrendProps = {
   data: {
@@ -43,7 +43,7 @@ const GasTrend: React.FC<GasTrendProps> = ({ data, timestamp }) => {
 
   return (
     <div className="h-full">
-      <div className="flex items-center gap-2 p-4">
+      <div className="flex items-center gap-2 bg-default p-4">
         <FMono className="text-lg dark:text-default-600">Gas Trend</FMono>
         <FMono className="ms-auto dark:text-default-200">
           <TimeAgo date={new Date(timestamp)} />
@@ -55,7 +55,7 @@ const GasTrend: React.FC<GasTrendProps> = ({ data, timestamp }) => {
           <CircleHelp className="dark:text-default-200" size={16} />
         </HTooltip>
       </div>
-      <ResponsiveContainer width="100%" height={360}>
+      <ResponsiveContainer width="100%" height={200}>
         <AreaChart data={sorted}>
           <defs>
             <linearGradient id="networkGradient" x1="0" y1="0" x2="0" y2="1">

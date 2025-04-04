@@ -19,17 +19,17 @@ import {
   PyusdSupply,
   PyusdTokenInfo,
 } from "./_components/pyusd";
-
-// const PyusdDominanceTreemap = async () => {
-//   const result = await getStablecoins();
-//   if (!result.success) return <></>;
-//   return <StablecoinTreemap data={Array.from(new Set(result.data))} />;
-// };
+import PyusdVolume from "./_components/pyusd-volume";
 
 const GridItem: React.FC<React.HTMLProps<HTMLDivElement>> = ({
   className,
   ...rest
-}) => <div className={cn("h-full rounded-md p-4", className)} {...rest} />;
+}) => (
+  <div
+    className={cn("h-full overflow-hidden rounded-md p-4", className)}
+    {...rest}
+  />
+);
 
 /**
  * TODO: real-time update on client side
@@ -44,28 +44,28 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="h-full lg:col-span-4 lg:row-start-2">
+      <div className="h-full lg:col-span-4">
         <GridItem className="bg-default">
           <PyusdHolderInfo />
         </GridItem>
       </div>
 
-      <div className="h-full lg:col-span-4 lg:row-start-3">
-        <GridItem className="bg-default/40">
+      <div className="h-full lg:col-span-4">
+        <GridItem className="bg-default/50">
           <PyusdTokenInfo />
         </GridItem>
       </div>
 
-      <div className="h-full sm:col-span-2 lg:col-span-8">
-        <GridItem className="bg-default/40 px-0">
+      <div className="h-full sm:col-span-2 lg:col-span-12 xl:col-span-8 xl:row-span-2">
+        <GridItem className="bg-default/50 p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
-            <NetworkCongestion />
+            <PyusdVolume />
           </ErrorBoundary>
         </GridItem>
       </div>
 
-      <div className="h-full lg:col-span-4 lg:row-span-2">
-        <GridItem className="bg-default/40 p-0">
+      <div className="h-full lg:col-span-6 xl:col-span-4">
+        <GridItem className="bg-default/50 p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <Suspense
               fallback={<SuspendedComponentFallback className="h-full" />}
@@ -76,15 +76,15 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="h-full lg:col-span-4 lg:row-span-2">
-        <GridItem className="bg-default/40 px-0">
+      <div className="h-full lg:col-span-6 xl:col-span-4">
+        <GridItem className="bg-default/50 p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <NetworkCongestion />
           </ErrorBoundary>
         </GridItem>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-9">
+      <div className="sm:col-span-2 lg:col-span-9 xl:col-span-8">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >

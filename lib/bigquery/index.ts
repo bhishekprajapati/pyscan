@@ -16,6 +16,7 @@ const createClient = (opts: BigQueryPluginOptions = {}) => {
       mainnet: ethereumMainnet(query),
       holesky: null,
     },
+    client: bigQuery,
   } as const;
 };
 

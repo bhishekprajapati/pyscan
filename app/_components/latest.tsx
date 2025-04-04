@@ -19,6 +19,7 @@ import bigquery from "@/lib/bigquery";
 import { pyusd } from "@/lib/coinmarketcap";
 import { microToPyusd, weiToEth } from "@/lib/converters";
 import ethereum from "@/lib/ethereum";
+import { PYUSDIcon } from "@/components/icon";
 
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="md:h-[50rem] md:overflow-auto">{children}</div>
@@ -199,7 +200,7 @@ export const LatestPyusdTransfers = async () => {
               className="group flex items-center gap-4 p-4"
             >
               <span>
-                <img src="/pyusd.webp" />
+                <PYUSDIcon />
               </span>
               <div className="mx-4">
                 <div>
