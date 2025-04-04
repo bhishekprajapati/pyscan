@@ -3,7 +3,7 @@ import { result } from "@/utils/misc";
 import { address, order } from "./schema";
 import { data, error } from "../helper";
 import type { QueryHandler } from "../query-handler";
-import type { BigQueryTimestamp } from "@google-cloud/bigquery";
+import type { BigQueryDate, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { Address } from "viem";
 
 const limit = z.enum(["10", "25", "50", "100"]);
@@ -183,7 +183,73 @@ export default function ethereumMainnet(query: QueryHandler) {
     });
   };
 
-  const getGasTrend = (() => {})();
+  const getNetworkGasTrend = async () => {
+    const result = await query({
+      query: `
+        SELECT
+          DATE(block_timestamp) AS tx_date,
+          COUNT(*) AS total_txns,
+          SAFE_DIVIDE(SUM(gas_price), COUNT(*)) / POWER(10,9) AS avg_gas_price_gwei,
+          MAX(gas_price) / POWER(10,9) AS max_gas_price_gwei,
+          MIN(gas_price) / POWER(10,9) AS min_gas_price_gwei
+        FROM
+          bigquery-public-data.goog_blockchain_ethereum_mainnet_us.transactions
+        WHERE
+          DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) -- Last 30 days
+        GROUP BY tx_date
+        ORDER BY tx_date DESC;
+      `,
+    });
+    if (!result.success) return result;
+
+    type TData = {
+      tx_date: BigQueryDate;
+      total_txns: number;
+      avg_gas_price_gwei: number;
+      max_gas_price_gwei: number;
+      min_gas_price_gwei: number;
+    };
+
+    return data(result.data[0] as TData[]);
+  };
+
+  const getPyusdGasTrend = async () => {
+    const result = await query({
+      query: `
+        WITH txns AS (
+        SELECT
+          DATE(block_timestamp) AS tx_date,
+          gas_price
+        FROM
+          bigquery-public-data.goog_blockchain_ethereum_mainnet_us.transactions
+        WHERE
+          DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) -- Last 30 days
+          AND (
+            LOWER(to_address) = '0x6c3ea9036406852006290770bedfcaba0e23a0e8'
+            OR LOWER(from_address) = '0x6c3ea9036406852006290770bedfcaba0e23a0e8'
+          )
+        )
+      SELECT
+        tx_date,
+        COUNT(*) AS total_txns,
+        SAFE_DIVIDE(SUM(gas_price), COUNT(*)) / POWER(10,9) AS avg_gas_price_gwei,
+        MAX(gas_price) / POWER(10,9) AS max_gas_price_gwei,
+        MIN(gas_price) / POWER(10,9) AS min_gas_price_gwei
+      FROM txns
+      GROUP BY tx_date
+      ORDER BY tx_date DESC;
+    `,
+    });
+    if (!result.success) return result;
+    type TData = {
+      tx_date: BigQueryDate;
+      total_txns: number;
+      avg_gas_price_gwei: number;
+      max_gas_price_gwei: number;
+      min_gas_price_gwei: number;
+    };
+    return data(result.data[0] as TData[]);
+  };
 
   const getTransactionsByAddress = (address: Address) =>
     query({
@@ -300,9 +366,10 @@ export default function ethereumMainnet(query: QueryHandler) {
     getTokenTransfers,
     getTopHolders,
     getTokenTransferCount,
-    getGasTrend,
     getTransactionsByAddress,
     getBlocks,
     getBlocksCount,
+    getNetworkGasTrend,
+    getPyusdGasTrend,
   };
 }

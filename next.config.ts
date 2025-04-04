@@ -3,6 +3,14 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     typedRoutes: true,
+    useCache: true,
+    cacheLife: {
+      gasTrend: {
+        revalidate: 3600 * 12,
+        stale: 3600 * 24,
+        expire: 3600 * 24 * 2,
+      },
+    },
   },
   logging: {
     fetches: {
