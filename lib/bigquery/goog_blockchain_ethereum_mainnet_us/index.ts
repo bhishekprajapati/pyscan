@@ -61,7 +61,7 @@ export default function ethereumMainnet(query: QueryHandler) {
     const queryFn = async (address: string, limit: number) => {
       type TransferRecord = {
         block_number: number;
-        block_timestamp: Pick<BigQueryTimestamp, "value">;
+        block_timestamp: BigQueryTimestamp;
         transaction_hash: string;
         event_hash: string;
         from_address: string;

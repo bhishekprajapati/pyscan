@@ -4,6 +4,7 @@ import { ArrowRight, Box, ReceiptText } from "lucide-react";
 import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";
 import CopyButton from "@/components/copy-button";
 import { ComponentErrorFallback } from "@/components/errors";
+import { PYUSDIcon } from "@/components/icon";
 import { RealTimeIndicator } from "@/components/indicator";
 import {
   AddressLink,
@@ -17,9 +18,9 @@ import LinkButton from "@/components/ui/link-button";
 
 import bigquery from "@/lib/bigquery";
 import { pyusd } from "@/lib/coinmarketcap";
-import { microToPyusd, weiToEth } from "@/lib/converters";
+import { weiToEth } from "@/lib/converters";
 import ethereum from "@/lib/ethereum";
-import { PYUSDIcon } from "@/components/icon";
+import LatestPyusdTransfersTable from "@/components/tables/latest-pyusd-transfers";
 
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="md:h-[50rem] md:overflow-auto">{children}</div>
@@ -188,84 +189,21 @@ export const LatestPyusdTransfers = async () => {
   return (
     <Card>
       <CardHeader>
-        <h2>PYUSD Token Transfers</h2>
+        <h2>
+          <PYUSDIcon className="me-2 inline-block h-6 w-6" /> PYUSD Token
+          Transfers
+        </h2>
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
       <CardBody>
-        <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
-          {txns.map((txn) => (
-            <li
-              key={txn.transaction_hash + txn.event_index}
-              className="group flex items-center gap-4 p-4"
-            >
-              <span>
-                <PYUSDIcon />
-              </span>
-              <div className="mx-4">
-                <div>
-                  <BlockLink number={BigInt(txn.block_number)}>
-                    <FMono>{txn.block_number}</FMono>
-                  </BlockLink>
-                </div>
-                <div className="text-sm">
-                  <Timestamp
-                    stamp={txn.block_timestamp.value}
-                    icon={false}
-                    string={false}
-                  />
-                </div>
-              </div>
-              <div className="me-16">
-                <div className="rounded-xl border border-divider px-1">
-                  <TransactionLink
-                    className="align-middle"
-                    hash={txn.transaction_hash}
-                  >
-                    <TextTruncate className="w-48">
-                      <FMono>{txn.transaction_hash}</FMono>
-                    </TextTruncate>
-                  </TransactionLink>
-                  <CopyButton text={txn.transaction_hash} />
-                </div>
-              </div>
-              <Tooltip content="From address">
-                <AddressLink address={txn.from_address}>
-                  <TextTruncate className="md:w-64">
-                    <FMono>{txn.from_address}</FMono>
-                  </TextTruncate>
-                </AddressLink>
-              </Tooltip>
-              <CopyButton text={txn.from_address} />
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-secondary/15 bg-secondary/10">
-                <ArrowRight size={12} className="text-secondary" />
-              </span>
-              <Tooltip content="To address">
-                <AddressLink address={txn.to_address}>
-                  <TextTruncate className="md:w-64">
-                    <FMono>{txn.to_address}</FMono>
-                  </TextTruncate>
-                </AddressLink>
-              </Tooltip>
-              <CopyButton text={txn.to_address} />
-              <Chip
-                variant="bordered"
-                className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
-              >
-                {price === undefined ? (
-                  <span className="text-success-700">
-                    <FMono>{microToPyusd(txn.quantity).toFixed(2)} </FMono>
-                    <span className="text-sm">PYUSD</span>
-                  </span>
-                ) : (
-                  <FMono className="text-success-700">
-                    ${(microToPyusd(txn.quantity) * price).toFixed(2)} USD
-                  </FMono>
-                )}
-              </Chip>
-            </li>
-          ))}
-        </ul>
+        <LatestPyusdTransfersTable
+          data={txns.map(({ block_timestamp, ...txn }) => ({
+            block_timestamp: block_timestamp.value,
+            ...txn,
+          }))}
+          price={price}
+        />
       </CardBody>
       <Divider />
       <CardFooter>

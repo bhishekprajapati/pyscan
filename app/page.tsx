@@ -89,7 +89,9 @@ export default function Home() {
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense
+            fallback={<SuspendedComponentFallback className="h-full" />}
+          >
             <LatestPyusdTransfers />
           </Suspense>
         </ErrorBoundary>
