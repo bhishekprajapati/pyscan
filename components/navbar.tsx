@@ -1,10 +1,12 @@
 import { Chip, Input, Skeleton } from "@heroui/react";
-import { ThemeSwitcher } from "./theme-switcher";
 import { Fuel, Search } from "lucide-react";
-import LinkButton from "./ui/link-button";
-import Nav from "./nav";
 import { Suspense } from "react";
+
+import Nav from "./nav";
 import { EthGasFee, Quote } from "./pyusd";
+import { ThemeSwitcher } from "./theme-switcher";
+import LinkButton from "./ui/link-button";
+import { RenderUserAvatar } from "./auth/user";
 
 const SearchInput = () => {
   return (
@@ -63,6 +65,7 @@ const AppNavBar = () => (
       </span>
       <SearchInput />
       <ThemeSwitcher />
+      <RenderUserAvatar />
     </header>
   </nav>
 );

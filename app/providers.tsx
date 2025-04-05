@@ -8,6 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -43,14 +44,16 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <HeroUIProvider>
-      <ToastProvider />
-      <QueryClientProvider client={queryClient}>
-        <NextThemesProvider attribute="class" defaultTheme="dark">
-          {children}
-        </NextThemesProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </HeroUIProvider>
+    <SessionProvider>
+      <HeroUIProvider>
+        <ToastProvider />
+        <QueryClientProvider client={queryClient}>
+          <NextThemesProvider attribute="class" defaultTheme="dark">
+            {children}
+          </NextThemesProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </HeroUIProvider>
+    </SessionProvider>
   );
 }
