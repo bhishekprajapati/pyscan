@@ -13,7 +13,7 @@ import { makeMutationFn } from "@/utils/tanstack";
 import { useState } from "react";
 
 const useQueryExecutor = () => {
-  const fn = makeMutationFn(client.queries.exec);
+  const fn = makeMutationFn(client.private.queries.exec);
   const mutation = useMutation({
     mutationKey: ["queries", "exec"],
     mutationFn: fn,

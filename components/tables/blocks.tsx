@@ -12,7 +12,7 @@ import TimeAgo from "react-timeago";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { FMono } from "../text";
-import { useBlocks } from "@/hooks/table";
+import { useBlocks } from "@/hooks/tables/blocks";
 import { AddressLink, BlockLink, BlockTransactionsLink } from "../links";
 import CopyButton from "../copy-button";
 

@@ -12,7 +12,7 @@ import TimeAgo from "react-timeago";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { FMono, TextClipboardCopy, TextTruncate } from "../text";
-import { useTransfers } from "@/hooks/table";
+import { useTransfers } from "@/hooks/tables/transfers";
 
 const columns = [
   { name: "Transaction Hash", uid: "transaction_hash" },

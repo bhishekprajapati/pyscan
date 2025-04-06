@@ -5,7 +5,7 @@
 
 import { auth as getSession } from "@/auth";
 import type { Session } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const data = <T>(d: T, init?: ResponseInit) =>
   NextResponse.json(
@@ -57,7 +57,7 @@ type THandlerContext<TParams> = {
 };
 
 type THandler<TParams, R> = (
-  req: Request,
+  req: NextRequest,
   res: THandlerResponse,
   ctx: THandlerContext<TParams>,
 ) => Promise<R>;
@@ -70,7 +70,7 @@ export const api = <R extends NextResponse<any>, TParams = TDefaultParams>(
   handler: THandler<TParams, R>,
 ) =>
   async function publicRouteHandler(
-    req: Request,
+    req: NextRequest,
     { params }: { params: TParams },
   ) {
     const res: THandlerResponse = {
@@ -96,7 +96,7 @@ type TPrivateHandlerContext<TParams> = {
 };
 
 type TPrivateHandler<TParams, R> = (
-  req: Request,
+  req: NextRequest,
   res: THandlerResponse,
   ctx: TPrivateHandlerContext<TParams>,
 ) => Promise<R>;
@@ -108,7 +108,7 @@ export const auth = <R extends NextResponse<any>, TParams = TDefaultParams>(
   handler: TPrivateHandler<TParams, R>,
 ) =>
   async function privateRouteHandler(
-    req: Request,
+    req: NextRequest,
     { params }: { params: TParams },
   ) {
     const res: THandlerResponse = {
