@@ -30,7 +30,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   return (
     <Tooltip content={tooltipText}>
       <Button size="sm" {...restProps} isIconOnly onPress={handleCopy}>
-        <Copy size={16} />
+        <Copy size={12} />
       </Button>
     </Tooltip>
   );

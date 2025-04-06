@@ -8,7 +8,7 @@ type SignedInProps = {
   children: React.ReactNode | ((data: Session) => React.ReactNode);
 };
 
-export const SignedIn: React.FC<SignedInProps> = (props) => {
+export const SignedInClientOnly: React.FC<SignedInProps> = (props) => {
   const { opts, children } = props;
   const { data, status } = useSession(opts);
   return status === "authenticated" ? (
@@ -27,7 +27,7 @@ type SignedOutProps = {
   children: React.ReactNode;
 };
 
-export const SignedOut: React.FC<SignedOutProps> = (props) => {
+export const SignedOutClientOnly: React.FC<SignedOutProps> = (props) => {
   const { opts, children } = props;
   const { status } = useSession(opts);
   return status === "unauthenticated" ? children : <></>;
@@ -38,9 +38,9 @@ type AuthStatusLoadFallbackProps = {
   children: React.ReactNode;
 };
 
-export const AuthStatusLoadFallback: React.FC<AuthStatusLoadFallbackProps> = (
-  props,
-) => {
+export const AuthStatusLoadFallbackClientOnly: React.FC<
+  AuthStatusLoadFallbackProps
+> = (props) => {
   const { opts, children } = props;
   const { status } = useSession(opts);
   return status === "loading" ? children : <></>;

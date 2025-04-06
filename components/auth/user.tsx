@@ -9,7 +9,11 @@ import {
 } from "@heroui/react";
 
 import { SignIn } from "./buttons";
-import { AuthStatusLoadFallback, SignedIn, SignedOut } from "./client";
+import {
+  SignedInClientOnly,
+  SignedOutClientOnly,
+  AuthStatusLoadFallbackClientOnly,
+} from "./client";
 import { signOut } from "next-auth/react";
 
 const ProfileMenu = ({ children }: { children: React.ReactNode }) => (
@@ -25,7 +29,7 @@ const ProfileMenu = ({ children }: { children: React.ReactNode }) => (
 
 export const RenderUserAvatar = () => (
   <div className="me-4">
-    <SignedIn>
+    <SignedInClientOnly>
       {({ user }) => {
         if (user?.image)
           return (
@@ -40,12 +44,12 @@ export const RenderUserAvatar = () => (
             </ProfileMenu>
           );
       }}
-    </SignedIn>
-    <AuthStatusLoadFallback>
+    </SignedInClientOnly>
+    <AuthStatusLoadFallbackClientOnly>
       <Skeleton className="h-9 w-9 rounded-full" />
-    </AuthStatusLoadFallback>
-    <SignedOut>
+    </AuthStatusLoadFallbackClientOnly>
+    <SignedOutClientOnly>
       <SignIn color="primary" />
-    </SignedOut>
+    </SignedOutClientOnly>
   </div>
 );

@@ -5,6 +5,7 @@ import {
   text,
   primaryKey,
   integer,
+  bigint,
 } from "drizzle-orm/pg-core";
 
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -17,6 +18,33 @@ export const users = pgTable("user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
+});
+
+export const balances = pgTable("balance", {
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bytes: bigint("bytes", { mode: "bigint" }),
+});
+
+export const queries = pgTable("query", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").default(""),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const queryJobs = pgTable("query_job", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  queryId: text("query_id")
+    .notNull()
+    .references(() => queries.id, { onDelete: "cascade" }),
 });
 
 export const accounts = pgTable(

@@ -7,6 +7,7 @@ import { EthGasFee, Quote } from "./pyusd";
 import { ThemeSwitcher } from "./theme-switcher";
 import LinkButton from "./ui/link-button";
 import { RenderUserAvatar } from "./auth/user";
+import { PathOnly } from "./path";
 
 const SearchInput = () => {
   return (
@@ -20,54 +21,60 @@ const SearchInput = () => {
   );
 };
 
-const AppNavBar = () => (
-  <nav className="border-y border-y-divider bg-background/75 backdrop-blur-xl">
-    <header className="flex items-center">
-      <div className="me-auto border-e border-e-divider p-4 md:me-0">
-        <LinkButton href="/" variant="light" size="sm">
-          <span className="font-serif text-xl font-bold text-primary">
-            PyScan
-          </span>
-        </LinkButton>
-      </div>
-      <div className="border-e border-e-divider p-4">
-        <div className="rounded-lg bg-zinc-900 p-1">
-          <Chip
-            color="default"
-            startContent={<Fuel size={16} className="me-1" />}
-            variant="light"
-          >
-            <Suspense fallback={<Skeleton className="h-4 w-32 rounded-md" />}>
-              <EthGasFee />
-            </Suspense>
-          </Chip>
-          <Chip
-            color="default"
-            startContent={
-              <img
-                src="https://etherscan.io/token/images/paypalusd_32.png"
-                className="me-1 h-4 w-4 rounded-full object-contain"
-              />
-            }
-            variant="light"
-          >
-            <Suspense fallback={<Skeleton className="h-4 w-24 rounded-md" />}>
-              <Quote />
-            </Suspense>
-          </Chip>
+const AppNavBar = () => {
+  return (
+    <nav className="border-y border-y-divider bg-background/75 backdrop-blur-xl">
+      <header className="flex items-center">
+        <div className="me-auto border-e border-e-divider p-4 md:me-0">
+          <LinkButton href="/" variant="light" size="sm">
+            <span className="font-serif text-xl font-bold text-primary">
+              PyScan
+            </span>
+          </LinkButton>
         </div>
-      </div>
-      <Nav />
-      <span className="hidden md:inline-block">
-        <Chip variant="dot" color="success" className="me-4">
-          Eth - Mainnet
-        </Chip>
-      </span>
-      <SearchInput />
-      <ThemeSwitcher />
-      <RenderUserAvatar />
-    </header>
-  </nav>
-);
+        <div className="border-e border-e-divider p-4">
+          <div className="rounded-lg bg-zinc-900 p-1">
+            <Chip
+              color="default"
+              startContent={<Fuel size={16} className="me-1" />}
+              variant="light"
+            >
+              <Suspense fallback={<Skeleton className="h-4 w-32 rounded-md" />}>
+                <EthGasFee />
+              </Suspense>
+            </Chip>
+            <Chip
+              color="default"
+              startContent={
+                <img
+                  src="https://etherscan.io/token/images/paypalusd_32.png"
+                  className="me-1 h-4 w-4 rounded-full object-contain"
+                />
+              }
+              variant="light"
+            >
+              <Suspense fallback={<Skeleton className="h-4 w-24 rounded-md" />}>
+                <Quote />
+              </Suspense>
+            </Chip>
+          </div>
+        </div>
+        <Nav />
+        <PathOnly matcher="/">
+          <span className="hidden md:inline-block">
+            <Chip variant="dot" color="success" className="me-4">
+              Eth - Mainnet
+            </Chip>
+          </span>
+        </PathOnly>
+        <PathOnly matcher="/">
+          <SearchInput />
+        </PathOnly>
+        <ThemeSwitcher />
+        <RenderUserAvatar />
+      </header>
+    </nav>
+  );
+};
 
 export default AppNavBar;
