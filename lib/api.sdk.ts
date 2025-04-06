@@ -32,53 +32,25 @@ export type ApiFnReturnType<TData, TErrorName extends string> = Promise<
 
 type BaseOptions = Pick<RequestInit, "signal">;
 
-const getPrivateMethods = () => {
-  const queries = (() => {
-    const exec = async (query: string, opts: BaseOptions = {}) => {
-      try {
-        const res = await fetch("/api/queries/execute", {
-          method: "POST",
-          body: JSON.stringify({ query }),
-          ...opts,
-        });
-        const json = (await res.json()) as ExecuteQueryApiResponse;
-        return json;
-      } catch (err) {
-        console.error(err);
-        return error({
-          name: "unknown-error",
-          message: "Something went wrong",
-        });
-      }
-    };
-
-    return {
-      exec,
-    };
-  })();
-
-  return {
-    queries,
-  } as const;
+type CreateClientOptions = {
+  baseUrl?: string;
 };
 
-const getPublicMethods = () => {
-  const explorer = (() => {
-    const mainnet = (() => {
-      type GetBlocksParams = {
-        limit?: "10" | "25" | "50" | "100";
-      };
-      const getBlocks = async (
-        params: GetBlocksParams = {},
-        opts: BaseOptions = {},
-      ) => {
+const createClient = (opts: CreateClientOptions = {}) => {
+  const { baseUrl } = opts;
+  const _URL = (path: string) =>
+    new URL(path, baseUrl ?? window.location.origin);
+
+  const getPrivateMethods = () => {
+    const queries = (() => {
+      const exec = async (query: string, opts: BaseOptions = {}) => {
         try {
-          const url = new URL("/api/public/explorer/mainnet/blocks");
-          url.searchParams.set("limit", params?.limit ?? "10");
-          const res = await fetch(url, {
+          const res = await fetch(_URL("/api/queries/execute"), {
+            method: "POST",
+            body: JSON.stringify({ query }),
             ...opts,
           });
-          const json = (await res.json()) as BlocksApiResponse;
+          const json = (await res.json()) as ExecuteQueryApiResponse;
           return json;
         } catch (err) {
           console.error(err);
@@ -89,62 +61,33 @@ const getPublicMethods = () => {
         }
       };
 
-      type GetTransactionsParams = {};
-      const getTransactions = async (
-        params: GetBlocksParams,
-        opts: BaseOptions = {},
-      ) => {
-        try {
-          const url = new URL("/api/public/explorer/mainnet/transactions");
-          const res = await fetch(url, {
-            ...opts,
-          });
-          const json = (await res.json()) as GetTransactionsApiResponse;
-          return json;
-        } catch (err) {
-          console.error(err);
-          return error({
-            name: "unknown-error",
-            message: "Something went wrong",
-          });
-        }
+      return {
+        exec,
       };
+    })();
 
-      type GetTransfersParams = {};
-      const getTransfers = async (
-        params: GetTransfersParams,
-        opts: BaseOptions = {},
-      ) => {
-        try {
-          const url = new URL("/api/public/explorer/mainnet/transfers");
-          const res = await fetch(url, {
-            ...opts,
-          });
-          const json = (await res.json()) as GetTransferApiResponse;
-          return json;
-        } catch (err) {
-          console.error(err);
-          return error({
-            name: "unknown-error",
-            message: "Something went wrong",
-          });
-        }
-      };
+    return {
+      queries,
+    } as const;
+  };
 
-      const analytics = (() => {
-        type GetTopHoldersParams = {};
-        const getTopHolders = async (
-          params: GetTopHoldersParams,
+  const getPublicMethods = () => {
+    const explorer = (() => {
+      const mainnet = (() => {
+        type GetBlocksParams = {
+          limit?: "10" | "25" | "50" | "100";
+        };
+        const getBlocks = async (
+          params: GetBlocksParams = {},
           opts: BaseOptions = {},
         ) => {
           try {
-            const url = new URL(
-              "/api/public/explorer/mainnet/analytics/top-holders",
-            );
+            const url = _URL("/api/public/explorer/mainnet/blocks");
+            url.searchParams.set("limit", params?.limit ?? "10");
             const res = await fetch(url, {
               ...opts,
             });
-            const json = (await res.json()) as GetTopHoldersApiResponse;
+            const json = (await res.json()) as BlocksApiResponse;
             return json;
           } catch (err) {
             console.error(err);
@@ -155,22 +98,17 @@ const getPublicMethods = () => {
           }
         };
 
-        type GetTransfersCountParams = {
-          timeframe: "day" | "month" | "year";
-        };
-        const getTransfersCount = async (
-          params: GetTransfersCountParams,
+        type GetTransactionsParams = {};
+        const getTransactions = async (
+          params: GetBlocksParams,
           opts: BaseOptions = {},
         ) => {
           try {
-            const url = new URL(
-              "/api/public/explorer/mainnet/analytics/transfer-counts",
-            );
-            url.searchParams.set("timeframe", params.timeframe);
+            const url = _URL("/api/public/explorer/mainnet/transactions");
             const res = await fetch(url, {
               ...opts,
             });
-            const json = (await res.json()) as GetTransferCountsApiResponse;
+            const json = (await res.json()) as GetTransactionsApiResponse;
             return json;
           } catch (err) {
             console.error(err);
@@ -180,35 +118,106 @@ const getPublicMethods = () => {
             });
           }
         };
+
+        type GetTransfersParams = {};
+        const getTransfers = async (
+          params: GetTransfersParams,
+          opts: BaseOptions = {},
+        ) => {
+          try {
+            const url = _URL("/api/public/explorer/mainnet/transfers");
+            const res = await fetch(url, {
+              ...opts,
+            });
+            const json = (await res.json()) as GetTransferApiResponse;
+            return json;
+          } catch (err) {
+            console.error(err);
+            return error({
+              name: "unknown-error",
+              message: "Something went wrong",
+            });
+          }
+        };
+
+        const analytics = (() => {
+          type GetTopHoldersParams = {};
+          const getTopHolders = async (
+            params: GetTopHoldersParams,
+            opts: BaseOptions = {},
+          ) => {
+            try {
+              const url = _URL(
+                "/api/public/explorer/mainnet/analytics/top-holders",
+              );
+              const res = await fetch(url, {
+                ...opts,
+              });
+              const json = (await res.json()) as GetTopHoldersApiResponse;
+              return json;
+            } catch (err) {
+              console.error(err);
+              return error({
+                name: "unknown-error",
+                message: "Something went wrong",
+              });
+            }
+          };
+
+          type GetTransfersCountParams = {
+            timeframe: "day" | "month" | "year";
+          };
+          const getTransfersCount = async (
+            params: GetTransfersCountParams,
+            opts: BaseOptions = {},
+          ) => {
+            try {
+              const url = _URL(
+                "/api/public/explorer/mainnet/analytics/transfer-counts",
+              );
+              url.searchParams.set("timeframe", params.timeframe);
+              const res = await fetch(url, {
+                ...opts,
+              });
+              const json = (await res.json()) as GetTransferCountsApiResponse;
+              return json;
+            } catch (err) {
+              console.error(err);
+              return error({
+                name: "unknown-error",
+                message: "Something went wrong",
+              });
+            }
+          };
+
+          return {
+            getTopHolders,
+            getTransfersCount,
+          } as const;
+        })();
 
         return {
-          getTopHolders,
-          getTransfersCount,
+          analytics,
+          getBlocks,
+          getTransactions,
+          getTransfers,
         } as const;
       })();
 
       return {
-        analytics,
-        getBlocks,
-        getTransactions,
-        getTransfers,
+        mainnet,
       } as const;
     })();
 
     return {
-      mainnet,
+      explorer,
     } as const;
-  })();
+  };
 
   return {
-    explorer,
-  } as const;
-};
-
-const createClient = () =>
-  ({
     public: getPublicMethods(),
     private: getPrivateMethods(),
-  }) as const;
+  } as const;
+};
 
 export const client = createClient();
