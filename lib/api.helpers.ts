@@ -3,9 +3,65 @@
  * to execute route handlers in public or private context.
  */
 
+import "server-only";
 import { auth as getSession } from "@/auth";
-import type { Session } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import type { Session } from "next-auth";
+import redis from "./redis";
+
+type TLimiterOptions = {
+  /**
+   * @default Ratelimit.slidingWindow(5, "1s")
+   */
+  algo?: ReturnType<typeof Ratelimit.slidingWindow>;
+  /**
+   * @default true
+   */
+  enabled?: boolean;
+};
+
+type TLimitedFn<R> = (
+  req: NextRequest,
+  ctx: { params: TDefaultParams },
+) => Promise<R>;
+
+export const limiter = <R>(
+  limitedFn: TLimitedFn<R>,
+  opts: TLimiterOptions = {},
+) => {
+  const { algo = Ratelimit.slidingWindow(5, "1s"), enabled = true } = opts;
+  const rate = new Ratelimit({
+    limiter: algo,
+    redis,
+  });
+
+  return async function limited(
+    req: NextRequest,
+    { params }: { params: TDefaultParams },
+  ) {
+    // TODO: add cloudlfare proxy to production server
+    // req.headers.get("cf-connecting-ip")
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+    const { limit, remaining, reset } = await rate.limit(ip);
+
+    if (enabled && remaining === 0) {
+      return error(
+        { name: "rate_limit_error" },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
+        },
+      );
+    }
+
+    return limitedFn(req, { params });
+  };
+};
 
 const data = <T>(d: T, init?: ResponseInit) =>
   NextResponse.json(
@@ -18,6 +74,7 @@ const data = <T>(d: T, init?: ResponseInit) =>
 
 const error = (() => {
   const errorNames = {
+    rate_limit_error: "rate limited. Please try again after some time",
     validation_error: "Bad input",
     authentication_required: "You are unautenticated",
     internal_server_error: "Something went wrong on the server",
@@ -68,8 +125,8 @@ type TDefaultParams = Record<string, string | string[]> | undefined;
  */
 export const api = <R extends NextResponse<any>, TParams = TDefaultParams>(
   handler: THandler<TParams, R>,
-) =>
-  async function publicRouteHandler(
+) => {
+  return async function publicRouteHandler(
     req: NextRequest,
     { params }: { params: TParams },
   ) {
@@ -89,6 +146,7 @@ export const api = <R extends NextResponse<any>, TParams = TDefaultParams>(
       });
     }
   };
+};
 
 type TPrivateHandlerContext<TParams> = {
   params: TParams;
