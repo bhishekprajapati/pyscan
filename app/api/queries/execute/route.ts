@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 import { auth, InferApiResponse } from "@/lib/api.helpers";
-import bigquery, { isBigQueryError } from "@/lib/bigquery";
+import bigquery from "@/lib/bigquery";
 import { sqlQuerySchema } from "@/lib/schema";
+import { isBigQueryError } from "@/lib/bigquery/errors";
 
 const bodySchema = z.object({
   query: sqlQuerySchema,

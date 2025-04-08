@@ -1,3 +1,4 @@
+import stablecoins from "@/constants/stablecoins";
 import env from "@/env";
 import { pick } from "remeda";
 
@@ -205,3 +206,5 @@ export const getStablecoins = async () => {
     data: coins,
   };
 };
+
+export const getTopStablecoins = async () => stablecoins;

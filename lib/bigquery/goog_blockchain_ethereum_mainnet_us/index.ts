@@ -5,6 +5,8 @@ import { data, error } from "../helper";
 import type { QueryHandler } from "../query-handler";
 import type { BigQueryDate, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { Address } from "viem";
+import analytics from "./analytics";
+import explorer from "./explorer";
 
 const limit = z.enum(["10", "25", "50", "100"]);
 
@@ -362,6 +364,8 @@ export default function ethereumMainnet(query: QueryHandler) {
   };
 
   return {
+    analytics: analytics(query),
+    explorer: explorer(query),
     getTransactions,
     getTokenTransfers,
     getTopHolders,
