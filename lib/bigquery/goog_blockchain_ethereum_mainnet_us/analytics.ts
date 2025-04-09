@@ -602,9 +602,85 @@ export default function analytics(query: QueryHandler) {
       `;
     };
 
-    const getReceiverLeadersByTokenAddress = () => {};
+    const getReceiverLeadersByTokenAddress = async (tokenAddress: string) => {
+      const sql = `
+        SELECT
+          to_address AS address,
+          SUM(SAFE_CAST(value AS BIGNUMERIC)) AS amount
+        FROM
+          bigquery-public-data.crypto_ethereum.token_transfers
+        WHERE
+          token_address = LOWER('${tokenAddress}')
+          AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
+          AND to_address != '0x0000000000000000000000000000000000000000'
+        GROUP BY
+          to_address
+        ORDER BY
+          amount DESC
+        LIMIT 100;
+      `;
 
-    const getSenderLeadersByTokenAddress = () => {};
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+        location: "US",
+      });
+
+      type TData = {
+        address: string;
+        amount: string;
+      };
+
+      if (result.success) {
+        return {
+          success: true,
+          data: result.data[0] as TData[],
+        };
+      }
+
+      return result;
+    };
+
+    const getSenderLeadersByTokenAddress = async (tokenAddress: string) => {
+      const sql = `
+        SELECT
+          from_address AS address,
+          SUM(SAFE_CAST(value AS BIGNUMERIC)) AS amount
+        FROM
+          bigquery-public-data.crypto_ethereum.token_transfers
+        WHERE
+          token_address = LOWER(@tokenAddress)
+          AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
+          AND from_address != '0x0000000000000000000000000000000000000000'
+        GROUP BY
+          from_address
+        ORDER BY
+          amount DESC
+        LIMIT 100;
+      `;
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+        params: {
+          tokenAddress,
+        },
+      });
+
+      type TData = {
+        address: string;
+        amount: string;
+      };
+
+      if (result.success) {
+        return {
+          success: true,
+          data: result.data[0] as TData[],
+        };
+      }
+
+      return result;
+    };
 
     const getHoldersByTokenAddress = () => {};
 
@@ -616,8 +692,11 @@ export default function analytics(query: QueryHandler) {
       // getAddressActivity,
       // getHoldersByTokenAddress,
       // getHoldersCountByTokenAddress,
-      // getReceiverLeadersByTokenAddress,
-      // getSenderLeadersByTokenAddress,
+
+      // TODO: cache it aggressively
+      getReceiverLeadersByTokenAddress,
+      // TODO: cache it aggressively
+      getSenderLeadersByTokenAddress,
     };
   })();
 

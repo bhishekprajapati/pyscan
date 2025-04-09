@@ -22,6 +22,14 @@ import type {
   PostTransactionCountSearchQuery,
 } from "@/app/api/public/mainnet/analytics/transactions/counts/route";
 import type {
+  GetRecieverLeaderboardApiResponse,
+  GetRecieverLeaderboardQuerySchema,
+} from "@/app/api/public/mainnet/analytics/volumes/leaderboards/receivers/route";
+import type {
+  GetSenderLeaderboardApiResponse,
+  GetSenderLeaderboardQuerySchema,
+} from "@/app/api/public/mainnet/analytics/volumes/leaderboards/senders/route";
+import type {
   PostMintBurnApiResponse,
   PostMintBurnSearchQuery,
 } from "@/app/api/public/mainnet/analytics/volumes/mint-burn/route";
@@ -236,11 +244,41 @@ const createClient = (opts: CreateClientOptions = {}) => {
           });
         };
 
+        const getRecieverLeaderboardVol = async (
+          query: GetRecieverLeaderboardQuerySchema,
+          opts: BaseOptions = {},
+        ) => {
+          const url = _URL(
+            "/api/public/mainnet/analytics/volumes/leaderboards/receivers",
+          );
+          url.searchParams.set("tokenAddress", query.tokenAddress);
+          return fetcher<GetRecieverLeaderboardApiResponse>(url, {
+            method: "GET",
+            ...opts,
+          });
+        };
+
+        const getSenderLeaderboardVol = async (
+          query: GetSenderLeaderboardQuerySchema,
+          opts: BaseOptions = {},
+        ) => {
+          const url = _URL(
+            "/api/public/mainnet/analytics/volumes/leaderboards/senders",
+          );
+          url.searchParams.set("tokenAddress", query.tokenAddress);
+          return fetcher<GetSenderLeaderboardApiResponse>(url, {
+            method: "GET",
+            ...opts,
+          });
+        };
+
         return {
           getHolderCounts,
           getTxnCounts,
           getMintBurnVol,
           getTokenTransferVol,
+          getRecieverLeaderboardVol,
+          getSenderLeaderboardVol,
         };
       })();
 
