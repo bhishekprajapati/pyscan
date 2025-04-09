@@ -1,6 +1,6 @@
 "use client";
 
-import { usePrimaryToken, useTokens } from "@/hooks/tokens";
+import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
 import { useMemo } from "react";
 import {
@@ -19,9 +19,10 @@ import {
 } from "../card";
 
 const TokenTransferVolume = () => {
-  const token = usePrimaryToken();
+  const token = usePrimaryTokenType();
+  const color = token.getColors("dark").background;
   const { query } = useTokenTransferVol({
-    tokenAddress: token.contractAddress,
+    tokenAddress: token.getContractAddress(),
     filter: {
       timeframe: "1d",
       limit: 15,
@@ -39,17 +40,12 @@ const TokenTransferVolume = () => {
       dataset: dataset
         .map(({ timestamp, totalValue, txCount }) => ({
           timestamp: new Date(timestamp),
-          totalValue: Math.trunc(
-            Number(totalValue) / Math.pow(10, token.subunits),
-          ),
+          totalValue: token.applySubunits(totalValue),
           txCount,
         }))
         .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()),
     };
   }, [query.data]);
-
-  const { getTokenColor } = useTokens();
-  const color = getTokenColor(token.symbol);
 
   return (
     <ChartCard className="h-full">

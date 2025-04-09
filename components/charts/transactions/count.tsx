@@ -3,7 +3,7 @@
 import TimeframeSelect from "@/components/select/timeframe-select";
 import TokenSelect from "@/components/select/token-select";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
-import { useSelectedTokens, useTokens } from "@/hooks/tokens";
+import { useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTransactionCounts } from "@/hooks/transactions";
 import {
   AreaChart,
@@ -22,9 +22,8 @@ import {
 } from "../card";
 
 const TransactionCount = () => {
-  const { getTokenColor } = useTokens();
   const [tf, registerTimeframes] = useSelectedTimeframe();
-  const [tokens, registerTokens] = useSelectedTokens();
+  const [tokens, registerTokens] = useSelectedTokenTypes();
   const limit = useTimeframeMaxLimit(tf);
 
   const { query } = useTransactionCounts({
@@ -33,7 +32,10 @@ const TransactionCount = () => {
       timeframe: tf,
       limit,
     },
-    tokens,
+    tokens: tokens.map((tk) => ({
+      label: tk.getSymbol(),
+      address: tk.getContractAddress(),
+    })),
   });
 
   // TODO: fix chart un-mounting when query key changes
@@ -83,13 +85,13 @@ const TransactionCount = () => {
                     );
                   }}
                 />
-                {tokens.map(({ label }) => (
+                {tokens.map((tk) => (
                   <Area
-                    key={label}
+                    key={tk.getSymbol()}
                     type="step"
-                    name={label}
-                    dataKey={label}
-                    stroke={getTokenColor(label)}
+                    name={tk.getName()}
+                    dataKey={tk.getSymbol()}
+                    stroke={tk.getColors("dark").background}
                     strokeWidth={2}
                     dot={false}
                     fillOpacity={0.05}

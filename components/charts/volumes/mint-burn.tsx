@@ -1,6 +1,6 @@
 "use client";
 
-import { usePrimaryToken } from "@/hooks/tokens";
+import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import {
   ChartCard,
@@ -22,9 +22,9 @@ import { useMemo } from "react";
 // TODO: add timeframe
 
 const MintBurnChart = () => {
-  const token = usePrimaryToken();
+  const token = usePrimaryTokenType();
   const { query } = useMintBurnVol({
-    tokenAddress: token.contractAddress,
+    tokenAddress: token.getContractAddress(),
     filter: {
       timeframe: "1d",
       limit: 30,
@@ -40,13 +40,8 @@ const MintBurnChart = () => {
       data: dataset
         .map(({ timestamp, totalValue }) => ({
           timestamp: new Date(timestamp),
-          minted: Math.trunc(
-            Number(totalValue.minted) / Math.pow(10, token.subunits),
-          ),
-          burnt:
-            Math.trunc(
-              Number(totalValue.burnt) / Math.pow(10, token.subunits),
-            ) * -1,
+          minted: token.applySubunits(totalValue.minted),
+          burnt: token.applySubunits(totalValue.burnt) * -1,
         }))
         .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()),
     };

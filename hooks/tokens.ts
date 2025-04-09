@@ -4,63 +4,93 @@ import type {
   TokenSelectOption,
   TokenSelectProps,
 } from "@/components/select/token-select";
-import stablecoins from "@/constants/stablecoins";
+import {
+  PRIMARY_TOKEN_TYPE,
+  SECONDARY_TOKEN_TYPES,
+} from "@/constants/stablecoins";
+import type { TokenType } from "@/lib/token";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-export const useTokens = () => {
+export const useTokenTypes = () => {
   return {
     /**
      * Only pyusd for public users
      */
-    public: stablecoins.filter(({ primary }) => primary),
+    public: PRIMARY_TOKEN_TYPE,
     /**
      * All tokens for authenticated users
      */
-    private: stablecoins,
-    getTokenColor: (symbol: string, fallback = "blue") => {
-      return (
-        stablecoins.find((tk) => tk.symbol === symbol)?.color.background ??
-        fallback
-      );
-    },
+    private: SECONDARY_TOKEN_TYPES,
   };
 };
 
-// TODO: change this hard and think of a more intutive and robust structure
-export const usePrimaryToken = () => stablecoins[4];
+export const usePrimaryTokenType = () => PRIMARY_TOKEN_TYPE;
+export const useSecondaryTokenTypes = () => SECONDARY_TOKEN_TYPES;
 
-export const useTokenSelectOptions = (): TokenSelectOption[] => {
-  const tokens = useTokens();
-  const session = useSession();
-  return session.status === "authenticated"
-    ? tokens.private.map(({ contractAddress, logo, symbol, primary }) => ({
-        logo,
-        address: contractAddress,
-        label: symbol,
-        defaultSelected: primary,
+export const useTokenSelectOptions = () => {
+  const { status } = useSession();
+
+  if (status === "loading") {
+    return {
+      status: "loading" as const,
+    };
+  }
+
+  if (status === "unauthenticated") {
+    const options: TokenSelectOption[] = [
+      {
+        tokenType: PRIMARY_TOKEN_TYPE,
+        defaultSelected: true,
         disabled: false,
-      }))
-    : tokens.private.map(({ contractAddress, logo, symbol, primary }) => ({
-        logo,
-        address: contractAddress,
-        label: symbol,
-        defaultSelected: primary,
-        disabled: primary ? false : true,
-      }));
+      },
+      ...SECONDARY_TOKEN_TYPES.map((type) => ({
+        tokenType: type,
+        defaultSelected: false,
+        disabled: true,
+      })),
+    ];
+
+    return {
+      status: "loaded" as const,
+      options,
+    };
+  }
+
+  // authenticated user
+  const options: TokenSelectOption[] = [
+    {
+      tokenType: PRIMARY_TOKEN_TYPE,
+      defaultSelected: true,
+      disabled: false,
+    },
+    ...SECONDARY_TOKEN_TYPES.map((type) => ({
+      tokenType: type,
+      defaultSelected: false,
+      disabled: false,
+    })),
+  ];
+
+  return {
+    status: "loaded" as const,
+    options,
+  };
 };
 
-export const useSelectedTokens = () => {
-  const options = useTokenSelectOptions();
-  const [selected, setSelected] = useState<TokenSelectOption[]>(
-    options.filter(({ defaultSelected }) => defaultSelected),
-  );
+export const useSelectedTokenTypes = () => {
+  const DEFAULT_TOKEN_TYPE = usePrimaryTokenType();
+  const selectables = useTokenSelectOptions();
+  const [selected, setSelected] = useState([
+    DEFAULT_TOKEN_TYPE,
+  ] as TokenType<string>[]);
+
   const register: TokenSelectProps = {
-    options,
-    onSelectionChange(keys) {
-      const set = new Set(keys);
-      setSelected(options.filter(({ address }) => set.has(address)));
+    options: selectables.status === "loaded" ? selectables.options : [],
+    onSelectionChange(selection) {
+      // TODO: fix this
+      console.log(selection);
     },
   };
+
   return [selected, register] as const;
 };

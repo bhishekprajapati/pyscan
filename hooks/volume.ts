@@ -23,9 +23,6 @@ export const useMintBurnVol = (opts: PostMintBurnSearchQuery) => {
   return { query };
 };
 
-export const useSenderLeaderboard = () => null;
-export const useReceiverLeaderboard = () => null;
-
 export const useTokenTransferVol = (
   opts: PostTokenTransferVolumeSearchQuery,
 ) => {
@@ -46,3 +43,6 @@ export const useTokenTransferVol = (
 
   return { query };
 };
+
+export const useSenderLeaderboard = () => null;
+export const useReceiverLeaderboard = () => null;

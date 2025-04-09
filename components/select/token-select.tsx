@@ -1,14 +1,12 @@
 "use client";
 
+import type { TokenType } from "@/lib/token";
 import { cn } from "@heroui/react";
 import { Select, SelectItem, SelectProps } from "@heroui/select";
 import { useMemo } from "react";
 
 export type TokenSelectOption = {
-  key?: string;
-  address: string;
-  label: string;
-  logo: string;
+  tokenType: TokenType<string>;
   /**
    * @default false
    */
@@ -23,26 +21,25 @@ export type TokenSelectProps = {
   "defaultSelectedKeys" | "disabledKeys" | "items" | "children"
 >;
 
-const TokenSelect = ({
-  options,
-  className,
-  ...restProps
-}: TokenSelectProps) => {
+const getOptionKey = (opt: TokenSelectOption) => opt.tokenType.getSymbol();
+const isDisabled = (opt: TokenSelectOption) => opt.disabled === true;
+const isDefault = (opt: TokenSelectOption) => opt.defaultSelected === true;
+
+const TokenSelect = (props: TokenSelectProps) => {
+  const { options, className, ...restProps } = props;
+
   const disabledKeys = useMemo(
-    () =>
-      options
-        .filter(({ disabled }) => disabled === true)
-        .map(({ key, address }) => key ?? address),
+    () => options.filter(isDisabled).map(getOptionKey),
     [options],
   );
 
   const defaultSelectedKeys = useMemo(
-    () =>
-      options
-        .filter(({ defaultSelected }) => defaultSelected === true)
-        .map(({ key, address }) => key ?? address),
+    () => options.filter(isDefault).map(getOptionKey),
     [options],
   );
+
+  console.log("dusabled keys ", disabledKeys);
+  console.log("default keys ", defaultSelectedKeys);
 
   return (
     <Select
@@ -55,20 +52,20 @@ const TokenSelect = ({
       aria-label="select a token to add or remove"
       {...restProps}
     >
-      {(token) => (
+      {(opt) => (
         <SelectItem
-          key={token.key ?? token.address}
-          textValue={token.label}
-          aria-label={token.label}
+          key={getOptionKey(opt)}
+          textValue={opt.tokenType.getName()}
+          aria-label={opt.tokenType.getName()}
         >
           <div className="flex items-center gap-2">
             <img
-              src={token.logo}
+              src={opt.tokenType.getLogo()}
               width={24}
               height={24}
               className="rounded-full"
             />
-            <span className="text-small">{token.label}</span>
+            <span className="text-small">{opt.tokenType.getName()}</span>
           </div>
         </SelectItem>
       )}
