@@ -30,7 +30,6 @@ const TokenTransferVolume = () => {
   });
 
   // TODO: add timeframe
-  // TODO: bro do something about calculating subunits again and again
   // TODO: account price in usd
   const data = useMemo(() => {
     if (!query.data) return query.data;
