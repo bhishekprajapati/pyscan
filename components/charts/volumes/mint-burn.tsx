@@ -17,6 +17,7 @@ import {
   XAxis,
 } from "recharts";
 import { useMemo } from "react";
+import { sortByDate } from "@/utils";
 
 // TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
 // TODO: add timeframe
@@ -43,7 +44,7 @@ const MintBurnChart = () => {
           minted: token.applySubunits(totalValue.minted),
           burnt: token.applySubunits(totalValue.burnt) * -1,
         }))
-        .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()),
+        .sort(sortByDate),
     };
   }, [query.data]);
 

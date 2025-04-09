@@ -17,6 +17,7 @@ import {
   ChartCardHeader,
   ChartCardHeading,
 } from "../card";
+import { sortByDate } from "@/utils";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
@@ -42,7 +43,7 @@ const TokenTransferVolume = () => {
           totalValue: token.applySubunits(totalValue),
           txCount,
         }))
-        .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()),
+        .sort(sortByDate),
     };
   }, [query.data]);
 
