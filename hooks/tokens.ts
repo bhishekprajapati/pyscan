@@ -27,6 +27,9 @@ export const useTokens = () => {
   };
 };
 
+// TODO: change this hard and think of a more intutive and robust structure
+export const usePrimaryToken = () => stablecoins[4];
+
 export const useTokenSelectOptions = (): TokenSelectOption[] => {
   const tokens = useTokens();
   const session = useSession();

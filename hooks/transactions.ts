@@ -21,16 +21,18 @@ export const useTransactionCounts = (opts: PostTransactionCountSearchQuery) => {
         const group = groupBy(txns.dataset, ({ timestamp }) => timestamp);
         return {
           type: txns.type,
-          dataset: Object.entries(group).map(([timestamp, tokens]) => {
-            const labels: Record<string, number> = {};
-            tokens.forEach(({ label, count }) => {
-              labels[label] = count;
-            });
-            return {
-              timestamp,
-              ...labels,
-            };
-          }),
+          dataset: Object.entries(group)
+            .map(([timestamp, tokens]) => {
+              const labels: Record<string, number> = {};
+              tokens.forEach(({ label, count }) => {
+                labels[label] = count;
+              });
+              return {
+                timestamp: new Date(timestamp),
+                ...labels,
+              };
+            })
+            .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime()),
         };
       }
       return txns;

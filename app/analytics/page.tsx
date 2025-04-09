@@ -9,12 +9,12 @@ import TokenTransferVolume from "@/components/charts/volumes/token-value";
 
 export default function analytics() {
   return (
-    <div className="m-4 grid gap-4 md:grid-cols-2">
+    <div className="m-4 grid gap-4">
       {/* <GasFeeTrend /> */}
       {/* <GasUsageTrend /> */}
       {/* <HoldersCount /> */}
       <TransactionCount />
-      {/* <MintBurnChart /> */}
+      <MintBurnChart />
       {/* <SendersLeaderboard /> */}
       {/* <ReceiversLeaderboard /> */}
       {/* <TokenTransferVolume /> */}

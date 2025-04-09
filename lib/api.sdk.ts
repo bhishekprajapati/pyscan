@@ -13,6 +13,10 @@ import type {
   PostTransactionCountsApiResponse,
   PostTransactionCountSearchQuery,
 } from "@/app/api/public/mainnet/analytics/transactions/counts/route";
+import type {
+  PostMintBurnApiResponse,
+  PostMintBurnSearchQuery,
+} from "@/app/api/public/mainnet/analytics/volumes/mint-burn/route";
 import type { ExecuteQueryApiResponse } from "@/app/api/queries/execute/route";
 
 const data = <T>(d: T) => ({
@@ -196,9 +200,22 @@ const createClient = (opts: CreateClientOptions = {}) => {
           });
         };
 
+        const getMintBurnVol = async (
+          query: PostMintBurnSearchQuery,
+          opts: BaseOptions = {},
+        ) => {
+          const url = _URL("/api/public/mainnet/analytics/volumes/mint-burn");
+          return fetcher<PostMintBurnApiResponse>(url, {
+            method: "POST",
+            body: JSON.stringify(query),
+            ...opts,
+          });
+        };
+
         return {
           getHolderCounts,
           getTxnCounts,
+          getMintBurnVol,
         };
       })();
 
