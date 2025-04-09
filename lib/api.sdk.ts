@@ -2,6 +2,14 @@
  * This module exports api sdk for all,
  * the backend api routes for the frontend.
  */
+
+/**
+ * NOTE: To future me
+ * Sole purpose of writing get functions using POST methods
+ * is make my little life easier while serializing and parsing
+ * nested query objects in body since using body in GET fetch calls
+ * and i couldn't find any other easier way to serialize nested object as search params
+ */
 "use client";
 
 import type { GetTopHoldersApiResponse } from "@/app/api/public/explorer/mainnet/analytics/top-holders/route";
@@ -17,6 +25,10 @@ import type {
   PostMintBurnApiResponse,
   PostMintBurnSearchQuery,
 } from "@/app/api/public/mainnet/analytics/volumes/mint-burn/route";
+import type {
+  PostTokenTransferVolumeApiResponse,
+  PostTokenTransferVolumeSearchQuery,
+} from "@/app/api/public/mainnet/analytics/volumes/transfers/route";
 import type { ExecuteQueryApiResponse } from "@/app/api/queries/execute/route";
 
 const data = <T>(d: T) => ({
@@ -212,10 +224,23 @@ const createClient = (opts: CreateClientOptions = {}) => {
           });
         };
 
+        const getTokenTransferVol = async (
+          query: PostTokenTransferVolumeSearchQuery,
+          opts: BaseOptions = {},
+        ) => {
+          const url = _URL("/api/public/mainnet/analytics/volumes/transfers");
+          return fetcher<PostTokenTransferVolumeApiResponse>(url, {
+            method: "POST",
+            body: JSON.stringify(query),
+            ...opts,
+          });
+        };
+
         return {
           getHolderCounts,
           getTxnCounts,
           getMintBurnVol,
+          getTokenTransferVol,
         };
       })();
 

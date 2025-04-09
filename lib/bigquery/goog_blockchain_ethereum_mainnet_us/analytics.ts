@@ -333,7 +333,13 @@ export default function analytics(query: QueryHandler) {
       if (result.success) {
         return {
           success: result.success,
-          data: result.data[0] as TData[],
+          data: (result.data[0] as TData[]).map(
+            ({ timestamp, total_value, tx_count }) => ({
+              timestamp: timestamp.value,
+              totalValue: total_value,
+              txCount: tx_count,
+            }),
+          ),
         };
       }
 

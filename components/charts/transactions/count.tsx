@@ -39,7 +39,7 @@ const TransactionCount = () => {
   // TODO: fix chart un-mounting when query key changes
 
   return (
-    <ChartCard>
+    <ChartCard className="h-full">
       <ChartCardHeader>
         <ChartCardHeading>Transaction Count</ChartCardHeading>
         <span className="ms-auto" />
@@ -48,7 +48,7 @@ const TransactionCount = () => {
       </ChartCardHeader>
       <ChartCardBody>
         {query.data && (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={400}>
             {query.data && query.data.type === "any" ? (
               <LineChart data={query.data.dataset}>
                 <Line dataKey="count" />
