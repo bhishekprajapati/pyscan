@@ -104,77 +104,6 @@ export default function ethereumMainnet(query: QueryHandler) {
     return queryFn;
   })();
 
-  const getTokenTransferCount = (() => {
-    const address = z.string().min(1);
-    const schema = z.object({
-      address,
-      timeframe: z.enum(["day", "month", "year"]),
-    });
-
-    async function queryFn(param: z.infer<typeof schema>, validate = true) {
-      if (validate) {
-        const validation = schema.safeParse(param);
-        if (!validation.success) {
-          return error({
-            reason: "failed validation",
-            retry: true,
-            isInternal: false,
-            error: validation.error,
-          });
-        }
-        param = validation.data;
-      }
-      const { address, timeframe } = param;
-
-      const sql = {
-        day: `
-          SELECT COUNT(*) as count, DATE(block_timestamp) as date 
-          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
-          WHERE LOWER(address) = LOWER(@address) AND  block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 180 DAY)
-          GROUP BY date
-          ORDER BY date DESC
-        `,
-        month: `
-          SELECT 
-            COUNT(*) AS count, 
-            FORMAT_DATE('%Y-%m-01', DATE(block_timestamp)) AS date 
-          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
-          WHERE 
-            LOWER(address) = LOWER(@address) 
-            AND DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH) 
-          GROUP BY date
-          ORDER BY date DESC;
-        `,
-        year: `
-          SELECT 
-            COUNT(*) AS count, 
-            FORMAT_DATE('%Y-01-01', DATE(block_timestamp)) AS date 
-          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
-          WHERE 
-            LOWER(address) = LOWER(@address) 
-            AND DATE(block_timestamp) >= DATE_SUB(CURRENT_DATE(), INTERVAL 5 Year) 
-          GROUP BY date
-          ORDER BY date DESC;        
-        `,
-      } as const;
-
-      const res = await query({
-        query: sql[timeframe],
-        params: {
-          address,
-        },
-      });
-
-      if (res.success)
-        return data(
-          res.data[0] as { count: number; date: { value: string } }[],
-        );
-      return res;
-    }
-
-    return queryFn;
-  })();
-
   const getTopHolders = (address: string, limit: number) => {
     return query({
       query: `
@@ -369,7 +298,6 @@ export default function ethereumMainnet(query: QueryHandler) {
     getTransactions,
     getTokenTransfers,
     getTopHolders,
-    getTokenTransferCount,
     getTransactionsByAddress,
     getBlocks,
     getBlocksCount,

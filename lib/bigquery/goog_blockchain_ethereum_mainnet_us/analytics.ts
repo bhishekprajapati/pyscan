@@ -5,6 +5,8 @@ import { z } from "zod";
 import { QueryHandler } from "../query-handler";
 import { timeseriesFilters } from "./schema";
 
+// TODO: build cachable queries
+
 export default function analytics(query: QueryHandler) {
   const timeseries = (() => {
     type Filter = z.infer<(typeof timeseriesFilters)["private"]>;
@@ -153,7 +155,7 @@ export default function analytics(query: QueryHandler) {
           success: true,
           data: (result.data[0] as TData[]).map(
             ({ time_interval, tx_count }) => ({
-              txCount: tx_count,
+              count: tx_count,
               timestamp: time_interval.value,
             }),
           ),
@@ -217,6 +219,70 @@ export default function analytics(query: QueryHandler) {
               txCount: tx_count,
             }),
           ),
+        };
+      }
+
+      return result;
+    };
+
+    /**
+     * How many transfers happened for a give token over a give period of time
+     */
+    const getTokenTransferCountByTokenAddresses = async (
+      tokens: { address: string; label: string }[],
+      filter: Filter,
+    ) => {
+      const { timeframe, limit } = filter;
+      const [start, end, unit] = timeseriesFilters.parsetimeframe(
+        timeframe,
+        limit,
+      );
+
+      const sql = `
+        SELECT
+          COUNT(*) as count,
+          TIMESTAMP_TRUNC(block_timestamp, ${unit}) as timestamp,
+          CASE
+            ${tokens.map(({ address, label }) => `WHEN LOWER(address) = '${address.toLowerCase()}' THEN '${label}'`).join(" ")}
+          END AS label
+        FROM 
+          bigquery-public-data.goog_blockchain_ethereum_mainnet_us.token_transfers
+        WHERE 
+          LOWER(address) IN (${tokens.map(({ address }) => `'${address.toLowerCase()}'`).join(",")})
+          AND  block_timestamp BETWEEN TIMESTAMP('${start}') AND TIMESTAMP('${end}') 
+        GROUP BY 
+          timestamp, label
+        ORDER BY 
+          timestamp DESC
+        LIMIT
+          @limit
+      `;
+
+      type TData = {
+        timestamp: BigQueryTimestamp;
+        count: number;
+        label: string;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+        // Since limit is only defined for one token at a time
+        // we need to multiply the limit by number of tokens
+        // to get all the records
+        params: {
+          limit: limit * tokens.length,
+        },
+        maximumBytesBilled: bytes("5GB")?.toString(),
+      });
+
+      if (result.success) {
+        return {
+          success: true,
+          data: (result.data[0] as TData[]).map(({ timestamp, ...rest }) => ({
+            timestamp: timestamp.value,
+            ...rest,
+          })),
         };
       }
 
@@ -350,86 +416,6 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    // Query Cost: 190 GB
-    const getMintVolumeByTokenAddress = async (
-      tokenAddress: string,
-      filter: Filter,
-    ) => {
-      const { timeframe, limit } = filter;
-      const [start, end, unit] = timeseriesFilters.parsetimeframe(
-        timeframe,
-        limit,
-      );
-
-      const sql = `
-        WITH Transactions AS (
-          SELECT
-            value,
-            block_timestamp
-          FROM
-            bigquery-public-data.crypto_ethereum.token_transfers
-          WHERE
-            LOWER(token_address) = LOWER(@tokenAddress) AND
-            from_address = '0x0000000000000000000000000000000000000000' AND
-            block_timestamp BETWEEN TIMESTAMP('${start}') AND TIMESTAMP('${end}')
-        )
-        SELECT
-          COUNT(*) AS tx_count,
-          TIMESTAMP_TRUNC(block_timestamp, ${unit}) AS timestamp,
-          SUM(SAFE_CAST(value AS BIGNUMERIC)) AS total_value
-        FROM Transactions
-        GROUP BY
-          timestamp
-        ORDER BY
-          timestamp DESC
-        LIMIT @limit;
-      `;
-
-      const result = await query({
-        query: sql,
-        dryRun: true,
-        params: {
-          tokenAddress,
-          limit,
-        },
-        maximumBytesBilled: bytes("10GB")?.toString(),
-      });
-
-      return result;
-    };
-
-    const getBurnVolumeByTokenAddress = async (
-      tokenAddress: string,
-      filter: Filter,
-    ) => {
-      const { timeframe, limit } = filter;
-      const [start, end, unit] = timeseriesFilters.parsetimeframe(
-        timeframe,
-        limit,
-      );
-
-      const sql = `
-        SELECT
-          'burn' AS type,
-          COUNT(*) AS tx_count,
-          SUM(CAST(value AS NUMERIC)) / POW(10, 6) AS total_pyusd
-        FROM
-          bigquery-public-data.crypto_ethereum.token_transfers
-        WHERE
-          token_address = '0x6c3ea9036406852006290770bedfcaba0e23a0e8' -- PYUSD contract
-          AND to_address = '0x0000000000000000000000000000000000000000'
-          AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 7 DAY)
-      `;
-
-      const result = await query({
-        query: sql,
-        dryRun: true,
-        useLegacySql: false,
-      });
-
-      return result;
-    };
-
     const getHoldersCountByTokenAddress = async (
       tokenAddress: string,
       filter: Filter,
@@ -447,9 +433,8 @@ export default function analytics(query: QueryHandler) {
       getGasUsageByToAddress,
       getMintAndBurnVolumeByTokenAddress,
       getTokenTransferVolumeByTokenAddress,
-      // getMintVolumeByTokenAddress,
-      // getBurnVolumeByTokenAddress,
       // getHoldersCountByTokenAddress,
+      getTokenTransferCountByTokenAddresses,
     };
   })();
 

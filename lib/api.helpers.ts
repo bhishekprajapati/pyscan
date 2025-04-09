@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import type { Session } from "next-auth";
 import redis from "./redis";
+import { ZodTypeAny } from "zod";
 
 type TLimiterOptions = {
   /**

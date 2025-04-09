@@ -9,6 +9,10 @@ import type { GetTransferCountsApiResponse } from "@/app/api/public/explorer/mai
 import type { BlocksApiResponse } from "@/app/api/public/explorer/mainnet/blocks/route";
 import type { GetTransactionsApiResponse } from "@/app/api/public/explorer/mainnet/transactions/route";
 import type { GetTransferApiResponse } from "@/app/api/public/explorer/mainnet/transfers/route";
+import type {
+  PostTransactionCountsApiResponse,
+  PostTransactionCountSearchQuery,
+} from "@/app/api/public/mainnet/analytics/transactions/counts/route";
 import type { ExecuteQueryApiResponse } from "@/app/api/queries/execute/route";
 
 const data = <T>(d: T) => ({
@@ -25,6 +29,20 @@ const error = <T extends string>(error: TError<T>) => ({
   ok: false as const,
   error,
 });
+
+const fetcher = async <TJsonResponse>(url: URL, init?: RequestInit) => {
+  try {
+    const res = await fetch(url, init);
+    const json = (await res.json()) as TJsonResponse;
+    return json;
+  } catch (err) {
+    console.error(err);
+    return error({
+      name: "unknown-error",
+      message: "Something went wrong",
+    });
+  }
+};
 
 export type ApiFnReturnType<TData, TErrorName extends string> = Promise<
   { ok: true; data: TData } | { ok: false; error: TError<TErrorName> }
@@ -77,25 +95,15 @@ const createClient = (opts: CreateClientOptions = {}) => {
         type GetBlocksParams = {
           limit?: "10" | "25" | "50" | "100";
         };
-        const getBlocks = async (
+        const getBlocks = (
           params: GetBlocksParams = {},
           opts: BaseOptions = {},
         ) => {
-          try {
-            const url = _URL("/api/public/explorer/mainnet/blocks");
-            url.searchParams.set("limit", params?.limit ?? "10");
-            const res = await fetch(url, {
-              ...opts,
-            });
-            const json = (await res.json()) as BlocksApiResponse;
-            return json;
-          } catch (err) {
-            console.error(err);
-            return error({
-              name: "unknown-error",
-              message: "Something went wrong",
-            });
-          }
+          const url = _URL("/api/public/explorer/mainnet/blocks");
+          url.searchParams.set("limit", params?.limit ?? "10");
+          return fetcher<BlocksApiResponse>(url, {
+            ...opts,
+          });
         };
 
         type GetTransactionsParams = {};
@@ -103,20 +111,8 @@ const createClient = (opts: CreateClientOptions = {}) => {
           params: GetBlocksParams,
           opts: BaseOptions = {},
         ) => {
-          try {
-            const url = _URL("/api/public/explorer/mainnet/transactions");
-            const res = await fetch(url, {
-              ...opts,
-            });
-            const json = (await res.json()) as GetTransactionsApiResponse;
-            return json;
-          } catch (err) {
-            console.error(err);
-            return error({
-              name: "unknown-error",
-              message: "Something went wrong",
-            });
-          }
+          const url = _URL("/api/public/explorer/mainnet/transactions");
+          return fetcher<GetTransactionsApiResponse>(url, { ...opts });
         };
 
         type GetTransfersParams = {};
@@ -124,20 +120,10 @@ const createClient = (opts: CreateClientOptions = {}) => {
           params: GetTransfersParams,
           opts: BaseOptions = {},
         ) => {
-          try {
-            const url = _URL("/api/public/explorer/mainnet/transfers");
-            const res = await fetch(url, {
-              ...opts,
-            });
-            const json = (await res.json()) as GetTransferApiResponse;
-            return json;
-          } catch (err) {
-            console.error(err);
-            return error({
-              name: "unknown-error",
-              message: "Something went wrong",
-            });
-          }
+          const url = _URL("/api/public/explorer/mainnet/transfers");
+          return fetcher<GetTransferApiResponse>(url, {
+            ...opts,
+          });
         };
 
         const analytics = (() => {
@@ -146,22 +132,12 @@ const createClient = (opts: CreateClientOptions = {}) => {
             params: GetTopHoldersParams,
             opts: BaseOptions = {},
           ) => {
-            try {
-              const url = _URL(
-                "/api/public/explorer/mainnet/analytics/top-holders",
-              );
-              const res = await fetch(url, {
-                ...opts,
-              });
-              const json = (await res.json()) as GetTopHoldersApiResponse;
-              return json;
-            } catch (err) {
-              console.error(err);
-              return error({
-                name: "unknown-error",
-                message: "Something went wrong",
-              });
-            }
+            const url = _URL(
+              "/api/public/explorer/mainnet/analytics/top-holders",
+            );
+            return fetcher<GetTopHoldersApiResponse>(url, {
+              ...opts,
+            });
           };
 
           type GetTransfersCountParams = {
@@ -171,23 +147,13 @@ const createClient = (opts: CreateClientOptions = {}) => {
             params: GetTransfersCountParams,
             opts: BaseOptions = {},
           ) => {
-            try {
-              const url = _URL(
-                "/api/public/explorer/mainnet/analytics/transfer-counts",
-              );
-              url.searchParams.set("timeframe", params.timeframe);
-              const res = await fetch(url, {
-                ...opts,
-              });
-              const json = (await res.json()) as GetTransferCountsApiResponse;
-              return json;
-            } catch (err) {
-              console.error(err);
-              return error({
-                name: "unknown-error",
-                message: "Something went wrong",
-              });
-            }
+            const url = _URL(
+              "/api/public/explorer/mainnet/analytics/transfer-counts",
+            );
+            url.searchParams.set("timeframe", params.timeframe);
+            return fetcher<GetTransferCountsApiResponse>(url, {
+              ...opts,
+            });
           };
 
           return {
@@ -209,8 +175,41 @@ const createClient = (opts: CreateClientOptions = {}) => {
       } as const;
     })();
 
+    const mainnet = (() => {
+      const analytics = (() => {
+        const getHolderCounts = async (opts: BaseOptions = {}) => {
+          const url = _URL("/api/public/mainnet/analytics/holders/counts");
+          return fetcher<any>(url, {
+            ...opts,
+          });
+        };
+
+        const getTxnCounts = async (
+          query: PostTransactionCountSearchQuery,
+          opts: BaseOptions = {},
+        ) => {
+          const url = _URL("/api/public/mainnet/analytics/transactions/counts");
+          return fetcher<PostTransactionCountsApiResponse>(url, {
+            method: "POST",
+            body: JSON.stringify(query),
+            ...opts,
+          });
+        };
+
+        return {
+          getHolderCounts,
+          getTxnCounts,
+        };
+      })();
+
+      return {
+        analytics,
+      } as const;
+    })();
+
     return {
       explorer,
+      mainnet,
     } as const;
   };
 

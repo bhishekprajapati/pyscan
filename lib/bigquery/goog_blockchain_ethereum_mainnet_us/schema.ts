@@ -133,3 +133,11 @@ export const timeseriesFilters = (() => {
     parsetimeframe,
   };
 })();
+
+export type PublicTimeframe = z.infer<
+  (typeof timeseriesFilters)["public"]
+>["timeframe"];
+
+export type PrivateTimeframe = z.infer<
+  (typeof timeseriesFilters)["private"]
+>["timeframe"];

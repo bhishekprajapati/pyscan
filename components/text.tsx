@@ -47,7 +47,7 @@ export const TextClipboardCopy = ({ content }: { content: string }) => {
   );
 };
 
-type FMonoProps = React.HTMLProps<HTMLSpanElement>;
+export type FMonoProps = React.HTMLProps<HTMLSpanElement>;
 export const FMono: React.FC<FMonoProps> = ({
   children,
   className,

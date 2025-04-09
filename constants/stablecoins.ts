@@ -7,7 +7,9 @@ export default [
       background: "#009491",
       foreground: "#f9fcfa",
     },
+    primary: false,
     subunits: 6,
+    contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
   },
   {
     name: "USDC",
@@ -18,6 +20,8 @@ export default [
       foreground: "#fffefa",
     },
     subunits: 6,
+    primary: false,
+    contractAddress: "0xA0b86991c6218B36c1D19D4a2e9Eb0cE3606eB48",
   },
   {
     name: "Dai",
@@ -28,6 +32,8 @@ export default [
       foreground: "#f1fff5",
     },
     subunits: 18,
+    primary: false,
+    contractAddress: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
   },
   {
     name: "First Digital USD",
@@ -38,6 +44,8 @@ export default [
       foreground: "#efeff2",
     },
     subunits: 18,
+    primary: false,
+    contractAddress: "0xc5f0f7b66764f6ec8c8dff7ba683102295e16409",
   },
   {
     name: "PayPal USD",
@@ -49,6 +57,7 @@ export default [
     },
     subunits: 6,
     primary: true,
+    contractAddress: "0x6c3ea9036406852006290770BEdFcAbA0e23A0e8",
   },
   {
     name: "TrueUSD",
@@ -59,6 +68,8 @@ export default [
       foreground: "#f5fcff",
     },
     subunits: 18,
+    primary: false,
+    contractAddress: "0x0000000000085d4780B73119b644AE5ecd22b376",
   },
   {
     name: "Gemini Dollar",
@@ -69,5 +80,7 @@ export default [
       foreground: "#f2fcfb",
     },
     subunits: 2,
+    primary: false,
+    contractAddress: "0x056Fd409E1d7A124BD7017459DFea2F387b6d5Cd",
   },
 ] as const;
