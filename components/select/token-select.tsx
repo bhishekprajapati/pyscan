@@ -38,9 +38,6 @@ const TokenSelect = (props: TokenSelectProps) => {
     [options],
   );
 
-  console.log("dusabled keys ", disabledKeys);
-  console.log("default keys ", defaultSelectedKeys);
-
   return (
     <Select
       className={cn("w-40", className)}
