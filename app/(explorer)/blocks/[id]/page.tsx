@@ -1,5 +1,7 @@
 export const dynamic = "force-dynamic";
 
+import { WeiToEther, WeiToGwei } from "@/components/eth";
+import { AddressLink, BlockTransactionsLink } from "@/components/links";
 import { FMono } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
@@ -141,8 +143,13 @@ const BlockPage: FC = async ({ params }) => {
                 label: "Transactions",
                 helpText:
                   "The number of transactions in the block. Internal transaction is transactions as a result of contract execution that involves Ether value.",
-                renderValue: ({ transactions }) => (
-                  <span>{transactions.length} transactions in this block</span>
+                renderValue: ({ transactions, number }) => (
+                  <span>
+                    <BlockTransactionsLink number={number} dataId={false}>
+                      {transactions.length}
+                    </BlockTransactionsLink>{" "}
+                    transactions in this block
+                  </span>
                 ),
               },
               {
@@ -164,7 +171,13 @@ const BlockPage: FC = async ({ params }) => {
                 label: "Fee Recipient",
                 helpText:
                   "Address receiving fees from transactions in this block",
-                renderValue: ({ miner }) => <FMono>{miner}</FMono>,
+                renderValue: ({ miner }) => (
+                  <FMono>
+                    <AddressLink address={miner} dataId={false}>
+                      {miner}
+                    </AddressLink>
+                  </FMono>
+                ),
               },
               {
                 label: "Total Difficulty",
@@ -189,7 +202,7 @@ const BlockPage: FC = async ({ params }) => {
               {
                 label: "Gas Used",
                 helpText: "Total used gas by all transactions in this block",
-                renderValue: ({ gasUsed }) => gasUsed,
+                renderValue: ({ gasUsed }) => `${gasUsed} Gas Units`,
               },
               {
                 label: "Blob Gas Used",
@@ -200,18 +213,26 @@ const BlockPage: FC = async ({ params }) => {
               {
                 label: "Gas Limit",
                 helpText: "Maximum gas allowed in this block",
-                renderValue: ({ gasLimit }) => gasLimit,
+                renderValue: ({ gasLimit }) => `${gasLimit} Gas Units`,
               },
               {
                 label: "Base Fee Per Gas",
                 helpText: "Base fee per gas",
-                renderValue: ({ baseFeePerGas }) => baseFeePerGas,
+                renderValue: ({ baseFeePerGas }) => (
+                  <WeiToGwei
+                    wei={baseFeePerGas === null ? undefined : baseFeePerGas}
+                  />
+                ),
               },
               {
                 label: "Burnt Fees",
                 helpText:
                   "Post-London Upgrade, this represents the part of the tx fee that is burnt: baseFeePerGas * gasUsed.",
-                renderValue: ({ burntFees }) => `🔥 ${burntFees}`,
+                renderValue: ({ burntFees }) => (
+                  <>
+                    🔥 <WeiToEther wei={BigInt(burntFees)} />
+                  </>
+                ),
               },
               {
                 label: "Extra Data",
