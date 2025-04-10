@@ -1,7 +1,6 @@
 "use client";
 
 import { HeroUIProvider, ToastProvider } from "@heroui/react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   isServer,
@@ -48,9 +47,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <HeroUIProvider>
         <ToastProvider />
         <QueryClientProvider client={queryClient}>
-          <NextThemesProvider attribute="class" defaultTheme="dark">
-            {children}
-          </NextThemesProvider>
+          {children}
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </HeroUIProvider>

@@ -4,7 +4,6 @@ import { Suspense } from "react";
 
 import Nav from "./nav";
 import { EthGasFee, Quote } from "./pyusd";
-import { ThemeSwitcher } from "./theme-switcher";
 import LinkButton from "./ui/link-button";
 import { RenderUserAvatar } from "./auth/user";
 import { PathOnly } from "./path";
@@ -70,7 +69,6 @@ const AppNavBar = () => {
         <PathOnly matcher="/">
           <SearchInput />
         </PathOnly>
-        <ThemeSwitcher />
         <RenderUserAvatar />
       </header>
     </nav>

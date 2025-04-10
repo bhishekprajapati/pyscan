@@ -43,7 +43,7 @@ const SendersLeaderboard = () => {
       <Divider />
       <Table
         aria-label="senders leaderboard"
-        className="h-96 overflow-x-auto rounded-xl bg-default"
+        className="scrollbar-thin h-96 overflow-x-auto rounded-xl bg-default"
         classNames={{
           th: "bg-transparent border-b border-b-divider text-sm",
           tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",

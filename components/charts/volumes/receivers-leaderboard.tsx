@@ -44,7 +44,7 @@ const ReceiversLeaderboard = () => {
       <Divider />
       <Table
         aria-label="receivers leaderboard"
-        className="h-96 overflow-x-auto"
+        className="scrollbar-thin h-96 overflow-x-auto"
         classNames={{
           th: "bg-transparent border-b border-b-divider text-sm",
           tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",
