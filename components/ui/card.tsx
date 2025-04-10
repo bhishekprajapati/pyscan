@@ -19,7 +19,10 @@ import { FMono } from "../text";
 type CardProps = HCardProps;
 export const Card: FC<CardProps> = ({ className, ...rest }) => (
   <HCard
-    className={"rounded-xl bg-primary-100 bg-opacity-[0.04] " + className}
+    className={
+      "rounded-xl bg-primary-100 bg-opacity-[0.04] hover:shadow-lg hover:shadow-default/25 " +
+      className
+    }
     {...rest}
   />
 );
