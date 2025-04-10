@@ -8,7 +8,8 @@ import {
   Tooltip,
 } from "@heroui/react";
 import copy from "copy-to-clipboard";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
+import { useState } from "react";
 
 type CopyButtonProps = Omit<ButtonProps, "children"> & {
   text?: string;
@@ -16,21 +17,27 @@ type CopyButtonProps = Omit<ButtonProps, "children"> & {
   onCopyToast?: Partial<ToastProps>;
 };
 
-const CopyButton: React.FC<CopyButtonProps> = ({
-  text = "",
-  tooltipText = "Click to copy",
-  onCopyToast,
-  ...restProps
-}) => {
+const CopyButton: React.FC<CopyButtonProps> = (props) => {
+  const [showCheck, setShowCheck] = useState(false);
+
+  const {
+    text = "",
+    tooltipText = "Click to copy",
+    onCopyToast,
+    ...restProps
+  } = props;
+
   const handleCopy = () => {
     copy(text);
+    setShowCheck(true);
+    setTimeout(() => setShowCheck(false), 2000);
     onCopyToast && addToast(onCopyToast);
   };
 
   return (
     <Tooltip content={tooltipText}>
       <Button size="sm" {...restProps} isIconOnly onPress={handleCopy}>
-        <Copy size={12} />
+        {showCheck ? <Check size={12} /> : <Copy size={12} />}
       </Button>
     </Tooltip>
   );
