@@ -57,7 +57,7 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="h-full sm:col-span-2 lg:col-span-12 xl:col-span-8 xl:row-span-2">
+      <div className="h-full sm:col-span-2 lg:col-span-12 xl:col-span-5 xl:row-span-2">
         <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback />}>
             <PyusdVolume />
@@ -85,7 +85,7 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-9 xl:col-span-9">
+      <div className="sm:col-span-2 lg:col-span-9 xl:col-span-12">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
@@ -96,7 +96,8 @@ export default function Home() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="sm:col-span-2 lg:col-span-3">
+
+      <div className="sm:col-span-2 lg:col-span-3 xl:col-start-10 xl:row-span-2 xl:row-start-2">
         <GridItem className="bg-primary-100 bg-opacity-[0.025] p-0">
           <ErrorBoundary fallback={<ComponentErrorFallback className="p-16" />}>
             <StablecoinDominance />
@@ -104,7 +105,7 @@ export default function Home() {
         </GridItem>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-9">
+      <div className="sm:col-span-2 lg:col-span-5">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
@@ -113,13 +114,8 @@ export default function Home() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="sm:col-span-2 lg:col-span-3">
-        <ErrorBoundary
-          fallback={<ComponentErrorFallback className="p-16" />}
-        ></ErrorBoundary>
-      </div>
 
-      <div className="sm:col-span-2 lg:col-span-12">
+      <div className="sm:col-span-2 lg:col-span-7">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >

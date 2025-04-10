@@ -40,7 +40,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     )}
     {...rest}
   >
-    <div className="flex items-center justify-between font-serif text-xl font-bold">
+    <div className="flex items-center justify-between font-serif font-semibold">
       {children}
     </div>
   </HCardHeader>
