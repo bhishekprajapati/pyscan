@@ -1,13 +1,20 @@
 export const dynamic = "force-dynamic";
 
+import TokenDominanceChart, {
+  TokenDominanceProps,
+} from "@/components/charts/token-dominance";
 import CopyButton from "@/components/copy-button";
 import { ComponentErrorFallback } from "@/components/errors";
 import { SuspendedComponentFallback } from "@/components/fallback";
 import { FMono, TextTruncate } from "@/components/text";
 import { Card, CardBody } from "@/components/ui/card";
-import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
+
+import { ALL_TOKEN_TYPES, PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
+import { getQuote } from "@/lib/coinmarketcap";
 import { TokenType } from "@/lib/token";
+
 import { Chip } from "@heroui/react";
+import { unstable_cacheLife as cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import GasTrendChart from "./_components/gas-trend";
@@ -18,7 +25,6 @@ import {
 } from "./_components/latest";
 import NetworkCongestion from "./_components/network-congestion";
 import PyusdVolume from "./_components/pyusd-volume";
-import TokenDominance from "./_components/token-dominance";
 
 type PrimaryTokenSupplyProps = { tokenType: TokenType<string> };
 const PrimaryTokenSupply = async (props: PrimaryTokenSupplyProps) => {
@@ -97,6 +103,12 @@ const PrimaryTokenInfo = (props: PrimaryTokenInfoProps) => {
     </Card>
   );
 };
+
+const TokenDominance = async () => {
+  const result = await getTokenDominanceCachedData();
+  return <TokenDominanceChart {...result} />;
+};
+
 /**
  * TODO: real-time update on client side
  */
@@ -177,4 +189,45 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+async function getTokenDominanceCachedData() {
+  "use cache";
+  cacheLife("weeks");
+
+  const tokenTypes = ALL_TOKEN_TYPES;
+  const promises = await Promise.allSettled(
+    tokenTypes.map(async (tk) => {
+      const result = await getQuote([tk.getSymbol()]);
+      if (result.success) {
+        return {
+          token: tk,
+          quote: result.data[tk.getSymbol()],
+        };
+      }
+      throw Error(result.err.message);
+    }),
+  );
+
+  const result: TokenDominanceProps = {
+    data: promises
+      .filter((p) => p.status === "fulfilled")
+      .map((p) => {
+        const { quote, token } = p.value;
+        return {
+          quote: {
+            marketCapInUsd: quote[0].quote.USD.market_cap,
+          },
+          token: {
+            name: token.getName(),
+            symbol: token.getSymbol(),
+            color: token.getColors("dark"),
+            logo: token.getLogo(),
+          },
+        };
+      }),
+    timestamp: Date.now(),
+  };
+
+  return result;
 }
