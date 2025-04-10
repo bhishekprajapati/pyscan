@@ -20,7 +20,7 @@ type CardProps = HCardProps;
 export const Card: FC<CardProps> = ({ className, ...rest }) => (
   <HCard
     className={
-      "rounded-xl bg-primary-100 bg-opacity-[0.04] hover:shadow-lg hover:shadow-default/25 " +
+      "group rounded-xl bg-primary-100 bg-opacity-[0.04] hover:shadow-lg hover:shadow-default/25 " +
       className
     }
     {...rest}
@@ -33,7 +33,7 @@ export const CardHeader: FC<CardHeaderProps> = ({ className, ...rest }) => (
 );
 
 export const CardTimestamp = ({ date }: { date: Date }) => (
-  <FMono className="ms-auto dark:text-default-200">
+  <FMono className="ms-auto transition-colors dark:text-default-200 group-hover:dark:text-default-400">
     <TimeAgo date={date} />
   </FMono>
 );
@@ -61,7 +61,13 @@ export const CardHelp: React.FC<CardHelpProps> = (props) => {
 
 type CardHeadingProps = React.HTMLProps<HTMLHeadingElement>;
 export const CardHeading: FC<CardHeadingProps> = ({ className, ...rest }) => (
-  <h2 className={cn(" ", className)} {...rest} />
+  <h2
+    className={cn(
+      "text-default-foreground/50 transition-colors group-hover:text-primary",
+      className,
+    )}
+    {...rest}
+  />
 );
 
 type CardBodyProps = React.ComponentPropsWithoutRef<typeof HCardBody>;
