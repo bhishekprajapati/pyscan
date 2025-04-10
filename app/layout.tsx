@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 
 import { Providers } from "./providers";
 import AppNavBar from "@/components/navbar";
+import { DataIdWatcher } from "@/components/data-id";
 
 const serif = Space_Grotesk({
   subsets: ["latin"],
@@ -42,7 +43,10 @@ export default function RootLayout({
             <NextTopLoader height={1} color="#AAFF00" showSpinner={false} />
             <AppNavBar />
           </div>
-          <div>{children}</div>
+          <div>
+            {children}
+            <DataIdWatcher />
+          </div>
         </Providers>
       </body>
     </html>
