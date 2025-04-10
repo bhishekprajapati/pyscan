@@ -1,11 +1,8 @@
 "use client";
 
-import { CardBody, Divider, Tooltip as HTooltip } from "@heroui/react";
-import { CircleHelp } from "lucide-react";
-import TimeAgo from "react-timeago";
+import { CardBody, Divider } from "@heroui/react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-import { FMono } from "../text";
 import { Card, CardHeader, CardHeading, CardTimestamp } from "../ui/card";
 
 type StablecoinDominanceProps = {
