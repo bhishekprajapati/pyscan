@@ -14,12 +14,6 @@ import {
 import LatestPyusdTransfersTable from "@/components/tables/latest-pyusd-transfers";
 import { FMono, TextTruncate } from "@/components/text";
 import Timestamp from "@/components/timestamp";
-import LinkButton from "@/components/ui/link-button";
-
-import bigquery from "@/lib/bigquery";
-import { pyusd } from "@/lib/coinmarketcap";
-import { weiToEth } from "@/lib/converters";
-import ethereum from "@/lib/ethereum";
 import {
   Card,
   CardBody,
@@ -27,6 +21,11 @@ import {
   CardHeader,
   CardHeading,
 } from "@/components/ui/card";
+import LinkButton from "@/components/ui/link-button";
+import bigquery from "@/lib/bigquery";
+import { pyusd } from "@/lib/coinmarketcap";
+import { weiToEth } from "@/lib/converters";
+import ethereum from "@/lib/ethereum";
 
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="md:h-[50rem] md:overflow-auto">{children}</div>
@@ -44,21 +43,18 @@ export const LatestBlocks = async () => {
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
-      <CardBody>
+      <CardBody className="p-0">
         <ScrollContainer>
           <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
             {blocks.map((block) => (
               <li key={block.number} className="g group flex p-4">
-                <BlockLink
-                  number={block.number}
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300"
-                >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300">
                   <Box
                     size={24}
                     strokeWidth={1.5}
                     className="group-hover:text-primary"
                   />
-                </BlockLink>
+                </div>
                 <div>
                   <div>
                     <BlockLink number={block.number}>
@@ -118,20 +114,19 @@ export const LatestTransactions = async () => {
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
-      <CardBody>
+      <CardBody className="p-0">
         <ul className="[&>:nth-child(2n+1)]:bg-zinc-900/50">
           {txns.map((txn) => (
             <li key={txn.hash} className="group flex items-center gap-4 p-4">
-              <TransactionLink
-                hash={txn.hash}
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300"
-              >
-                <ReceiptText
-                  size={20}
-                  strokeWidth={1.5}
-                  className="group-hover:text-primary"
-                />
-              </TransactionLink>
+              <div className="flex-shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300">
+                  <ReceiptText
+                    size={20}
+                    strokeWidth={1.5}
+                    className="group-hover:text-primary"
+                  />
+                </div>
+              </div>
               <div>
                 <TransactionLink hash={txn.hash}>
                   <TextTruncate className="w-64">
@@ -200,7 +195,7 @@ export const LatestPyusdTransfers = async () => {
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
-      <CardBody>
+      <CardBody className="p-0">
         <LatestPyusdTransfersTable
           data={txns.map(({ block_timestamp, ...txn }) => ({
             block_timestamp: block_timestamp.value,
