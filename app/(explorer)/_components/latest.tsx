@@ -133,7 +133,10 @@ export const LatestTransactions = async () => {
                     <FMono>{txn.hash}</FMono>
                   </TextTruncate>
                 </TransactionLink>
-                <CopyButton text={txn.hash} />
+                <CopyButton
+                  className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+                  text={txn.hash}
+                />
               </div>
               <div className="me-16 text-sm">
                 <Timestamp stamp={timestamp} icon={false} string={false} />

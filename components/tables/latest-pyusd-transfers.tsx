@@ -56,7 +56,10 @@ const LatestPyusdTransfersTable: React.FC<Props> = ({ data, price }) => (
     </TableHeader>
     <TableBody>
       {data.map((txn) => (
-        <TableRow key={txn.transaction_hash + txn.event_index}>
+        <TableRow
+          className="group"
+          key={txn.transaction_hash + txn.event_index}
+        >
           <TableCell>
             <div className="flex items-center gap-2">
               <BoringAvatar name={txn.from_address} size={24} />
@@ -65,7 +68,10 @@ const LatestPyusdTransfersTable: React.FC<Props> = ({ data, price }) => (
                   <FMono>{txn.from_address}</FMono>
                 </TextTruncate>
               </AddressLink>
-              <CopyButton text={txn.from_address} />
+              <CopyButton
+                className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+                text={txn.from_address}
+              />
             </div>
           </TableCell>
           <TableCell>
@@ -80,7 +86,10 @@ const LatestPyusdTransfersTable: React.FC<Props> = ({ data, price }) => (
                   <FMono>{txn.to_address}</FMono>
                 </TextTruncate>
               </AddressLink>
-              <CopyButton text={txn.from_address} />
+              <CopyButton
+                className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
+                text={txn.from_address}
+              />
             </div>
           </TableCell>
           <TableCell>
