@@ -43,10 +43,10 @@ type Props = {
 const LatestPyusdTransfersTable: React.FC<Props> = ({ data, price }) => (
   <Table
     aria-label="latest pyusd token transfers"
-    className="overflow-x-auto bg-default"
+    className="overflow-x-auto bg-background"
     classNames={{
-      th: "bg-transparent border-b border-b-divider text-sm",
-      tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",
+      th: "bg-default border-b border-b-divider text-sm",
+      tbody: "[&>tr:nth-child(2n+1)]:bg-default/40",
       thead: "py-8",
     }}
     removeWrapper
