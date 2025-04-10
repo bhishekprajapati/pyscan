@@ -1,6 +1,5 @@
 "use client";
 
-import type { GetRecieverLeaderboardQuerySchema } from "@/app/api/public/mainnet/analytics/volumes/leaderboards/receivers/route";
 import type { PostMintBurnSearchQuery } from "@/app/api/public/mainnet/analytics/volumes/mint-burn/route";
 import type { PostTokenTransferVolumeSearchQuery } from "@/app/api/public/mainnet/analytics/volumes/transfers/route";
 import { client } from "@/lib/api.sdk";
