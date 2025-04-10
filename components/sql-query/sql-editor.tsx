@@ -93,10 +93,14 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
   const isWithinCharLimit = maxLength ? sqlQuery.length <= maxLength : true;
   const canRunQuery = sqlQuery !== "" && isWithinCharLimit;
 
-  const handleChange = useCallback((val: string) => {
-    onChange && onChange(val);
-    setSqlQuery(val);
-  }, []);
+  const handleChange = useCallback(
+    (val: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      onChange && onChange(val);
+      setSqlQuery(val);
+    },
+    [onChange],
+  );
 
   return (
     <Card className="h-full flex-col">

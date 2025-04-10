@@ -1,6 +1,3 @@
-import GasFeeTrend from "@/components/charts/gas/fee";
-import GasUsageTrend from "@/components/charts/gas/usage";
-import HoldersCount from "@/components/charts/holders/counts";
 import TransactionCount from "@/components/charts/transactions/count";
 import MintBurnChart from "@/components/charts/volumes/mint-burn";
 import ReceiversLeaderboard from "@/components/charts/volumes/receivers-leaderboard";
@@ -19,9 +16,6 @@ export default function analytics() {
       <div className="lg:col-span-8">
         <MintBurnChart />
       </div>
-      {/* <GasFeeTrend /> */}
-      {/* <GasUsageTrend /> */}
-      {/* <HoldersCount /> */}
       <div className="lg:col-span-5 lg:col-start-9 lg:row-start-1">
         <SendersLeaderboard />
       </div>

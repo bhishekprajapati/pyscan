@@ -5,8 +5,6 @@ import TimeAgo from "react-timeago";
 import {
   Area,
   AreaChart,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,

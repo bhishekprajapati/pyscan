@@ -45,7 +45,7 @@ const TokenTransferVolume = () => {
         }))
         .sort(sortByDate),
     };
-  }, [query.data]);
+  }, [query.data, token]);
 
   return (
     <ChartCard className="h-full">

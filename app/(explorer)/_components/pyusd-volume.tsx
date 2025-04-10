@@ -2,7 +2,6 @@ import PyusdVolumeChart from "@/components/charts/pyusd-volume";
 import bigquery from "@/lib/bigquery";
 import { pyusd } from "@/lib/coinmarketcap";
 import { devOnly } from "@/utils/dev";
-import { BigQueryDate } from "@google-cloud/bigquery";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 
 const getCachedVolumeData = async () => {

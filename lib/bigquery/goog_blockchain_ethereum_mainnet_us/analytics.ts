@@ -422,16 +422,16 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    const getHoldersCountByTokenAddress = async (
-      tokenAddress: string,
-      filter: Filter,
-    ) => {
-      const { timeframe, limit } = filter;
-      const [start, end, unit] = timeseriesFilters.parsetimeframe(
-        timeframe,
-        limit,
-      );
-    };
+    // const getHoldersCountByTokenAddress = async (
+    //   tokenAddress: string,
+    //   filter: Filter,
+    // ) => {
+    //   const { timeframe, limit } = filter;
+    //   const [start, end, unit] = timeseriesFilters.parsetimeframe(
+    //     timeframe,
+    //     limit,
+    //   );
+    // };
 
     return {
       getTxnCount,
@@ -552,55 +552,55 @@ export default function analytics(query: QueryHandler) {
      * participants in the network. Useful for detecting whales,
      * high-frequency traders, or key liquidity providers.
      */
-    const getAddressActivity = () => {
-      const sql = `
-        WITH TransferEvents AS (
-          SELECT
-            transaction_hash,
-            block_timestamp,
-            LOWER(CONCAT('0x', SUBSTR(topics[1], 27, 40))) AS from_address,
-            LOWER(CONCAT('0x', SUBSTR(topics[2], 27, 40))) AS to_address,
-            SAFE_CAST(FORMAT("%f", CAST(data AS FLOAT64) / POW(10, 6)) AS FLOAT64) AS amount_pyusd
-          FROM
-            bigquery-public-data.goog_blockchain_ethereum_mainnet_us.logs
-          WHERE
-            address = '0x6c3ea9036406852006290770bedfcaba0e23a0e8' -- PYUSD Contract
-            AND topics[SAFE_OFFSET(0)] = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' -- Transfer Event
-            AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-        ),
-        Incoming AS (
-          SELECT
-            to_address AS address,
-            COUNT(*) AS incoming_transactions,
-            SUM(amount_pyusd) AS incoming_pyusd
-          FROM TransferEvents
-          GROUP BY to_address
-        ),
-        Outgoing AS (
-          SELECT
-            from_address AS address,
-            COUNT(*) AS outgoing_transactions,
-            SUM(amount_pyusd) AS outgoing_pyusd
-          FROM TransferEvents
-          GROUP BY from_address
-        )
-        SELECT
-          COALESCE(i.address, o.address) AS address,
-          COALESCE(i.incoming_transactions, 0) AS incoming_transactions,
-          COALESCE(i.incoming_pyusd, 0) AS incoming_pyusd,
-          COALESCE(o.outgoing_transactions, 0) AS outgoing_transactions,
-          COALESCE(o.outgoing_pyusd, 0) AS outgoing_pyusd,
-          (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) AS net_activity,
-          RANK() OVER (ORDER BY COALESCE(i.incoming_pyusd, 0) DESC) AS incoming_rank,
-          RANK() OVER (ORDER BY COALESCE(o.outgoing_pyusd, 0) DESC) AS outgoing_rank,
-          RANK() OVER (ORDER BY (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) DESC) AS net_activity_rank
-        FROM Incoming i
-        FULL OUTER JOIN Outgoing o
-        ON i.address = o.address
-        ORDER BY net_activity DESC
-        LIMIT 10;
-      `;
-    };
+    // const getAddressActivity = () => {
+    //   const sql = `
+    //     WITH TransferEvents AS (
+    //       SELECT
+    //         transaction_hash,
+    //         block_timestamp,
+    //         LOWER(CONCAT('0x', SUBSTR(topics[1], 27, 40))) AS from_address,
+    //         LOWER(CONCAT('0x', SUBSTR(topics[2], 27, 40))) AS to_address,
+    //         SAFE_CAST(FORMAT("%f", CAST(data AS FLOAT64) / POW(10, 6)) AS FLOAT64) AS amount_pyusd
+    //       FROM
+    //         bigquery-public-data.goog_blockchain_ethereum_mainnet_us.logs
+    //       WHERE
+    //         address = '0x6c3ea9036406852006290770bedfcaba0e23a0e8' -- PYUSD Contract
+    //         AND topics[SAFE_OFFSET(0)] = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' -- Transfer Event
+    //         AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+    //     ),
+    //     Incoming AS (
+    //       SELECT
+    //         to_address AS address,
+    //         COUNT(*) AS incoming_transactions,
+    //         SUM(amount_pyusd) AS incoming_pyusd
+    //       FROM TransferEvents
+    //       GROUP BY to_address
+    //     ),
+    //     Outgoing AS (
+    //       SELECT
+    //         from_address AS address,
+    //         COUNT(*) AS outgoing_transactions,
+    //         SUM(amount_pyusd) AS outgoing_pyusd
+    //       FROM TransferEvents
+    //       GROUP BY from_address
+    //     )
+    //     SELECT
+    //       COALESCE(i.address, o.address) AS address,
+    //       COALESCE(i.incoming_transactions, 0) AS incoming_transactions,
+    //       COALESCE(i.incoming_pyusd, 0) AS incoming_pyusd,
+    //       COALESCE(o.outgoing_transactions, 0) AS outgoing_transactions,
+    //       COALESCE(o.outgoing_pyusd, 0) AS outgoing_pyusd,
+    //       (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) AS net_activity,
+    //       RANK() OVER (ORDER BY COALESCE(i.incoming_pyusd, 0) DESC) AS incoming_rank,
+    //       RANK() OVER (ORDER BY COALESCE(o.outgoing_pyusd, 0) DESC) AS outgoing_rank,
+    //       RANK() OVER (ORDER BY (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) DESC) AS net_activity_rank
+    //     FROM Incoming i
+    //     FULL OUTER JOIN Outgoing o
+    //     ON i.address = o.address
+    //     ORDER BY net_activity DESC
+    //     LIMIT 10;
+    //   `;
+    // };
 
     const getReceiverLeadersByTokenAddress = async (tokenAddress: string) => {
       const sql = `
@@ -738,9 +738,9 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    const getHoldersByTokenAddress = () => {};
+    // const getHoldersByTokenAddress = () => {};
 
-    const getHoldersCountByTokenAddress = () => {};
+    // const getHoldersCountByTokenAddress = () => {};
 
     return {
       getTxnCountByToAddresses,

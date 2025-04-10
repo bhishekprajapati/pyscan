@@ -54,7 +54,7 @@ export const createClient = (opts: CreateClientOption) => {
           blockNumber: num,
         });
         return data(block);
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "failed to fetch",
@@ -69,7 +69,7 @@ export const createClient = (opts: CreateClientOption) => {
           blockTag: "finalized",
         });
         return data(blockNumber <= latest.number);
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "failed to fetch",
@@ -109,6 +109,7 @@ export const createClient = (opts: CreateClientOption) => {
       return formatUnits(total, await getDecimals());
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const getLogs = async (from: "latest" | bigint = "latest", count = 5) => {
       const latestBlock = await client.getBlockNumber();
       const startBlock = latestBlock - BigInt(5);
@@ -161,8 +162,6 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
-    const getAddressInfo = async (address: Address) => {};
-
     const getEnsInfo = async (address: Address) => {
       try {
         const name = await client.getEnsName({
@@ -174,7 +173,7 @@ export const createClient = (opts: CreateClientOption) => {
           client.getEnsAddress({ name }),
         ]);
         return data({ name, avatar, resolvedAddress });
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           isInternal: false,
@@ -215,7 +214,7 @@ export const createClient = (opts: CreateClientOption) => {
           ...pick(bk, ["number", "timestamp", "duration", "miner", "ensName"]),
         }));
         return data(transformed);
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "Failed to fetch",
@@ -232,7 +231,7 @@ export const createClient = (opts: CreateClientOption) => {
         });
         const txns = block.transactions.slice(0, 10);
         return data({ txns, timestamp: block.timestamp });
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "Failed to fetch",
@@ -253,7 +252,7 @@ export const createClient = (opts: CreateClientOption) => {
             ...pick(tx, ["hash", "from", "to", "value", "blockNumber"]),
           })),
         );
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "Failed to fetch",
@@ -265,7 +264,7 @@ export const createClient = (opts: CreateClientOption) => {
     const getGasPrice = async () => {
       try {
         return data(await client.getGasPrice());
-      } catch (err) {
+      } catch {
         return error({
           name: "unknown",
           message: "Failed to fetch",
@@ -283,7 +282,7 @@ export const createClient = (opts: CreateClientOption) => {
       getLogs,
       getBlockInfo,
       getTransaction,
-      getAddressInfo,
+      // getAddressInfo,
       getEnsInfo,
       getIsBlockFinalized,
       getLatestBlocks,

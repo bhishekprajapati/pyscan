@@ -9,6 +9,7 @@ type DatasetProps = {
   name: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const Dataset = ({ name, dataset }: DatasetProps) => (
   <section>
     <header>

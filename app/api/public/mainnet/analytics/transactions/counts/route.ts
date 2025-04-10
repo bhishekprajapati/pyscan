@@ -1,4 +1,3 @@
-import stablecoins from "@/constants/stablecoins";
 import { api, InferApiResponse } from "@/lib/api.helpers";
 import bigquery from "@/lib/bigquery";
 import { timeseriesFilters } from "@/lib/bigquery/goog_blockchain_ethereum_mainnet_us/schema";

@@ -8,7 +8,6 @@ export const GET = api(async (req, res) => {
   const result = await eth.getBlocks(req.nextUrl.searchParams as any);
 
   if (!result.success) {
-    const { isInternal, reason } = result;
     return res.error({
       name: "validation_error",
     });

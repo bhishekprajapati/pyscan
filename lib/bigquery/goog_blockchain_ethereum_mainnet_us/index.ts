@@ -104,6 +104,7 @@ export default function ethereumMainnet(query: QueryHandler) {
     return queryFn;
   })();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getTopHolders = (address: string, limit: number) => {
     return query({
       query: `

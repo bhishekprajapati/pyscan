@@ -94,7 +94,7 @@ const BlockPage: FC = async ({ params }) => {
                     <span>{number}</span>
                     <Tooltip content="View previous block">
                       <LinkButton
-                        // @ts-expect-error
+                        // @ts-expect-error dynamic route
                         href={`/blocks/${(number - BigInt(1)).toString()}`}
                         size="sm"
                         variant="faded"
@@ -105,7 +105,7 @@ const BlockPage: FC = async ({ params }) => {
                     </Tooltip>
                     <Tooltip content="View next block">
                       <LinkButton
-                        // @ts-expect-error
+                        // @ts-expect-error dynamic route
                         href={`/blocks/${(number + BigInt(1)).toString()}`}
                         size="sm"
                         variant="faded"

@@ -25,7 +25,7 @@ const columns = [
   { name: "Gas Limit", uid: "gas_limit" },
 ];
 
-const _Table = () => {
+const BTable = () => {
   const query = useBlocks();
   const data = query.data ?? [];
 
@@ -84,7 +84,7 @@ const _Table = () => {
 
 const BlocksTable = () => (
   <ErrorBoundary fallback={<>error occured</>}>
-    <_Table></_Table>
+    <BTable />
   </ErrorBoundary>
 );
 

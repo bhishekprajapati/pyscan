@@ -1,4 +1,4 @@
-import { Chip, Divider, Tooltip } from "@heroui/react";
+import { Chip, Divider } from "@heroui/react";
 import { ArrowRight, Box, ReceiptText } from "lucide-react";
 
 import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";

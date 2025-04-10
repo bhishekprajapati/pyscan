@@ -1,12 +1,11 @@
-import "./globals.css";
-import NextTopLoader from "nextjs-toploader";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import { cn } from "@heroui/react";
-import type { Metadata } from "next";
-
-import { Providers } from "./providers";
-import AppNavBar from "@/components/navbar";
 import { DataIdWatcher } from "@/components/data-id";
+import AppNavBar from "@/components/navbar";
+import { cn } from "@heroui/react";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
+
+import "./globals.css";
+import { Providers } from "./providers";
 
 const serif = Space_Grotesk({
   subsets: ["latin"],

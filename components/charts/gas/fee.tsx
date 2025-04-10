@@ -1,6 +1,5 @@
 "use client";
 
-import { useGasFee } from "@/hooks/gas";
 import {
   ChartCard,
   ChartCardBody,
@@ -9,8 +8,6 @@ import {
 } from "../card";
 
 const GasFeeTrend = () => {
-  const query = useGasFee();
-
   return (
     <ChartCard>
       <ChartCardHeader>

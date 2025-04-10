@@ -2,12 +2,8 @@
 
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
+import { sortByDate } from "@/utils";
+import { useMemo } from "react";
 import {
   Bar,
   BarChart,
@@ -16,8 +12,12 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import { useMemo } from "react";
-import { sortByDate } from "@/utils";
+import {
+  ChartCard,
+  ChartCardBody,
+  ChartCardHeader,
+  ChartCardHeading,
+} from "../card";
 
 // TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
 // TODO: add timeframe
@@ -46,7 +46,7 @@ const MintBurnChart = () => {
         }))
         .sort(sortByDate),
     };
-  }, [query.data]);
+  }, [query.data, token]);
 
   return (
     <ChartCard>

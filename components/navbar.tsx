@@ -2,11 +2,11 @@ import { Chip, Input, Skeleton } from "@heroui/react";
 import { Fuel, Search } from "lucide-react";
 import { Suspense } from "react";
 
+import { RenderUserAvatar } from "./auth/user";
 import Nav from "./nav";
+import { PathOnly } from "./path";
 import { EthGasFee, Quote } from "./pyusd";
 import LinkButton from "./ui/link-button";
-import { RenderUserAvatar } from "./auth/user";
-import { PathOnly } from "./path";
 
 const SearchInput = () => {
   return (

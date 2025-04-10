@@ -11,7 +11,6 @@ export const GET = api(async (_, res) => {
   const result = await eth.getTokenTransfers(CONTRACT_ADDRESS, 10);
 
   if (!result.success) {
-    const { isInternal, reason } = result;
     return res.error({
       name: "internal_server_error",
     });

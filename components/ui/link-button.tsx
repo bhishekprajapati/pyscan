@@ -18,7 +18,7 @@ const LinkButton = (props: LinkButtonProps) => {
         radius,
         size,
         isIconOnly,
-        className: "hover:cursor-pointer",
+        className: "hover:cursor-pointer " + className,
       })}
       {...restProps}
     />

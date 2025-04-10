@@ -16,7 +16,6 @@ export const GET = api(async (req, res) => {
     ...query,
   });
   if (!result.success) {
-    const { isInternal, reason } = result;
     return res.error({ name: "internal_server_error" });
   }
   return res.data(result.data);

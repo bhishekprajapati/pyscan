@@ -41,7 +41,8 @@ const cmc = (() => {
     url: Parameters<typeof fetch>["0"],
     init: Parameters<typeof fetch>["1"] = {},
   ) => {
-    const { headers: setHeaders, ...restInit } = init;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { headers: _, ...restInit } = init;
     try {
       const res = await fetch(url, {
         ...restInit,

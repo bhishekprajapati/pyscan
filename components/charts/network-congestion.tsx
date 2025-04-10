@@ -36,7 +36,7 @@ const NetworkCongestionChart: React.FC<Props> = ({ data, timestamp }) => (
           separator=" "
           wrapperClassName="!bg-default-50 rounded-lg !border-none"
           cursor={false}
-          formatter={(value, name) => [value, "Avg Gas Price (In gwei)"]}
+          formatter={(value) => [value, "Avg Gas Price (In gwei)"]}
         />
         <Line
           type="monotone"

@@ -23,7 +23,7 @@ const columns = [
   { name: "Amount", uid: "quantity" },
 ];
 
-const _Table = () => {
+const TTable = () => {
   const query = useTransactions();
   const data = query.data ?? [];
 

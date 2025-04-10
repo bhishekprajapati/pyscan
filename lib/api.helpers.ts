@@ -9,7 +9,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import type { Session } from "next-auth";
 import redis from "./redis";
-import { ZodTypeAny } from "zod";
 
 type TLimiterOptions = {
   /**
@@ -124,7 +123,7 @@ type TDefaultParams = Record<string, string | string[]> | undefined;
 /**
  * Public API route handler
  */
-export const api = <R extends NextResponse<any>, TParams = TDefaultParams>(
+export const api = <R extends NextResponse<unknown>, TParams = TDefaultParams>(
   handler: THandler<TParams, R>,
 ) => {
   return async function publicRouteHandler(
@@ -163,7 +162,7 @@ type TPrivateHandler<TParams, R> = (
 /**
  * Private API route handler
  */
-export const auth = <R extends NextResponse<any>, TParams = TDefaultParams>(
+export const auth = <R extends NextResponse<unknown>, TParams = TDefaultParams>(
   handler: TPrivateHandler<TParams, R>,
 ) =>
   async function privateRouteHandler(
@@ -195,6 +194,7 @@ export const auth = <R extends NextResponse<any>, TParams = TDefaultParams>(
     }
   };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type InferApiResponse<THandler extends (...args: any[]) => any> =
   THandler extends (...args: any[]) => Promise<NextResponse<infer R>>
     ? R

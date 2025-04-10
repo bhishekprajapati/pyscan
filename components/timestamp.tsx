@@ -11,12 +11,7 @@ type TimestampProps = {
   formatter?: Pick<Props, "formatter">;
 };
 
-const Timestamp = ({
-  stamp,
-  ago,
-  icon = true,
-  string = true,
-}: TimestampProps) => {
+const Timestamp = ({ stamp, icon = true, string = true }: TimestampProps) => {
   const date =
     stamp instanceof Date
       ? stamp

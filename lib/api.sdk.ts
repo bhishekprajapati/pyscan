@@ -39,10 +39,10 @@ import type {
 } from "@/app/api/public/mainnet/analytics/volumes/transfers/route";
 import type { ExecuteQueryApiResponse } from "@/app/api/queries/execute/route";
 
-const data = <T>(d: T) => ({
-  ok: true as const,
-  data: d,
-});
+// const data = <T>(d: T) => ({
+//   ok: true as const,
+//   data: d,
+// });
 
 export type TError<T extends string> = {
   name: T;
@@ -130,20 +130,14 @@ const createClient = (opts: CreateClientOptions = {}) => {
           });
         };
 
-        type GetTransactionsParams = {};
-        const getTransactions = async (
-          params: GetBlocksParams,
-          opts: BaseOptions = {},
-        ) => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+        const getTransactions = async (params: {}, opts: BaseOptions = {}) => {
           const url = _URL("/api/public/explorer/mainnet/transactions");
           return fetcher<GetTransactionsApiResponse>(url, { ...opts });
         };
 
-        type GetTransfersParams = {};
-        const getTransfers = async (
-          params: GetTransfersParams,
-          opts: BaseOptions = {},
-        ) => {
+        // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+        const getTransfers = async (params: {}, opts: BaseOptions = {}) => {
           const url = _URL("/api/public/explorer/mainnet/transfers");
           return fetcher<GetTransferApiResponse>(url, {
             ...opts,

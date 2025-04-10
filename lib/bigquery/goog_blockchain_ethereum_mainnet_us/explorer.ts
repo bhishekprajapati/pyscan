@@ -1,5 +1,3 @@
-import { QueryHandler } from "../query-handler";
-
-export default function explorer(query: QueryHandler) {
+export default function explorer() {
   return {};
 }
