@@ -1,7 +1,6 @@
 import { Chip, Divider } from "@heroui/react";
 import { ArrowRight, Box, ReceiptText } from "lucide-react";
 
-import { Card, CardBody, CardFooter, CardHeader } from "@/components/card";
 import CopyButton from "@/components/copy-button";
 import { ComponentErrorFallback } from "@/components/errors";
 import { PYUSDIcon } from "@/components/icon";
@@ -12,6 +11,7 @@ import {
   BlockTransactionsLink,
   TransactionLink,
 } from "@/components/links";
+import LatestPyusdTransfersTable from "@/components/tables/latest-pyusd-transfers";
 import { FMono, TextTruncate } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
@@ -20,7 +20,13 @@ import bigquery from "@/lib/bigquery";
 import { pyusd } from "@/lib/coinmarketcap";
 import { weiToEth } from "@/lib/converters";
 import ethereum from "@/lib/ethereum";
-import LatestPyusdTransfersTable from "@/components/tables/latest-pyusd-transfers";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  CardHeading,
+} from "@/components/ui/card";
 
 const ScrollContainer = ({ children }: { children: React.ReactNode }) => (
   <div className="md:h-[50rem] md:overflow-auto">{children}</div>
@@ -34,7 +40,7 @@ export const LatestBlocks = async () => {
   return (
     <Card>
       <CardHeader>
-        <h2>Latest Blocks</h2>
+        <CardHeading>Latest Blocks</CardHeading>
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
@@ -108,7 +114,7 @@ export const LatestTransactions = async () => {
   return (
     <Card>
       <CardHeader>
-        <h2>Latest Transactions</h2>
+        <CardHeading>Latest Transactions</CardHeading>
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
@@ -189,10 +195,8 @@ export const LatestPyusdTransfers = async () => {
   return (
     <Card>
       <CardHeader>
-        <h2>
-          <PYUSDIcon className="me-2 inline-block h-6 w-6" /> PYUSD Token
-          Transfers
-        </h2>
+        <PYUSDIcon className="me-2 inline-block h-6 w-6" />
+        <CardHeading>PYUSD Token Transfers</CardHeading>
         <RealTimeIndicator />
       </CardHeader>
       <Divider />

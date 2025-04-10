@@ -2,24 +2,20 @@
 
 import TimeframeSelect from "@/components/select/timeframe-select";
 import TokenSelect from "@/components/select/token-select";
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import { useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTransactionCounts } from "@/hooks/transactions";
+import { Divider } from "@heroui/react";
 import {
+  Area,
   AreaChart,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  Area,
 } from "recharts";
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
 
 const TransactionCount = () => {
   const [tf, registerTimeframes] = useSelectedTimeframe();
@@ -41,14 +37,15 @@ const TransactionCount = () => {
   // TODO: fix chart un-mounting when query key changes
 
   return (
-    <ChartCard className="h-full">
-      <ChartCardHeader>
-        <ChartCardHeading>Transaction Count</ChartCardHeading>
+    <Card className="h-full">
+      <CardHeader>
+        <CardHeading>Transaction Count</CardHeading>
         <span className="ms-auto" />
         <TimeframeSelect variant="bordered" {...registerTimeframes} />
         <TokenSelect variant="bordered" {...registerTokens} />
-      </ChartCardHeader>
-      <ChartCardBody>
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
         {query.data && (
           <ResponsiveContainer width="100%" height={400}>
             {query.data && query.data.type === "any" ? (
@@ -116,8 +113,8 @@ const TransactionCount = () => {
             )}
           </ResponsiveContainer>
         )}
-      </ChartCardBody>
-    </ChartCard>
+      </CardBody>
+    </Card>
   );
 };
 

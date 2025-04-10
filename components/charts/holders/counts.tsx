@@ -1,21 +1,16 @@
 "use client";
 
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 
 const HoldersCount = () => {
   return (
-    <ChartCard>
-      <ChartCardHeader>
-        <ChartCardHeading>Holders</ChartCardHeading>
+    <Card>
+      <CardHeader>
+        <CardHeading>Holders</CardHeading>
         <span className="ms-auto" />
-      </ChartCardHeader>
-      <ChartCardBody></ChartCardBody>
-    </ChartCard>
+      </CardHeader>
+      <CardBody></CardBody>
+    </Card>
   );
 };
 

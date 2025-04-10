@@ -1,8 +1,10 @@
 "use client";
 
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
+import { Divider } from "@heroui/react";
 import { useMemo } from "react";
 import {
   Bar,
@@ -12,12 +14,6 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
 
 // TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
 // TODO: add timeframe
@@ -49,11 +45,12 @@ const MintBurnChart = () => {
   }, [query.data, token]);
 
   return (
-    <ChartCard>
-      <ChartCardHeader>
-        <ChartCardHeading>Mint Vs Burn</ChartCardHeading>
-      </ChartCardHeader>
-      <ChartCardBody>
+    <Card>
+      <CardHeader>
+        <CardHeading>Mint Vs Burn</CardHeading>
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
         {data && (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={data.data}>
@@ -103,8 +100,8 @@ const MintBurnChart = () => {
             </BarChart>
           </ResponsiveContainer>
         )}
-      </ChartCardBody>
-    </ChartCard>
+      </CardBody>
+    </Card>
   );
 };
 export default MintBurnChart;

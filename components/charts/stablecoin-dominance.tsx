@@ -1,11 +1,12 @@
 "use client";
 
-import { Tooltip as HTooltip } from "@heroui/react";
+import { CardBody, Divider, Tooltip as HTooltip } from "@heroui/react";
 import { CircleHelp } from "lucide-react";
 import TimeAgo from "react-timeago";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import { FMono } from "../text";
+import { Card, CardHeader, CardHeading, CardTimestamp } from "../ui/card";
 
 type StablecoinDominanceProps = {
   data: {
@@ -37,17 +38,13 @@ const StablecoinDominanceChart: React.FC<StablecoinDominanceProps> = ({
   ];
 
   return (
-    <div className="h-full">
-      <div className="flex items-center gap-2 bg-default p-4">
-        <FMono className="text-lg dark:text-default-600">PYUSD Dominance</FMono>
-        <FMono className="ms-auto dark:text-default-200">
-          <TimeAgo date={new Date(timestamp)} />
-        </FMono>
-        <HTooltip className="max-w-64 bg-default-50" content="">
-          <CircleHelp className="dark:text-default-200" size={16} />
-        </HTooltip>
-      </div>
-      <div className="p-2 md:p-4">
+    <Card>
+      <CardHeader>
+        <CardHeading>Market Cap Dominance</CardHeading>
+        <CardTimestamp date={new Date(timestamp)} />
+      </CardHeader>
+      <Divider />
+      <CardBody>
         <ResponsiveContainer
           width="100%"
           height={400}
@@ -80,8 +77,8 @@ const StablecoinDominanceChart: React.FC<StablecoinDominanceProps> = ({
             />
           </PieChart>
         </ResponsiveContainer>
-      </div>
-    </div>
+      </CardBody>
+    </Card>
   );
 };
 

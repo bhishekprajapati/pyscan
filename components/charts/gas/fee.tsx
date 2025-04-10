@@ -1,20 +1,15 @@
 "use client";
 
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 
 const GasFeeTrend = () => {
   return (
-    <ChartCard>
-      <ChartCardHeader>
-        <ChartCardHeading>Gas Fee</ChartCardHeading>
-      </ChartCardHeader>
-      <ChartCardBody></ChartCardBody>
-    </ChartCard>
+    <Card>
+      <CardHeader>
+        <CardHeading>Gas Fee</CardHeading>
+      </CardHeader>
+      <CardBody></CardBody>
+    </Card>
   );
 };
 export default GasFeeTrend;

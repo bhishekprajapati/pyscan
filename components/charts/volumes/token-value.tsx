@@ -1,7 +1,10 @@
 "use client";
 
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
+import { sortByDate } from "@/utils";
+import { Divider } from "@heroui/react";
 import { useMemo } from "react";
 import {
   Area,
@@ -11,13 +14,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-  ChartCard,
-  ChartCardBody,
-  ChartCardHeader,
-  ChartCardHeading,
-} from "../card";
-import { sortByDate } from "@/utils";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
@@ -48,11 +44,12 @@ const TokenTransferVolume = () => {
   }, [query.data, token]);
 
   return (
-    <ChartCard className="h-full">
-      <ChartCardHeader>
-        <ChartCardHeading>Token Transfer Volume</ChartCardHeading>
-      </ChartCardHeader>
-      <ChartCardBody>
+    <Card className="h-full">
+      <CardHeader>
+        <CardHeading>Token Transfer Volume</CardHeading>
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
         <ResponsiveContainer height={400}>
           <AreaChart data={data?.dataset ?? []}>
             <defs>
@@ -79,8 +76,8 @@ const TokenTransferVolume = () => {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </ChartCardBody>
-    </ChartCard>
+      </CardBody>
+    </Card>
   );
 };
 
