@@ -1,4 +1,7 @@
-import stablecoins from "@/constants/stablecoins";
+import {
+  PRIMARY_TOKEN_TYPE,
+  SECONDARY_TOKEN_TYPES,
+} from "@/constants/stablecoins";
 import env from "@/env";
 import { pick } from "remeda";
 
@@ -166,24 +169,9 @@ export const pyusd = (() => {
 })();
 
 export const getStablecoins = async () => {
-  const result = await getQuote([
-    "USDT",
-    "USDC",
-    "USDS",
-    "DAI",
-    "PYUSD",
-    "PAXG",
-    "TUSD",
-    "RLUSD",
-    "USDD",
-    "USDG",
-    "UST",
-    "EURT",
-    "EURR",
-    "USDQ",
-    "USDR",
-    "EURQ",
-  ]);
+  const tokens = [PRIMARY_TOKEN_TYPE, ...SECONDARY_TOKEN_TYPES];
+  const symbols = tokens.map((tk) => tk.getSymbol());
+  const result = await getQuote(symbols);
 
   if (!result.success) return result;
   const { data } = result;
@@ -206,5 +194,3 @@ export const getStablecoins = async () => {
     data: coins,
   };
 };
-
-export const getTopStablecoins = async () => stablecoins;

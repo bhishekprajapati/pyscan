@@ -31,7 +31,7 @@ const SendersLeaderboard = () => {
 
   return (
     <div className="overflow-hidden rounded-xl bg-primary-100 bg-opacity-[0.04]">
-      <h2 className="flex justify-between p-4 text-lg">
+      <h2 className="flex justify-between p-4">
         <FMono>
           Senders Leaderboard{" "}
           <span className="text-default-400"> (🔥 Last 24 Hours)</span>
@@ -62,7 +62,7 @@ const SendersLeaderboard = () => {
               </TableCell>
               <TableCell>
                 <AddressLink address={account.address}>
-                  <TextTruncate>
+                  <TextTruncate className="max-w-56">
                     <FMono>{account.address}</FMono>
                   </TextTruncate>
                 </AddressLink>

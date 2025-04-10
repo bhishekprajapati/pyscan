@@ -30,7 +30,7 @@ const ReceiversLeaderboard = () => {
 
   return (
     <div className="overflow-hidden rounded-xl bg-primary-100 bg-opacity-[0.04]">
-      <div className="flex justify-between p-4 text-lg">
+      <div className="flex justify-between p-4">
         <h2>
           <FMono>
             Receivers Leaderboard{" "}
@@ -63,7 +63,7 @@ const ReceiversLeaderboard = () => {
               </TableCell>
               <TableCell>
                 <AddressLink address={account.address}>
-                  <TextTruncate>
+                  <TextTruncate className="max-w-56">
                     <FMono>{account.address}</FMono>
                   </TextTruncate>
                 </AddressLink>

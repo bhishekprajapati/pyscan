@@ -45,7 +45,7 @@ export const ChartCardHeading: FC<FMonoProps> = ({
   ...rest
 }) => (
   <FMono
-    className={cn("inline-block text-lg dark:text-default-600", className)}
+    className={cn("inline-block dark:text-default-600", className)}
     {...rest}
   >
     {children}
