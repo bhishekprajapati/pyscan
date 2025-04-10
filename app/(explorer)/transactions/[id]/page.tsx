@@ -1,17 +1,17 @@
 export const dynamic = "force-dynamic";
 
-import { BlockLink } from "@/components/links";
+import { WeiToGwei } from "@/components/eth";
+import { LogsJsonView } from "@/components/json-view";
+import { AddressLink, BlockLink, TransactionLink } from "@/components/links";
 import { Tabs } from "@/components/tabs";
+import { FMono } from "@/components/text";
 import Timestamp from "@/components/timestamp";
 import LinkButton from "@/components/ui/link-button";
 import ObjectKeys from "@/components/ui/object-keys";
-import { LogsJsonView } from "@/components/json-view";
 import ethereum from "@/lib/ethereum";
-
 import { Chip, Code, Textarea, Tooltip } from "@heroui/react";
 import { Check, X } from "lucide-react";
 import { Hash } from "viem";
-import { FMono } from "@/components/text";
 
 type Transaction = Extract<
   Awaited<ReturnType<typeof ethereum.mainnet.getTransaction>>,
@@ -34,7 +34,13 @@ const Overview = ({ tx }: { tx: Transaction }) => {
               label: "Transaction Hash",
               helpText:
                 "A TxHash or transaction hash is a unique 66-character identifier that is generated whenever a transaction is executed.",
-              renderValue: ({ hash }) => <FMono>{hash}</FMono>,
+              renderValue: ({ hash }) => (
+                <FMono>
+                  <TransactionLink hash={hash} dataId={false}>
+                    {hash}
+                  </TransactionLink>
+                </FMono>
+              ),
             },
             {
               label: "status",
@@ -95,13 +101,27 @@ const Overview = ({ tx }: { tx: Transaction }) => {
             {
               label: "From",
               helpText: "The sending party of the transaction.",
-              renderValue: ({ from }) => <FMono>{from}</FMono>,
+              renderValue: ({ from }) => (
+                <FMono>
+                  <AddressLink address={from} dataId={false}>
+                    {from}
+                  </AddressLink>
+                </FMono>
+              ),
             },
             {
               label: "To",
               helpText:
                 "The receiving party of the transaction (could be a contract address).",
-              renderValue: ({ to }) => <FMono>{to}</FMono>,
+              renderValue: ({ to }) => (
+                <FMono>
+                  {to && (
+                    <AddressLink address={to} dataId={false}>
+                      {to}
+                    </AddressLink>
+                  )}
+                </FMono>
+              ),
             },
             {
               label: "Value",
@@ -113,7 +133,28 @@ const Overview = ({ tx }: { tx: Transaction }) => {
               label: "Gas Price",
               helpText:
                 "Cost per unit of gas spent for the transaction, in Ether and Gwei.",
-              renderValue: ({ gasPrice }) => gasPrice?.toString() ?? 0,
+              renderValue: ({ gasPrice }) => <WeiToGwei wei={gasPrice} />,
+            },
+            {
+              label: "Max Fee Per Gas",
+              helpText: "",
+              renderValue: ({ maxFeePerGas }) => (
+                <WeiToGwei wei={maxFeePerGas} />
+              ),
+            },
+            {
+              label: "Max Fee Per Blob Gas",
+              helpText: "",
+              renderValue: ({ maxFeePerBlobGas }) => (
+                <WeiToGwei wei={maxFeePerBlobGas} />
+              ),
+            },
+            {
+              label: "Max Priority Fee Per Gas",
+              helpText: "",
+              renderValue: ({ maxPriorityFeePerGas }) => (
+                <WeiToGwei wei={maxPriorityFeePerGas} />
+              ),
             },
           ]}
         />
