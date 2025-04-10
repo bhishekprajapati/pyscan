@@ -17,7 +17,7 @@ import {
   PyusdTokenInfo,
 } from "./_components/pyusd";
 import PyusdVolume from "./_components/pyusd-volume";
-import StablecoinDominance from "./_components/stablecoin-dominance";
+import TokenDominance from "./_components/token-dominance";
 
 /**
  * TODO: real-time update on client side
@@ -74,7 +74,7 @@ export default function Home() {
 
       <div className="sm:col-span-2 lg:col-span-3 xl:col-start-10 xl:row-span-2 xl:row-start-2">
         <ErrorBoundary fallback={<ComponentErrorFallback className="p-16" />}>
-          <StablecoinDominance />
+          <TokenDominance />
         </ErrorBoundary>
       </div>
 

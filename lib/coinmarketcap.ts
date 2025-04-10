@@ -1,9 +1,4 @@
-import {
-  PRIMARY_TOKEN_TYPE,
-  SECONDARY_TOKEN_TYPES,
-} from "@/constants/stablecoins";
 import env from "@/env";
-import { pick } from "remeda";
 
 const data = <T>(data: T) => ({
   success: true as const,
@@ -103,7 +98,7 @@ const cmc = (() => {
   };
 })();
 
-const getQuote = async <T extends string>(symbols: T[]) => {
+export const getQuote = async <T extends string>(symbols: T[]) => {
   const url = new URL("/v2/cryptocurrency/quotes/latest?symbol", BASE_URL);
   url.searchParams.set("symbol", symbols.join(","));
 
@@ -168,30 +163,3 @@ export const pyusd = (() => {
     getInfo,
   } as const;
 })();
-
-export const getStablecoins = async () => {
-  const tokens = [PRIMARY_TOKEN_TYPE, ...SECONDARY_TOKEN_TYPES];
-  const symbols = tokens.map((tk) => tk.getSymbol());
-  const result = await getQuote(symbols);
-
-  if (!result.success) return result;
-  const { data } = result;
-  const coins = Object.values(data)
-    .flat()
-    .map((coin) => ({
-      quote_currency: "USD",
-      ...pick(coin.quote.USD, [
-        "market_cap",
-        "market_cap_dominance",
-        "fully_diluted_market_cap",
-        "volume_24h",
-        "percent_change_24h",
-      ]),
-      ...pick(coin, ["id", "name", "symbol"]),
-    }));
-
-  return {
-    success: true as const,
-    data: coins,
-  };
-};

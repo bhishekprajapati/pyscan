@@ -2,37 +2,32 @@
 
 import { CardBody, Divider } from "@heroui/react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-
 import { Card, CardHeader, CardHeading, CardTimestamp } from "../ui/card";
 
-type StablecoinDominanceProps = {
+export type TokenDominanceProps = {
   data: {
-    symbol: string;
-    market_cap: number;
-    market_cap_dominance: number;
-    id: number;
-    name: string;
+    quote: {
+      marketCapInUsd: number;
+    };
+    token: {
+      name: string;
+      symbol: string;
+      logo: string;
+      color: {
+        background: string;
+        foreground: string;
+      };
+    };
   }[];
   timestamp: number;
 };
 
-const StablecoinDominanceChart: React.FC<StablecoinDominanceProps> = ({
-  data,
-  timestamp,
-}) => {
-  const tokens = data.map(({ market_cap, ...rest }) => ({
-    ...rest,
-    market_cap: Math.sqrt(Math.sqrt(market_cap)),
+const TokenDominanceChart: React.FC<TokenDominanceProps> = (props) => {
+  const { data, timestamp } = props;
+  const quotes = data.map(({ quote, token }) => ({
+    token,
+    market_cap: Math.sqrt(Math.sqrt(quote.marketCapInUsd)),
   }));
-
-  const COLORS = [
-    "#8884d8",
-    "#82ca9d",
-    "#ffc658",
-    "#ff8042",
-    "#00C49F",
-    "#FFBB28",
-  ];
 
   return (
     <Card>
@@ -49,17 +44,25 @@ const StablecoinDominanceChart: React.FC<StablecoinDominanceProps> = ({
         >
           <PieChart width={730} height={250}>
             <Pie
-              data={tokens}
+              data={quotes}
               dataKey="market_cap"
-              nameKey="name"
+              nameKey="token.name"
               cx="50%"
               cy="50%"
               outerRadius="100%"
-              fill="#8884d8"
+              stroke="none"
             >
-              {data.map((token, i) => (
-                <Cell key={token.id} fill={COLORS[i % COLORS.length]} />
-              ))}
+              {data.map((quote, i) => {
+                const { color, symbol } = quote.token;
+                return (
+                  <Cell
+                    key={symbol}
+                    fill={`${color.background}95`}
+                    stroke={color.background}
+                    strokeWidth={2}
+                  />
+                );
+              })}
             </Pie>
             <Tooltip
               separator=" "
@@ -79,4 +82,4 @@ const StablecoinDominanceChart: React.FC<StablecoinDominanceProps> = ({
   );
 };
 
-export default StablecoinDominanceChart;
+export default TokenDominanceChart;

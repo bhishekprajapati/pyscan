@@ -125,3 +125,8 @@ export const SECONDARY_TOKEN_TYPES = [
     address: "0x056Fd409E1d7A124BD7017459DFea2F387b6d5Cd",
   }),
 ];
+
+export const ALL_TOKEN_TYPES = [
+  PRIMARY_TOKEN_TYPE,
+  ...SECONDARY_TOKEN_TYPES,
+] as const;
