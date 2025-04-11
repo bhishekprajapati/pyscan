@@ -1,4 +1,4 @@
-import type { ApiFnReturnType } from "@/lib/api.sdk";
+import type { ApiFnReturnType } from "@/lib/api-sdk/fetcher";
 
 export const makeMutationFn =
   <TFn extends (...args: any[]) => ApiFnReturnType<any, any>>(apiFn: TFn) =>

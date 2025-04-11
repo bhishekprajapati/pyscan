@@ -8,12 +8,12 @@ import SqlEditor, {
   type SqlEditorProps,
 } from "@/components/sql-query/sql-editor";
 import { useMutation } from "@tanstack/react-query";
-import { client } from "@/lib/api.sdk";
+import api from "@/lib/api-sdk";
 import { makeMutationFn } from "@/utils/tanstack";
 import { useState } from "react";
 
 const useQueryExecutor = () => {
-  const fn = makeMutationFn(client.private.queries.exec);
+  const fn = makeMutationFn(api.private.queries.exec);
   const mutation = useMutation({
     mutationKey: ["queries", "exec"],
     mutationFn: fn,

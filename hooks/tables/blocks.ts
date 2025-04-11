@@ -1,7 +1,7 @@
 "use client";
 
 import { isServer, useQuery } from "@tanstack/react-query";
-import { client } from "@/lib/api.sdk";
+import api from "@/lib/api-sdk";
 
 type UseBlocksOptions = {
   limit?: "10" | "25" | "50" | "100";
@@ -12,7 +12,7 @@ export const useBlocks = (opts?: UseBlocksOptions) => {
   return useQuery({
     queryKey: ["mainnet", "blocks", limit],
     queryFn: async ({ signal }) => {
-      const res = await client.public.explorer.mainnet.getBlocks(
+      const res = await api.public.explorer.getBlocks(
         {
           limit,
         },

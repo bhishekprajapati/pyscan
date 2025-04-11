@@ -1,8 +1,7 @@
-import { Tooltip } from "@heroui/react";
-import { Circle } from "lucide-react";
+import { Chip, Tooltip } from "@heroui/react";
 
 export const RealTimeIndicator = () => (
-  <Tooltip content="⚡ Real-Time Data">
-    <Circle className="animate-pulse fill-success stroke-divider" size={8} />
-  </Tooltip>
+  <Chip variant="flat" className="rounded-md">
+    <span className="animate-pulse">⚡</span> Real-Time
+  </Chip>
 );

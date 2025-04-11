@@ -2,6 +2,27 @@ import { Abi } from "viem";
 
 export const CONTRACT_ADDRESS = "0x6c3ea9036406852006290770BEdFcAbA0e23A0e8";
 
+export const TRANSFER_EVENT = {
+  anonymous: false,
+  inputs: [
+    {
+      indexed: true,
+      internalType: "address",
+      name: "from",
+      type: "address",
+    },
+    { indexed: true, internalType: "address", name: "to", type: "address" },
+    {
+      indexed: false,
+      internalType: "uint256",
+      name: "value",
+      type: "uint256",
+    },
+  ],
+  name: "Transfer",
+  type: "event",
+} as const;
+
 export const PROXY_ABI = [
   {
     constant: false,

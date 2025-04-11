@@ -1,7 +1,7 @@
 "use client";
 
 import type { PostTransactionCountSearchQuery } from "@/app/api/public/mainnet/analytics/transactions/counts/route";
-import { client } from "@/lib/api.sdk";
+import api from "@/lib/api-sdk";
 import { isServer, useQuery } from "@tanstack/react-query";
 import { groupBy } from "remeda";
 
@@ -9,7 +9,7 @@ export const useTransactionCounts = (opts: PostTransactionCountSearchQuery) => {
   const query = useQuery({
     queryKey: ["transactions-count", opts],
     queryFn: async ({ signal }) => {
-      const result = await client.public.mainnet.analytics.getTxnCounts(opts, {
+      const result = await api.public.analytics.getTxnCounts(opts, {
         signal,
       });
       if (result.ok) return result.data;

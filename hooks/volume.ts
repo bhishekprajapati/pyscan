@@ -2,7 +2,7 @@
 
 import type { PostMintBurnSearchQuery } from "@/app/api/public/mainnet/analytics/volumes/mint-burn/route";
 import type { PostTokenTransferVolumeSearchQuery } from "@/app/api/public/mainnet/analytics/volumes/transfers/route";
-import { client } from "@/lib/api.sdk";
+import api from "@/lib/api-sdk";
 import { TokenType } from "@/lib/token";
 import { isServer, useQuery } from "@tanstack/react-query";
 
@@ -11,12 +11,9 @@ export const useMintBurnVol = (opts: PostMintBurnSearchQuery) => {
     enabled: !isServer,
     queryKey: ["mint-burn-volume", opts],
     queryFn: async ({ signal }) => {
-      const result = await client.public.mainnet.analytics.getMintBurnVol(
-        opts,
-        {
-          signal,
-        },
-      );
+      const result = await api.public.analytics.getMintBurnVol(opts, {
+        signal,
+      });
       if (result.ok) return result.data;
       throw Error(result.error.message);
     },
@@ -31,12 +28,9 @@ export const useTokenTransferVol = (
     enabled: !isServer,
     queryKey: ["token-transfer-volume", opts],
     queryFn: async ({ signal }) => {
-      const result = await client.public.mainnet.analytics.getTokenTransferVol(
-        opts,
-        {
-          signal,
-        },
-      );
+      const result = await api.public.analytics.getTokenTransferVol(opts, {
+        signal,
+      });
       if (result.ok) return result.data;
       throw Error(result.error.message);
     },
@@ -50,15 +44,14 @@ export const useSenderLeaderboard = (tokenType: TokenType<string>) => {
     enabled: !isServer,
     queryKey: ["sender-leaders", tokenType.getContractAddress()],
     queryFn: async ({ signal }) => {
-      const result =
-        await client.public.mainnet.analytics.getSenderLeaderboardVol(
-          {
-            tokenAddress: tokenType.getContractAddress(),
-          },
-          {
-            signal,
-          },
-        );
+      const result = await api.public.analytics.getSenderLeaderboardVol(
+        {
+          tokenAddress: tokenType.getContractAddress(),
+        },
+        {
+          signal,
+        },
+      );
       if (result.ok) return result.data;
       throw Error(result.error.message);
     },
@@ -81,15 +74,14 @@ export const useReceiverLeaderboard = (tokenType: TokenType<string>) => {
     enabled: !isServer,
     queryKey: ["reciever-leaders", tokenType.getContractAddress()],
     queryFn: async ({ signal }) => {
-      const result =
-        await client.public.mainnet.analytics.getRecieverLeaderboardVol(
-          {
-            tokenAddress: tokenType.getContractAddress(),
-          },
-          {
-            signal,
-          },
-        );
+      const result = await api.public.analytics.getRecieverLeaderboardVol(
+        {
+          tokenAddress: tokenType.getContractAddress(),
+        },
+        {
+          signal,
+        },
+      );
       if (result.ok) return result.data;
       throw Error(result.error.message);
     },

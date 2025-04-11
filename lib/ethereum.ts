@@ -1,16 +1,24 @@
-import { CONTRACT_ADDRESS, IMPLEMENTATION_ABI } from "@/constants/pyusd";
+import {
+  CONTRACT_ADDRESS,
+  IMPLEMENTATION_ABI,
+  TRANSFER_EVENT,
+} from "@/constants/pyusd";
 import env from "@/env";
 import { pick } from "remeda";
 import {
+  Address,
+  Block,
   createPublicClient,
   formatUnits,
-  http,
-  isAddress,
   Hash,
+  http,
+  webSocket,
   InvalidParamsRpcError,
-  Address,
+  isAddress,
+  Transaction,
 } from "viem";
 import { mainnet } from "viem/chains";
+import { BoundedStack } from "@/lib/stack";
 
 const data = <T>(data: T) => ({
   success: true as const,
@@ -43,9 +51,30 @@ export const createClient = (opts: CreateClientOption) => {
   const abi = IMPLEMENTATION_ABI;
 
   const createMainnetMethods = () => {
+    type TokenTransferData = {
+      address: string;
+      record: {
+        block_number: number;
+        block_timestamp: string;
+        transaction_hash: string;
+        event_hash: string;
+        from_address: string;
+        to_address: string;
+        quantity: string;
+        event_index: number;
+      };
+    };
+
+    const liveTokenTransferStack = new BoundedStack<TokenTransferData>(25);
+
     const client = createPublicClient({
       chain: mainnet,
       transport: http(opts.ETHEREUM_MAINNET_JSON_RPC_URL),
+    });
+
+    const ws = createPublicClient({
+      chain: mainnet,
+      transport: webSocket(opts.ETHEREUM_MAINNET_WSS_URL),
     });
 
     const getBlockInfo = async (num: bigint) => {
@@ -273,6 +302,52 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
+    // TODO: gracefully handle unsubscribe
+    ws.watchEvent({
+      address: CONTRACT_ADDRESS,
+      event: TRANSFER_EVENT,
+      onLogs: async (logs) => {
+        const logsWithBlock = (
+          await Promise.allSettled(
+            logs.map(async (log) => {
+              const result = await getBlockInfo(log.blockNumber);
+              if (!result.success) {
+                throw Error(result.err.message);
+              }
+              return {
+                log,
+                block: result.data,
+              };
+            }),
+          )
+        )
+          .filter((p) => p.status === "fulfilled")
+          .map((p) => p.value);
+
+        // WARN: type mismatch
+        // @ts-expect-error
+        const transfers: TokenTransferData[] = logsWithBlock.map(
+          ({ log, block }) => ({
+            address: log.address,
+            record: {
+              block_number: Number(log.blockNumber.toString()),
+              block_timestamp: new Date(
+                Number(block.timestamp) * 1000,
+              ).toISOString(),
+              from_address: log.args.from,
+              to_address: log.args.to,
+              quantity: log.args.value?.toString(),
+              transaction_hash: log.transactionHash,
+              event_index: log.logIndex,
+              event_hash: log.transactionHash,
+            },
+          }),
+        );
+
+        liveTokenTransferStack.push(transfers);
+      },
+    });
+
     return {
       httpClient: client,
       getName,
@@ -289,6 +364,7 @@ export const createClient = (opts: CreateClientOption) => {
       getLatestTransactions,
       getBlockTransactions,
       getGasPrice,
+      liveTokenTransferStack,
     } as const;
   };
 

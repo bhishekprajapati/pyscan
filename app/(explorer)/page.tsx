@@ -131,7 +131,7 @@ const PrimaryTokenLatestTransferTable = async (
 
   const result = await eth.getTokenTransfers(
     tokenType.getContractAddress(),
-    10,
+    25,
   );
   if (!result.success) return <ComponentErrorFallback />;
 
@@ -147,6 +147,7 @@ const PrimaryTokenLatestTransferTable = async (
       <CardHeader>
         <TokenLogo token={tokenType.toJSON()} className="me-2" />
         <CardHeading>{tokenType.getSymbol()} Token Transfers</CardHeading>
+        <span className="ms-auto" />
         <RealTimeIndicator />
       </CardHeader>
       <Divider />
@@ -195,7 +196,6 @@ const LatestBlocks = async () => {
     <Card>
       <CardHeader>
         <CardHeading>Latest Blocks</CardHeading>
-        <RealTimeIndicator />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
@@ -229,7 +229,6 @@ const LatestTransactions = async () => {
     <Card>
       <CardHeader>
         <CardHeading>Latest Transactions</CardHeading>
-        <RealTimeIndicator />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

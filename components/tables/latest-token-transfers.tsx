@@ -17,6 +17,8 @@ import { AddressLink } from "../links";
 import { FMono, TextTruncate } from "../text";
 import Timestamp from "../timestamp";
 import { col, tableClassName, tableClassNames } from "../ui/table";
+import { useLatestTokenTransfer } from "@/hooks/explorer/transactions";
+import { useEffect, useState } from "react";
 
 const columns = [
   col("From", "from"),
@@ -48,6 +50,20 @@ const LatestTokenTransferTable: React.FC<Props> = ({
   tokenData,
 }) => {
   const token = new TokenType(tokenData);
+  const latest = useLatestTokenTransfer(token.getContractAddress());
+  const [transfers, setTransfers] = useState(data);
+  const MAX_COUNT = data.length;
+
+  useEffect(() => {
+    if (latest.query.data === undefined) return;
+    setTransfers((d) => {
+      // @ts-expect-error ...
+      const transfers = [...latest.query.data, ...d];
+      return transfers.length > MAX_COUNT
+        ? transfers.slice(0, MAX_COUNT)
+        : transfers;
+    });
+  }, [latest.query.data]);
 
   return (
     <Table
@@ -60,10 +76,15 @@ const LatestTokenTransferTable: React.FC<Props> = ({
         {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
       </TableHeader>
       <TableBody>
-        {data.map((txn) => (
+        {transfers.map((txn) => (
           <TableRow
             className="group"
-            key={txn.transaction_hash + txn.event_index}
+            key={
+              txn.transaction_hash +
+              txn.event_index +
+              txn.quantity +
+              txn.block_timestamp.toString()
+            }
           >
             <TableCell>
               <div className="flex items-center gap-2">
@@ -73,10 +94,7 @@ const LatestTokenTransferTable: React.FC<Props> = ({
                     <FMono>{txn.from_address}</FMono>
                   </TextTruncate>
                 </AddressLink>
-                <CopyButton
-                  className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
-                  text={txn.from_address}
-                />
+                <CopyButton text={txn.from_address} />
               </div>
             </TableCell>
             <TableCell>
@@ -91,16 +109,13 @@ const LatestTokenTransferTable: React.FC<Props> = ({
                     <FMono>{txn.to_address}</FMono>
                   </TextTruncate>
                 </AddressLink>
-                <CopyButton
-                  className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
-                  text={txn.from_address}
-                />
+                <CopyButton text={txn.from_address} />
               </div>
             </TableCell>
             <TableCell>
               <div className="text-sm">
                 <Timestamp
-                  stamp={txn.block_timestamp}
+                  stamp={txn.block_timestamp.toString()}
                   icon={false}
                   string={false}
                 />
