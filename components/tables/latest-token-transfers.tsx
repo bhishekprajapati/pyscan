@@ -18,7 +18,7 @@ import { FMono, TextTruncate } from "../text";
 import Timestamp from "../timestamp";
 import { col, tableClassName, tableClassNames } from "../ui/table";
 import { useLatestTokenTransfer } from "@/hooks/explorer/transactions";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const columns = [
   col("From", "from"),
@@ -65,6 +65,13 @@ const LatestTokenTransferTable: React.FC<Props> = ({
     });
   }, [latest.query.data]);
 
+  // Quick fix: to duplicate key
+  // I'm not proud of this since table is small and update frequency is less
+  const txns = useMemo(
+    () => transfers.map((t) => ({ key: crypto.randomUUID(), ...t })),
+    [transfers],
+  );
+
   return (
     <Table
       aria-label={`latest ${token.getName()} token transfers`}
@@ -76,16 +83,8 @@ const LatestTokenTransferTable: React.FC<Props> = ({
         {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
       </TableHeader>
       <TableBody>
-        {transfers.map((txn) => (
-          <TableRow
-            className="group"
-            key={
-              txn.transaction_hash +
-              txn.event_index +
-              txn.quantity +
-              txn.block_timestamp.toString()
-            }
-          >
+        {txns.map((txn) => (
+          <TableRow className="group" key={txn.key}>
             <TableCell>
               <div className="flex items-center gap-2">
                 <BoringAvatar name={txn.from_address} size={24} />
