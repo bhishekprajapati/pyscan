@@ -1,7 +1,6 @@
-import { pick } from "remeda";
-
-import ethereum from "@/lib/ethereum";
 import BlockTransactionsTable from "@/components/tables/block-transactions";
+import ethereum from "@/lib/ethereum";
+import { pick } from "remeda";
 
 export const BlockTransactionsPage = async ({
   params,
@@ -19,7 +18,7 @@ export const BlockTransactionsPage = async ({
     fee: BigInt(0),
   }));
 
-  return <BlockTransactionsTable data={data} />;
+  return <BlockTransactionsTable block={id} data={data} />;
 };
 
 export default BlockTransactionsPage;
