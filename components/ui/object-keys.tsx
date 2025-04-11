@@ -16,7 +16,7 @@ type ObjectKeysProps<TData> = {
 function ObjectKeys<T>(props: ObjectKeysProps<T>) {
   const { data, entries } = props;
   return (
-    <ul className="rounded-2xl bg-default p-4 [&>*:not(:last-child)]:mb-4">
+    <ul className="rounded-2xl bg-[#090909] p-4 [&>*:not(:last-child)]:mb-4">
       {entries.map(
         ({ label, helpText, renderValue, shouldRender = () => true }) =>
           shouldRender(data) && (
