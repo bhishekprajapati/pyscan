@@ -57,7 +57,7 @@ const BlockTransactionsTable = ({
   const paginator = usePaginator({
     data,
     defaultPage: 1,
-    defaultPageSize: 25,
+    defaultPageSize: 10,
     pageSizes: [10, 25, 50, 100],
   });
 
@@ -93,7 +93,8 @@ const BlockTransactionsTable = ({
               className="overflow-x-auto bg-default"
               classNames={{
                 th: "bg-transparent border-b border-b-divider text-sm",
-                tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",
+                tbody:
+                  "[&>tr:nth-child(2n+1)]:bg-primary [&>tr:nth-child(2n+1)]:bg-opacity-[0.01]",
                 thead: "py-8",
               }}
               removeWrapper
@@ -116,7 +117,7 @@ const BlockTransactionsTable = ({
                           </TransactionLink>
                         </TextTruncate>
                       </FMono>
-                      <CopyButton value={tx.hash} />
+                      <CopyButton text={tx.hash} />
                     </TableCell>
                     {/* <TableCell>{tx.method}</TableCell> */}
                     <TableCell>{tx.blockNumber}</TableCell>
@@ -129,7 +130,7 @@ const BlockTransactionsTable = ({
                           <AddressLink address={tx.from}>{tx.from}</AddressLink>
                         </TextTruncate>
                       </FMono>
-                      <CopyButton value={tx.from} />
+                      <CopyButton text={tx.from} />
                     </TableCell>
                     <TableCell>
                       {tx.to && (
@@ -139,7 +140,7 @@ const BlockTransactionsTable = ({
                               <AddressLink address={tx.to}>{tx.to}</AddressLink>
                             </TextTruncate>
                           </FMono>
-                          <CopyButton value={tx.to} />
+                          <CopyButton text={tx.to} />
                         </>
                       )}
                     </TableCell>
