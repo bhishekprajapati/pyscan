@@ -302,51 +302,54 @@ export const createClient = (opts: CreateClientOption) => {
       }
     };
 
-    // TODO: gracefully handle unsubscribe
-    ws.watchEvent({
-      address: CONTRACT_ADDRESS,
-      event: TRANSFER_EVENT,
-      onLogs: async (logs) => {
-        const logsWithBlock = (
-          await Promise.allSettled(
-            logs.map(async (log) => {
-              const result = await getBlockInfo(log.blockNumber);
-              if (!result.success) {
-                throw Error(result.err.message);
-              }
-              return {
-                log,
-                block: result.data,
-              };
-            }),
+    if (typeof process !== "undefined") {
+      const unwatch = ws.watchEvent({
+        address: CONTRACT_ADDRESS,
+        event: TRANSFER_EVENT,
+        onLogs: async (logs) => {
+          const logsWithBlock = (
+            await Promise.allSettled(
+              logs.map(async (log) => {
+                const result = await getBlockInfo(log.blockNumber);
+                if (!result.success) {
+                  throw Error(result.err.message);
+                }
+                return {
+                  log,
+                  block: result.data,
+                };
+              }),
+            )
           )
-        )
-          .filter((p) => p.status === "fulfilled")
-          .map((p) => p.value);
+            .filter((p) => p.status === "fulfilled")
+            .map((p) => p.value);
 
-        // WARN: type mismatch
-        // @ts-expect-error
-        const transfers: TokenTransferData[] = logsWithBlock.map(
-          ({ log, block }) => ({
-            address: log.address,
-            record: {
-              block_number: Number(log.blockNumber.toString()),
-              block_timestamp: new Date(
-                Number(block.timestamp) * 1000,
-              ).toISOString(),
-              from_address: log.args.from,
-              to_address: log.args.to,
-              quantity: log.args.value?.toString(),
-              transaction_hash: log.transactionHash,
-              event_index: log.logIndex,
-              event_hash: log.transactionHash,
-            },
-          }),
-        );
+          // WARN: type mismatch
+          // @ts-expect-error
+          const transfers: TokenTransferData[] = logsWithBlock.map(
+            ({ log, block }) => ({
+              address: log.address,
+              record: {
+                block_number: Number(log.blockNumber.toString()),
+                block_timestamp: new Date(
+                  Number(block.timestamp) * 1000,
+                ).toISOString(),
+                from_address: log.args.from,
+                to_address: log.args.to,
+                quantity: log.args.value?.toString(),
+                transaction_hash: log.transactionHash,
+                event_index: log.logIndex,
+                event_hash: log.transactionHash,
+              },
+            }),
+          );
 
-        liveTokenTransferStack.push(transfers);
-      },
-    });
+          liveTokenTransferStack.push(transfers);
+        },
+      });
+      process.on("SIGINT", unwatch);
+      process.on("SIGTERM", unwatch);
+    }
 
     return {
       httpClient: client,
