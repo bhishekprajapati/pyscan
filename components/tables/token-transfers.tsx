@@ -9,10 +9,10 @@ import {
   TableCell,
 } from "@heroui/table";
 import TimeAgo from "react-timeago";
-import { ErrorBoundary } from "react-error-boundary";
-
 import { FMono, TextClipboardCopy, TextTruncate } from "../text";
 import { useTransfers } from "@/hooks/tables/transfers";
+import { SerializedTokenData, TokenType } from "@/lib/token";
+import { tableClassName, tableClassNames } from "../ui/table";
 
 const columns = [
   { name: "Transaction Hash", uid: "transaction_hash" },
@@ -23,19 +23,22 @@ const columns = [
   { name: "Amount", uid: "quantity" },
 ];
 
-const _Table = () => {
+type TokenTransferTableProps = {
+  tokenData: SerializedTokenData;
+};
+
+const TokenTransferTable: React.FC<TokenTransferTableProps> = ({
+  tokenData,
+}) => {
+  const token = new TokenType(tokenData);
   const query = useTransfers();
   const data = query.data ?? [];
 
   return (
     <Table
-      aria-label="pyusd transfers table"
-      className="overflow-x-auto bg-default"
-      classNames={{
-        th: "bg-transparent border-b border-b-divider text-sm",
-        tbody: "[&>tr:nth-child(2n+1)]:bg-background/40",
-        thead: "py-8",
-      }}
+      aria-label={`${token.getSymbol()} transfers table`}
+      className={tableClassName}
+      classNames={tableClassNames}
       removeWrapper
     >
       <TableHeader columns={columns}>
@@ -72,10 +75,4 @@ const _Table = () => {
   );
 };
 
-const TransfersTable = () => (
-  <ErrorBoundary fallback={<>error occured</>}>
-    <_Table />
-  </ErrorBoundary>
-);
-
-export default TransfersTable;
+export default TokenTransferTable;

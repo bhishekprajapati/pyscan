@@ -162,7 +162,14 @@ const PrimaryTokenLatestTransferTable = async (
       </CardBody>
       <Divider />
       <CardFooter>
-        <LinkButton href="/pyusd-transfers" variant="light" className="group">
+        <LinkButton
+          // @ts-expect-error dynamic
+          href={
+            `/transactions/tokens/${tokenType.getContractAddress()}` as string
+          }
+          variant="light"
+          className="group"
+        >
           <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
             View All {tokenType.getSymbol()} Transfers
           </span>
