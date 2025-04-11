@@ -1,7 +1,7 @@
 "use client";
 
 import { usePaginator } from "@/hooks/table";
-import { Button, Divider } from "@heroui/react";
+import { Divider } from "@heroui/react";
 import {
   Table,
   TableBody,
@@ -10,8 +10,10 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/table";
+import { Download } from "lucide-react";
 import TimeAgo from "react-timeago";
 import CopyButton from "../copy-button";
+import DownloadButton from "../download-button";
 import { WeiToEther } from "../eth";
 import { AddressLink, BlockLink, TransactionLink } from "../links";
 import { FMono, TextTruncate } from "../text";
@@ -23,8 +25,7 @@ import {
   CardHeading,
 } from "../ui/card";
 import { Paginator } from "../ui/paginator";
-import { Download } from "lucide-react";
-import DownloadButton from "../download-button";
+import { col, tableClassName, tableClassNames } from "../ui/table";
 
 type TRowData = {
   hash: string;
@@ -38,13 +39,13 @@ type TRowData = {
 };
 
 const columns = [
-  { name: "Transaction Hash", uid: "hash" },
+  col("Transaction Hash", "hash"),
   // { name: "Method", uid: "method" },
-  { name: "Block", uid: "blockNumber" },
-  { name: "Age", uid: "age" },
-  { name: "From", uid: "from" },
-  { name: "To", uid: "to" },
-  { name: "Amount", uid: "amount" },
+  col("Block", "blockNumber"),
+  col("Age", "age"),
+  col("From", "from"),
+  col("To", "to"),
+  col("Amount", "amount"),
   // { name: "Txn Fee", uid: "fee" },
 ];
 
@@ -90,13 +91,8 @@ const BlockTransactionsTable = ({
           <CardBody className="p-0">
             <Table
               aria-label="eth blocks table"
-              className="overflow-x-auto bg-default"
-              classNames={{
-                th: "bg-transparent border-b border-b-divider text-sm",
-                tbody:
-                  "[&>tr:nth-child(2n+1)]:bg-primary [&>tr:nth-child(2n+1)]:bg-opacity-[0.01]",
-                thead: "py-8",
-              }}
+              className={tableClassName}
+              classNames={tableClassNames}
               removeWrapper
             >
               <TableHeader columns={columns}>

@@ -19,7 +19,9 @@ type TokenTypeData<T> = {
   address: string;
 };
 
-export class TokenType<T extends string> {
+export type SerializedTokenData = TokenTypeData<string>;
+
+export class TokenType<T extends string = string> {
   constructor(private config: TokenTypeData<T>) {
     // TODO: add runtime checks for invalid values
   }
@@ -50,5 +52,26 @@ export class TokenType<T extends string> {
 
   getLogo() {
     return this.config.logo;
+  }
+
+  getSubunits() {
+    return this.config.subunits;
+  }
+
+  toJSON(): TokenTypeData<string> {
+    return {
+      name: this.config.name,
+      symbol: this.config.symbol,
+      logo: this.config.logo,
+      colors: {
+        dark: this.getColors("dark"),
+        light: this.getColors("light"),
+      },
+      subunits: this.config.subunits,
+      /**
+       * Contract Address
+       */
+      address: this.getContractAddress(),
+    };
   }
 }

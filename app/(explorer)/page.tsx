@@ -6,25 +6,33 @@ import TokenDominanceChart, {
 import CopyButton from "@/components/copy-button";
 import { ComponentErrorFallback } from "@/components/errors";
 import { SuspendedComponentFallback } from "@/components/fallback";
+import { RealTimeIndicator } from "@/components/indicator";
+import LatestTokenTransferTable from "@/components/tables/latest-token-transfers";
 import { FMono, TextTruncate } from "@/components/text";
-import { Card, CardBody } from "@/components/ui/card";
+import { TokenLogo } from "@/components/token";
+import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
+import LinkButton from "@/components/ui/link-button";
 
 import { ALL_TOKEN_TYPES, PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
+
+import bigquery from "@/lib/bigquery";
 import { getQuote } from "@/lib/coinmarketcap";
+import ethereum from "@/lib/ethereum";
 import { TokenType } from "@/lib/token";
 
-import { Chip } from "@heroui/react";
+import { CardFooter, Chip, Divider } from "@heroui/react";
+import { ArrowRight } from "lucide-react";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+
 import GasTrendChart from "./_components/gas-trend";
-import {
-  LatestBlocks,
-  LatestPyusdTransfers,
-  LatestTransactions,
-} from "./_components/latest";
 import NetworkCongestion from "./_components/network-congestion";
 import PyusdVolume from "./_components/pyusd-volume";
+import LatestBlockTable from "@/components/tables/latest-blocks";
+import LatestTransactionTable from "@/components/tables/latest-transactions";
+
+const eth = bigquery.ethereum.mainnet;
 
 type PrimaryTokenSupplyProps = { tokenType: TokenType<string> };
 const PrimaryTokenSupply = async (props: PrimaryTokenSupplyProps) => {
@@ -35,7 +43,7 @@ const PrimaryTokenSupply = async (props: PrimaryTokenSupplyProps) => {
         <div>
           <h3 className="text-foreground-500">Max Total Supply</h3>
           <p className="mb-4">
-            <FMono>672,119,685.918257</FMono> PYUSD
+            <FMono>672,119,685.918257</FMono> {tokenType.getSymbol()}
           </p>
           <h3 className="text-foreground-500">OnChain Market Cap</h3>
           <p className="mb-4">
@@ -89,7 +97,7 @@ const PrimaryTokenInfo = (props: PrimaryTokenInfoProps) => {
             </TextTruncate>
             <CopyButton
               value={address}
-              tooltipText="Copy PYUSD contract address"
+              tooltipText={`Copy ${tokenType.getSymbol()} contract address`}
             />
           </p>
           <Chip className="me-4" variant="dot" color="primary">
@@ -109,9 +117,132 @@ const TokenDominance = async () => {
   return <TokenDominanceChart {...result} />;
 };
 
+type PrimaryTokenLatestTransferTableProps = {
+  tokenType: TokenType<string>;
+};
+
 /**
  * TODO: real-time update on client side
  */
+const PrimaryTokenLatestTransferTable = async (
+  props: PrimaryTokenLatestTransferTableProps,
+) => {
+  const { tokenType } = props;
+
+  const result = await eth.getTokenTransfers(
+    tokenType.getContractAddress(),
+    10,
+  );
+  if (!result.success) return <ComponentErrorFallback />;
+
+  const txns = result.data;
+  const quoteResult = await getQuote([tokenType.getSymbol()]);
+  const price = quoteResult.success
+    ? quoteResult.data[tokenType.getSymbol()]["0"].quote.USD.price
+    : undefined;
+
+  // TODO: switch data source to rpc provider
+  return (
+    <Card>
+      <CardHeader>
+        <TokenLogo token={tokenType.toJSON()} className="me-2" />
+        <CardHeading>{tokenType.getSymbol()} Token Transfers</CardHeading>
+        <RealTimeIndicator />
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
+        <LatestTokenTransferTable
+          tokenData={tokenType.toJSON()}
+          data={txns.map(({ block_timestamp, ...txn }) => ({
+            block_timestamp: block_timestamp.value,
+            ...txn,
+          }))}
+          price={price}
+        />
+      </CardBody>
+      <Divider />
+      <CardFooter>
+        <LinkButton href="/pyusd-transfers" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
+            View All {tokenType.getSymbol()} Transfers
+          </span>
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
+        </LinkButton>
+      </CardFooter>
+    </Card>
+  );
+};
+
+/**
+ * TODO: real-time update on client side
+ */
+const LatestBlocks = async () => {
+  const results = await ethereum.mainnet.getLatestBlocks();
+  if (!results.success) return <>errro occured</>;
+  const blocks = results.data;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardHeading>Latest Blocks</CardHeading>
+        <RealTimeIndicator />
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
+        <LatestBlockTable blocks={blocks} />
+      </CardBody>
+      <Divider />
+      <CardFooter>
+        <LinkButton href="/blocks" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
+            View All Blocks
+          </span>
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
+        </LinkButton>
+      </CardFooter>
+    </Card>
+  );
+};
+
+/**
+ * TODO: real-time update on client side
+ */
+const LatestTransactions = async () => {
+  const results = await ethereum.mainnet.getLatestTransactions();
+  if (!results.success) return <>errro occured</>;
+  const { txns, timestamp } = results.data;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardHeading>Latest Transactions</CardHeading>
+        <RealTimeIndicator />
+      </CardHeader>
+      <Divider />
+      <CardBody className="p-0">
+        <LatestTransactionTable txns={txns} blockTimestamp={timestamp} />
+      </CardBody>
+      <Divider />
+      <CardFooter>
+        <LinkButton href="/transactions" variant="light" className="group">
+          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
+            View All Transactions
+          </span>
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-secondary"
+          />
+        </LinkButton>
+      </CardFooter>
+    </Card>
+  );
+};
 
 export default function Home() {
   return (
@@ -157,14 +288,18 @@ export default function Home() {
           <Suspense
             fallback={<SuspendedComponentFallback className="h-full" />}
           >
-            <LatestPyusdTransfers />
+            <PrimaryTokenLatestTransferTable tokenType={PRIMARY_TOKEN_TYPE} />
           </Suspense>
         </ErrorBoundary>
       </div>
 
       <div className="sm:col-span-2 lg:col-span-3 xl:col-start-10 xl:row-span-2 xl:row-start-2">
         <ErrorBoundary fallback={<ComponentErrorFallback className="p-16" />}>
-          <TokenDominance />
+          <Suspense
+            fallback={<SuspendedComponentFallback className="h-full" />}
+          >
+            <TokenDominance />
+          </Suspense>
         </ErrorBoundary>
       </div>
 
@@ -172,7 +307,9 @@ export default function Home() {
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense
+            fallback={<SuspendedComponentFallback className="h-[59rem]" />}
+          >
             <LatestBlocks />
           </Suspense>
         </ErrorBoundary>
