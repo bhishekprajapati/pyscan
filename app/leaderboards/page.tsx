@@ -50,7 +50,7 @@ export default function leaderboards() {
     <div className="m-4 grid auto-rows-auto gap-4 lg:grid-cols-12">
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <LeaderBoard
               fetcher={getCachedTopHoldersByTokenAddress}
               heading="Top Holders"
@@ -61,7 +61,7 @@ export default function leaderboards() {
 
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <LeaderBoard
               fetcher={getCachedTopBurnersByTokenAddress}
               heading="Top Burners"
@@ -72,7 +72,7 @@ export default function leaderboards() {
 
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <LeaderBoard
               fetcher={getCachedTopReceiversByTokenAddress}
               heading="Top Receivers"
@@ -83,7 +83,7 @@ export default function leaderboards() {
 
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-64" />}>
             <LeaderBoard
               fetcher={getCachedTopSendersByTokenAddress}
               heading="Top Senders"
