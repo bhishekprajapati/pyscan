@@ -4,8 +4,8 @@ import TokenTransferVolume from "@/components/charts/volumes/token-value";
 import { ComponentErrorFallback } from "@/components/errors";
 import { SuspendedComponentFallback } from "@/components/fallback";
 import TokenUsersCountTable, {
-  TokenUsersCountTableProps,
-} from "@/components/tables/token-users-count";
+  TokenUsersCountChartProps,
+} from "@/components/charts/token-users-count";
 import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import bigquery from "@/lib/bigquery";
 import { unstable_cacheLife } from "next/cache";
@@ -75,10 +75,10 @@ const getCachedUniqueReceiversUsers = async (address: string) => {
 
 type PrimaryTokenUsersCountProps = {
   fetcher: (tokenAddress: string) => Promise<{
-    data: TokenUsersCountTableProps["data"];
+    data: TokenUsersCountChartProps["data"];
     timestamp: string;
   }>;
-} & Pick<TokenUsersCountTableProps, "heading" | "freshness">;
+} & Pick<TokenUsersCountChartProps, "heading" | "freshness">;
 
 const PrimaryTokenUsersCount = async (props: PrimaryTokenUsersCountProps) => {
   const token = PRIMARY_TOKEN_TYPE;

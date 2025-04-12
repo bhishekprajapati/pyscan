@@ -11,7 +11,7 @@ import type { SerializedTokenData } from "@/lib/token";
 import { Divider } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 
-export type TokenUsersCountTableProps = {
+export type TokenUsersCountChartProps = {
   data: {
     date: string;
     count: number;
@@ -22,7 +22,7 @@ export type TokenUsersCountTableProps = {
   token: SerializedTokenData;
 };
 
-const TokenUsersCountTable: React.FC<TokenUsersCountTableProps> = (props) => {
+const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
   const { data, timestamp, heading, freshness, token } = props;
 
   return (
@@ -94,4 +94,4 @@ const TokenUsersCountTable: React.FC<TokenUsersCountTableProps> = (props) => {
   );
 };
 
-export default TokenUsersCountTable;
+export default TokenUsersCountChart;
