@@ -93,7 +93,7 @@ const PrimaryTokenInfo = (props: PrimaryTokenInfoProps) => {
         <div>
           <h3 className="text-foreground-500">Token Contract</h3>
           <p className="mb-4 flex items-center gap-4">
-            <TextTruncate className="w-[90%]">
+            <TextTruncate className="w-[75%]">
               <FMono>{address}</FMono>
             </TextTruncate>
             <CopyButton
@@ -197,7 +197,9 @@ const LatestBlocks = async () => {
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
-        <LatestBlockTable blocks={blocks} />
+        <div className="overflow-auto">
+          <LatestBlockTable blocks={blocks} />
+        </div>
       </CardBody>
       <Divider />
       <CardFooter>
@@ -259,7 +261,7 @@ export default function Home() {
         <PrimaryTokenHolderInfo tokenType={PRIMARY_TOKEN_TYPE} />
       </div>
 
-      <div className="h-full lg:col-span-4">
+      <div className="h-full overflow-x-auto lg:col-span-4">
         <PrimaryTokenInfo tokenType={PRIMARY_TOKEN_TYPE} />
       </div>
 
@@ -307,7 +309,7 @@ export default function Home() {
         </ErrorBoundary>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-5">
+      <div className="sm:col-span-2 lg:col-span-12">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >
@@ -319,7 +321,7 @@ export default function Home() {
         </ErrorBoundary>
       </div>
 
-      <div className="sm:col-span-2 lg:col-span-7">
+      <div className="overflow-hidden sm:col-span-2 lg:col-span-12">
         <ErrorBoundary
           fallback={<ComponentErrorFallback className="h-[59rem]" />}
         >

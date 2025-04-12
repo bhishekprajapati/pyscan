@@ -11,9 +11,9 @@ import {
 import { Box } from "lucide-react";
 import type { Address, GetEnsNameReturnType } from "viem";
 import { AddressLink, BlockLink, BlockTransactionsLink } from "../links";
-import { FMono } from "../text";
+import { FMono, TextTruncate } from "../text";
 import Timestamp from "../timestamp";
-import { col, tableClassName, tableClassNames } from "../ui/table";
+import { col, tableClassNames } from "../ui/table";
 
 const columns = [
   col("", "icon"),
@@ -35,8 +35,7 @@ type Props = {
 const LatestBlockTable: React.FC<Props> = ({ blocks }) => {
   return (
     <Table
-      aria-label={`latest blocks`}
-      className={tableClassName}
+      aria-label="latest blocks"
       classNames={tableClassNames}
       removeWrapper
     >
@@ -49,14 +48,10 @@ const LatestBlockTable: React.FC<Props> = ({ blocks }) => {
       </TableHeader>
       <TableBody>
         {blocks.map((block) => (
-          <TableRow className="group" key={block.number.toString()}>
+          <TableRow className="" key={block.number.toString()}>
             <TableCell>
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300">
-                <Box
-                  size={24}
-                  strokeWidth={1.5}
-                  className="group-hover:text-primary"
-                />
+                <Box size={24} strokeWidth={1.5} />
               </div>
             </TableCell>
             <TableCell>
@@ -77,11 +72,13 @@ const LatestBlockTable: React.FC<Props> = ({ blocks }) => {
             </TableCell>
             <TableCell>
               <div>
-                <div>
-                  Miner{" "}
-                  <AddressLink address={block.miner}>
-                    {block.ensName ? block.ensName : block.miner}
-                  </AddressLink>
+                <div className="flex items-center gap-1">
+                  Miner
+                  <TextTruncate className="w-16 sm:w-24 md:w-40 lg:w-full">
+                    <AddressLink address={block.miner}>
+                      {block.ensName ? block.ensName : block.miner}
+                    </AddressLink>
+                  </TextTruncate>
                 </div>
                 <BlockTransactionsLink number={block.number}>
                   {block.transactionCount}

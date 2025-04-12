@@ -28,7 +28,7 @@ const ProfileMenu = ({ children }: { children: React.ReactNode }) => (
 );
 
 export const RenderUserAvatar = () => (
-  <div className="me-4">
+  <div className="me-4 hidden md:block">
     <SignedInClientOnly>
       {({ user }) => {
         if (user?.image)

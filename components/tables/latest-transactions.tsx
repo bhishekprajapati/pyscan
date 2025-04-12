@@ -38,77 +38,72 @@ type Props = {
 const LatestTransactionTable: React.FC<Props> = ({ txns, blockTimestamp }) => {
   return (
     <Table
-      aria-label={`latest blocks`}
+      as="div"
+      aria-label="latest transactions"
       className={tableClassName}
       classNames={tableClassNames}
       removeWrapper
     >
-      <TableHeader columns={columns}>
+      <TableHeader as="div" columns={columns}>
         {(col) => (
-          <TableColumn className="hidden" key={col.uid}>
+          <TableColumn as="div" className="hidden" key={col.uid}>
             <></>
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody>
+      <TableBody as="div">
         {txns.map((txn) => (
-          <TableRow
-            className="group"
-            key={txn.hash + txn.transactionIndex + txn.nonce}
-          >
-            <TableCell>
-              <div className="flex-shrink-0">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background !text-gray-300">
-                  <ReceiptText
-                    size={20}
-                    strokeWidth={1.5}
-                    className="group-hover:text-primary"
-                  />
-                </div>
+          <TableRow as="div" key={txn.hash + txn.transactionIndex + txn.nonce}>
+            <TableCell as="div">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-default !text-gray-300">
+                <ReceiptText size={20} strokeWidth={1.5} />
               </div>
             </TableCell>
-            <TableCell>
-              <div>
+            <TableCell as="div">
+              <div className="flex items-center gap-2">
                 <TransactionLink hash={txn.hash}>
                   <TextTruncate className="w-64">
                     <FMono>{txn.hash}</FMono>
                   </TextTruncate>
                 </TransactionLink>
-                <CopyButton
-                  className="pointer-events-none opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100"
-                  text={txn.hash}
-                />
+                <CopyButton text={txn.hash} />
               </div>
             </TableCell>
-            <TableCell>
-              <div className="me-16 text-sm">
+            <TableCell as="div">
+              <div className="me-16 min-w-max text-sm">
                 <Timestamp stamp={blockTimestamp} icon={false} string={false} />
               </div>
             </TableCell>
-            <TableCell>
-              <AddressLink address={txn.from}>
-                <FMono>{txn.from}</FMono>
-              </AddressLink>
-            </TableCell>
-            <TableCell>
-              <span className="mx-2 flex h-6 w-6 items-center justify-center rounded-full border border-secondary/15 bg-secondary/10">
-                <ArrowRight size={12} className="text-secondary" />
-              </span>
-              {txn.to && (
-                <AddressLink address={txn.to}>
-                  <FMono>{txn.to}</FMono>
+            <TableCell as="div">
+              <div>
+                <AddressLink address={txn.from}>
+                  <FMono>{txn.from}</FMono>
                 </AddressLink>
-              )}
+              </div>
             </TableCell>
-            <TableCell>
-              <Chip
-                variant="bordered"
-                className="ms-auto rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
-              >
-                <FMono>
-                  <WeiToEther wei={txn.value} />
-                </FMono>
-              </Chip>
+            <TableCell as="div">
+              <div className="flex gap-4">
+                <span className="mx-2 flex h-6 w-6 items-center justify-center rounded-full border border-secondary/15 bg-secondary/10">
+                  <ArrowRight size={12} className="text-secondary" />
+                </span>
+                {txn.to && (
+                  <AddressLink address={txn.to}>
+                    <FMono>{txn.to}</FMono>
+                  </AddressLink>
+                )}
+              </div>
+            </TableCell>
+            <TableCell as="div">
+              <div>
+                <Chip
+                  variant="bordered"
+                  className="ms-auto rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
+                >
+                  <FMono>
+                    <WeiToEther wei={txn.value} />
+                  </FMono>
+                </Chip>
+              </div>
             </TableCell>
           </TableRow>
         ))}

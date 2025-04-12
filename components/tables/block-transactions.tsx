@@ -25,7 +25,7 @@ import {
   CardHeading,
 } from "../ui/card";
 import { Paginator } from "../ui/paginator";
-import { col, tableClassName, tableClassNames } from "../ui/table";
+import { col, tableClassNames } from "../ui/table";
 
 type TRowData = {
   hash: string;
@@ -91,7 +91,6 @@ const BlockTransactionsTable = ({
           <CardBody className="p-0">
             <Table
               aria-label="eth blocks table"
-              className={tableClassName}
               classNames={tableClassNames}
               removeWrapper
             >
