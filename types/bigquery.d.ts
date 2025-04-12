@@ -1,0 +1,3 @@
+type Big = {
+  toString: () => string;
+};

@@ -8,7 +8,7 @@ export const ComponentErrorFallback: React.FC<ComponentErrorFallbackProps> = ({
 }) => (
   <div
     className={cn(
-      "flex h-full flex-col items-center justify-center gap-2 rounded-md bg-default/25 p-32 text-danger",
+      "flex h-full flex-col items-center justify-center gap-2 rounded-md bg-[#09090975] p-32 text-danger",
       className,
     )}
     {...rest}

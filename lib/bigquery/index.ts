@@ -7,7 +7,7 @@ type BigQueryPluginOptions = {
   bigQueryOptions?: BigQueryOptions;
 };
 
-const createClient = (opts: BigQueryPluginOptions = {}) => {
+export const createClient = (opts: BigQueryPluginOptions = {}) => {
   const { bigQueryOptions } = opts;
   const bigQuery = new BigQuery(bigQueryOptions);
   const handler = makeQueryHandler(bigQuery);

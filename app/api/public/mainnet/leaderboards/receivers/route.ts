@@ -1,47 +1,37 @@
-import { api, InferApiResponse } from "@/lib/api.helpers";
-import bigquery from "@/lib/bigquery";
+import { api, InferApiResponse, limiter } from "@/lib/api.helpers";
+import { getCachedTopReceiversByTokenAddress } from "@/lib/leaderboards";
+import { primaryTokenAddressSchema } from "@/lib/validator";
+import { Ratelimit } from "@upstash/ratelimit";
 import { z } from "zod";
 
-const { leaderboards } = bigquery.ethereum.mainnet;
-
-// TODO: write strict checks
 const querySchema = z.object({
-  tokenAddress: z.string(),
+  tokenAddress: primaryTokenAddressSchema,
 });
 
 export type GetRecieverLeaderboardApiResponse = InferApiResponse<typeof GET>;
 export type GetRecieverLeaderboardQuerySchema = z.infer<typeof querySchema>;
 
-export const GET = api(async (req, { data, error }) => {
-  const validation = querySchema.safeParse({
-    tokenAddress: req.nextUrl.searchParams.get("tokenAddress"),
-  });
-
-  if (!validation.success) {
-    return error(
-      {
-        name: "validation_error",
-      },
-      {
-        status: 400,
-      },
-    );
-  }
-
-  const query = validation.data;
-
-  const result = await leaderboards.getReceiverLeadersByTokenAddress(
-    query.tokenAddress,
-  );
-
-  if (result.success) {
-    return data({
-      dataset: result.data,
-      timestamp: Date.now(),
+export const GET = limiter(
+  api(async (req, { data, error }) => {
+    const validation = querySchema.safeParse({
+      tokenAddress: req.nextUrl.searchParams.get("tokenAddress"),
     });
-  }
 
-  return error({
-    name: "internal_server_error",
-  });
-});
+    if (!validation.success) {
+      return error(
+        {
+          name: "validation_error",
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const query = validation.data;
+    return data(await getCachedTopReceiversByTokenAddress(query.tokenAddress));
+  }),
+  {
+    algo: Ratelimit.slidingWindow(1, "21600s"),
+  },
+);
