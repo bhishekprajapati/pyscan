@@ -2,15 +2,15 @@ import { api, InferApiResponse } from "@/lib/api.helpers";
 import bigquery from "@/lib/bigquery";
 import { z } from "zod";
 
-const { aggregated } = bigquery.ethereum.mainnet.analytics;
+const { leaderboards } = bigquery.ethereum.mainnet;
 
 // TODO: write strict checks
 const querySchema = z.object({
   tokenAddress: z.string(),
 });
 
-export type GetSenderLeaderboardApiResponse = InferApiResponse<typeof GET>;
-export type GetSenderLeaderboardQuerySchema = z.infer<typeof querySchema>;
+export type GetRecieverLeaderboardApiResponse = InferApiResponse<typeof GET>;
+export type GetRecieverLeaderboardQuerySchema = z.infer<typeof querySchema>;
 
 export const GET = api(async (req, { data, error }) => {
   const validation = querySchema.safeParse({
@@ -30,7 +30,7 @@ export const GET = api(async (req, { data, error }) => {
 
   const query = validation.data;
 
-  const result = await aggregated.getSenderLeadersByTokenAddress(
+  const result = await leaderboards.getReceiverLeadersByTokenAddress(
     query.tokenAddress,
   );
 

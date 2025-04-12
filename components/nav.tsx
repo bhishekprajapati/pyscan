@@ -13,6 +13,9 @@ const Nav = () => (
     <li>
       <Link href="/analytics">Analytics</Link>
     </li>
+    <li>
+      <Link href="/leaderboards">🔥 Leaderboards</Link>
+    </li>
     <SignedInClientOnly>
       <li>
         <Link href="/queries">My Queries</Link>

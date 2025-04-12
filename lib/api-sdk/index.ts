@@ -11,9 +11,10 @@
  * and i couldn't find any other easier way to serialize nested object as search params
  */
 
+import { createURL } from "./fetcher";
 import { createMainnetAnalytics } from "./analytics";
 import { createMainnetExplorer } from "./explorer";
-import { createURL } from "./fetcher";
+import { createMainnetLeaderboards } from "./leaderboards";
 
 type CreateClientOptions = {
   baseUrl?: string;
@@ -28,10 +29,10 @@ function createClient(opts: CreateClientOptions = {}) {
     public: {
       explorer: createMainnetExplorer(publicBase),
       analytics: createMainnetAnalytics(publicBase),
+      leaderboards: createMainnetLeaderboards(publicBase),
     },
     private: {
       explorer: createMainnetExplorer(privateBase),
-      analytics: createMainnetAnalytics(privateBase),
     },
   };
 }

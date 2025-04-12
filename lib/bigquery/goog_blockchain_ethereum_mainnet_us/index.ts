@@ -7,6 +7,7 @@ import type { BigQueryDate, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { Address } from "viem";
 import analytics from "./analytics";
 import explorer from "./explorer";
+import leaderboards from "./leaderboards";
 import bytes from "bytes";
 
 export default function ethereumMainnet(query: QueryHandler) {
@@ -293,6 +294,7 @@ export default function ethereumMainnet(query: QueryHandler) {
   };
 
   return {
+    leaderboards: leaderboards(query),
     analytics: analytics(query),
     explorer: explorer(),
     getTransactions,

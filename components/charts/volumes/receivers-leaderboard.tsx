@@ -11,7 +11,7 @@ import {
   CardTimestamp,
 } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
-import { useReceiverLeaderboard } from "@/hooks/volume";
+import { useReceiverLeaderboard } from "@/hooks/leaderboards";
 import {
   Divider,
   Table,
@@ -38,7 +38,7 @@ const ReceiversLeaderboard = () => {
     <Card>
       <CardHeader>
         <CardHeading>Receivers Leaderboard</CardHeading>
-        <span className="text-default-400">(🔥 Last 24 Hours)</span>
+        <span className="text-default-400">(Last 24 Hours)</span>
         {timestamp && <CardTimestamp date={new Date(timestamp)} />}
       </CardHeader>
       <Divider />
