@@ -2,9 +2,7 @@ import BlockTransactionsTable from "@/components/tables/block-transactions";
 import ethereum from "@/lib/ethereum";
 import { pick } from "remeda";
 
-export const BlockTransactionsPage = async ({
-  params,
-}: PageProps<{ id: string }>) => {
+const BlockTransactionsPage = async ({ params }: PageProps<{ id: string }>) => {
   const { id } = await params;
   const result = await ethereum.mainnet.getBlockTransactions(id);
   // TODO: build error ui

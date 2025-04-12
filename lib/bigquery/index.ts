@@ -1,6 +1,7 @@
 import { BigQuery, type BigQueryOptions } from "@google-cloud/bigquery";
 import ethereumMainnet from "./goog_blockchain_ethereum_mainnet_us/index";
 import { makeQueryHandler } from "./query-handler";
+import env from "@/env";
 
 type BigQueryPluginOptions = {
   bigQueryOptions?: BigQueryOptions;
@@ -42,4 +43,13 @@ const createClient = (opts: BigQueryPluginOptions = {}) => {
   } as const;
 };
 
-export default createClient();
+const creds = JSON.parse(
+  Buffer.from(env.GOOGLE_CREDS_BASE64_1, "base64").toString(),
+);
+
+export default createClient({
+  bigQueryOptions: {
+    credentials: creds,
+    projectId: creds["projectId"],
+  },
+});

@@ -1,2 +1,2 @@
-export const TransactionsPage = () => "transactions";
+const TransactionsPage = () => <>transactions</>;
 export default TransactionsPage;

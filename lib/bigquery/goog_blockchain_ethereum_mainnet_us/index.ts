@@ -295,7 +295,7 @@ export default function ethereumMainnet(query: QueryHandler) {
 
   return {
     analytics: analytics(query),
-    explorer: explorer(query),
+    explorer: explorer(),
     getTransactions,
     getTokenTransfers,
     getTopHolders,

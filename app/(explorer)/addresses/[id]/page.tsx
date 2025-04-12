@@ -2,11 +2,6 @@ export const dynamic = "force-dynamic";
 
 import CopyButton from "@/components/copy-button";
 import { AddressLink } from "@/components/links";
-import {
-  AddressInternalTransactionTable,
-  AddressTokenTransferTable,
-  AddressTransactionTable,
-} from "@/components/tables/address";
 import { Tabs } from "@/components/tabs";
 import LinkButton from "@/components/ui/link-button";
 import ethereum, { isAddress } from "@/lib/ethereum";
@@ -108,23 +103,25 @@ const AddressPage: FC = async ({ params }) => {
 
       <div className="m-4">
         <Tabs
-          list={[
-            {
-              key: "Transactions",
-              title: "Transactions",
-              tab: <AddressTransactionTable address={id} />,
-            },
-            {
-              key: "Internal Transactions",
-              title: "Internal Transactions",
-              tab: <AddressInternalTransactionTable address={id} />,
-            },
-            {
-              key: "Token Transfers",
-              title: "Token Transfers",
-              tab: <AddressTokenTransferTable address={id} />,
-            },
-          ]}
+          list={
+            [
+              // {
+              //   key: "Transactions",
+              //   title: "Transactions",
+              //   tab: <AddressTransactionTable address={id} />,
+              // },
+              // {
+              //   key: "Internal Transactions",
+              //   title: "Internal Transactions",
+              //   tab: <AddressInternalTransactionTable address={id} />,
+              // },
+              // {
+              //   key: "Token Transfers",
+              //   title: "Token Transfers",
+              //   tab: <AddressTokenTransferTable address={id} />,
+              // },
+            ]
+          }
         />
       </div>
     </section>

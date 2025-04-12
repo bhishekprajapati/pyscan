@@ -15,6 +15,7 @@ const env = z
     UPSTASH_REDIS_REDIS_URL: z.string().min(1),
     UPSTASH_REDIS_KV_REST_API_TOKEN: z.string().min(1),
     UPSTASH_REDIS_KV_REST_API_URL: z.string().min(1),
+    GOOGLE_CREDS_BASE64_1: z.string().trim(),
   })
   .readonly()
   .parse(process.env);

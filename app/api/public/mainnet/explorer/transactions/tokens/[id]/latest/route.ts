@@ -13,7 +13,7 @@ const getLatestTransfers = (tokenAddress: string) =>
 
 export type GetLatestTokenTransferApiResponse = InferApiResponse<typeof GET>;
 export const GET = api(async (_, res, { params }) => {
-  const p = await (params as unknown as Promise<Record<string, string>>);
+  const p = await params;
   const tokenAddress = p["id"];
   if (!isPrimaryTokenAddress(tokenAddress)) {
     return res.error(

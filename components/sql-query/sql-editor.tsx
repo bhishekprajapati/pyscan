@@ -17,8 +17,8 @@ import {
 } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import { Card } from "../card";
 import CopyButton from "../copy-button";
+import { Card } from "../ui/card";
 
 const dark = createTheme({
   theme: "dark",

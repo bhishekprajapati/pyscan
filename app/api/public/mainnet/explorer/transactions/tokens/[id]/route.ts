@@ -5,7 +5,7 @@ import { isPrimaryTokenAddress } from "@/lib/validator";
 export type GetTransferApiResponse = InferApiResponse<typeof GET>;
 
 export const GET = api(async (_, res, { params }) => {
-  const tokenAddress = (params as Record<string, string>)["id"];
+  const tokenAddress = (await params)["id"];
 
   if (!isPrimaryTokenAddress(tokenAddress)) {
     return res.error({
