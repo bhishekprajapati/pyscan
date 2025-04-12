@@ -1,4 +1,4 @@
-import { BigQueryTimestamp } from "@google-cloud/bigquery";
+import { BigQueryDate, BigQueryTimestamp } from "@google-cloud/bigquery";
 import bytes from "bytes";
 import { z } from "zod";
 
@@ -422,16 +422,227 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    // const getHoldersCountByTokenAddress = async (
-    //   tokenAddress: string,
-    //   filter: Filter,
-    // ) => {
-    //   const { timeframe, limit } = filter;
-    //   const [start, end, unit] = timeseriesFilters.parsetimeframe(
-    //     timeframe,
-    //     limit,
-    //   );
-    // };
+    /** for last 30 days */
+    const getActiveUsersByTokenAddress = async (tokenAddress: string) => {
+      const sql = `
+        DECLARE tokenAddress STRING DEFAULT '${tokenAddress}';
+        DECLARE start_timestamp TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY);
+        DECLARE zero_address STRING DEFAULT '0x0000000000000000000000000000000000000000';
+        WITH recent_transfers AS (
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            from_address,
+            to_address
+          FROM
+            bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE
+            LOWER(token_address) = LOWER(tokenAddress)
+            AND block_timestamp >= start_timestamp
+        ),
+        daily_active_addresses AS (
+          SELECT activity_date AS date, from_address AS user_address
+          FROM recent_transfers
+          WHERE from_address != zero_address
+          UNION ALL
+          SELECT activity_date AS date, to_address AS user_address
+          FROM recent_transfers
+          WHERE to_address != zero_address
+        )
+        SELECT
+          date,
+          COUNT(DISTINCT user_address) AS count
+        FROM daily_active_addresses
+        GROUP BY
+          date
+        ORDER BY
+          date DESC;
+      `;
+
+      type TData = {
+        date: BigQueryDate;
+        count: number;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+      });
+
+      if (result.success) {
+        return {
+          success: result.success,
+          data: (result.data[0] as TData[]).map(({ date, count }) => ({
+            date: date.value,
+            count,
+          })),
+        };
+      }
+
+      return result;
+    };
+
+    /** for last 30 days */
+    const getNewUsersByTokenAddress = async (tokenAddress: string) => {
+      const sql = `
+        DECLARE tokenAddress STRING DEFAULT '${tokenAddress}';
+        DECLARE start_timestamp TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY);
+        DECLARE zero_address STRING DEFAULT '0x0000000000000000000000000000000000000000';
+        WITH recent_transfers AS (
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            From_address,	
+            to_address
+          FROM
+            bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE
+            LOWER(token_address) = LOWER(tokenAddress)
+            AND block_timestamp >= start_timestamp
+        ),
+        all_users_in_period AS (
+          SELECT activity_date, from_address AS wallet FROM recent_transfers WHERE from_address != zero_address
+          UNION ALL
+          SELECT activity_date, to_address AS wallet FROM recent_transfers WHERE to_address != zero_address
+        ),
+        first_seen_in_period AS (
+          SELECT
+            wallet,
+            MIN(activity_date) AS first_interaction_date_in_period
+          FROM all_users_in_period
+          GROUP BY
+            wallet
+        )
+        SELECT
+          first_interaction_date_in_period AS date,
+          COUNT(wallet) AS count
+        FROM first_seen_in_period
+        GROUP BY
+          first_interaction_date_in_period
+        ORDER BY
+          date DESC;
+
+      `;
+
+      type TData = {
+        date: BigQueryDate;
+        count: number;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+      });
+
+      if (result.success) {
+        return {
+          success: result.success,
+          data: (result.data[0] as TData[]).map(({ date, count }) => ({
+            date: date.value,
+            count,
+          })),
+        };
+      }
+
+      return result;
+    };
+
+    /** for last 30 days */
+    const getUniqueSendersByTokenAddress = async (tokenAddress: string) => {
+      const sql = `
+        DECLARE tokenAddress STRING DEFAULT '${tokenAddress}';
+        DECLARE start_timestamp TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY);
+        DECLARE zero_address STRING DEFAULT '0x0000000000000000000000000000000000000000';
+        WITH recent_senders AS (
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            from_address
+          FROM
+            bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE
+            LOWER(token_address) = LOWER(tokenAddress)
+            AND block_timestamp >= start_timestamp
+        )
+        SELECT
+          activity_date AS date,
+          COUNT(DISTINCT from_address) AS count
+        FROM recent_senders
+        GROUP BY
+          activity_date
+        ORDER BY
+          date DESC;
+      `;
+
+      type TData = {
+        date: BigQueryDate;
+        count: number;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+      });
+
+      if (result.success) {
+        return {
+          success: result.success,
+          data: (result.data[0] as TData[]).map(({ date, count }) => ({
+            date: date.value,
+            count,
+          })),
+        };
+      }
+
+      return result;
+    };
+
+    /** for last 30 days */
+    const getUniqueReceiversUsersByTokenAddress = async (
+      tokenAddress: string,
+    ) => {
+      const sql = `
+        DECLARE tokenAddress STRING DEFAULT '${tokenAddress}';
+        DECLARE start_timestamp TIMESTAMP DEFAULT TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY);
+        DECLARE zero_address STRING DEFAULT '0x0000000000000000000000000000000000000000';
+        WITH recent_receivers AS (
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            to_address
+          FROM
+            bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE
+            LOWER(token_address) = LOWER(tokenAddress)
+            AND block_timestamp >= start_timestamp  
+        )
+        SELECT
+          activity_date AS date,
+          COUNT(DISTINCT to_address) AS count
+        FROM recent_receivers
+        GROUP BY
+          activity_date
+        ORDER BY
+          date DESC;
+      `;
+
+      type TData = {
+        date: BigQueryDate;
+        count: number;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+      });
+
+      if (result.success) {
+        return {
+          success: result.success,
+          data: (result.data[0] as TData[]).map(({ date, count }) => ({
+            date: date.value,
+            count,
+          })),
+        };
+      }
+      return result;
+    };
 
     return {
       getTxnCount,
@@ -439,8 +650,11 @@ export default function analytics(query: QueryHandler) {
       getGasUsageByToAddress,
       getMintAndBurnVolumeByTokenAddress,
       getTokenTransferVolumeByTokenAddress,
-      // getHoldersCountByTokenAddress,
       getTokenTransferCountByTokenAddresses,
+      getActiveUsersByTokenAddress,
+      getNewUsersByTokenAddress,
+      getUniqueSendersByTokenAddress,
+      getUniqueReceiversUsersByTokenAddress,
     };
   })();
 
@@ -545,73 +759,9 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    /**
-     * This query analyzes incoming and outgoing PYUSD transactions
-     * for Ethereum addresses, ranks them based on total received,
-     * sent, and net activity, and identifies the most active
-     * participants in the network. Useful for detecting whales,
-     * high-frequency traders, or key liquidity providers.
-     */
-    // const getAddressActivity = () => {
-    //   const sql = `
-    //     WITH TransferEvents AS (
-    //       SELECT
-    //         transaction_hash,
-    //         block_timestamp,
-    //         LOWER(CONCAT('0x', SUBSTR(topics[1], 27, 40))) AS from_address,
-    //         LOWER(CONCAT('0x', SUBSTR(topics[2], 27, 40))) AS to_address,
-    //         SAFE_CAST(FORMAT("%f", CAST(data AS FLOAT64) / POW(10, 6)) AS FLOAT64) AS amount_pyusd
-    //       FROM
-    //         bigquery-public-data.goog_blockchain_ethereum_mainnet_us.logs
-    //       WHERE
-    //         address = '0x6c3ea9036406852006290770bedfcaba0e23a0e8' -- PYUSD Contract
-    //         AND topics[SAFE_OFFSET(0)] = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef' -- Transfer Event
-    //         AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
-    //     ),
-    //     Incoming AS (
-    //       SELECT
-    //         to_address AS address,
-    //         COUNT(*) AS incoming_transactions,
-    //         SUM(amount_pyusd) AS incoming_pyusd
-    //       FROM TransferEvents
-    //       GROUP BY to_address
-    //     ),
-    //     Outgoing AS (
-    //       SELECT
-    //         from_address AS address,
-    //         COUNT(*) AS outgoing_transactions,
-    //         SUM(amount_pyusd) AS outgoing_pyusd
-    //       FROM TransferEvents
-    //       GROUP BY from_address
-    //     )
-    //     SELECT
-    //       COALESCE(i.address, o.address) AS address,
-    //       COALESCE(i.incoming_transactions, 0) AS incoming_transactions,
-    //       COALESCE(i.incoming_pyusd, 0) AS incoming_pyusd,
-    //       COALESCE(o.outgoing_transactions, 0) AS outgoing_transactions,
-    //       COALESCE(o.outgoing_pyusd, 0) AS outgoing_pyusd,
-    //       (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) AS net_activity,
-    //       RANK() OVER (ORDER BY COALESCE(i.incoming_pyusd, 0) DESC) AS incoming_rank,
-    //       RANK() OVER (ORDER BY COALESCE(o.outgoing_pyusd, 0) DESC) AS outgoing_rank,
-    //       RANK() OVER (ORDER BY (COALESCE(i.incoming_pyusd, 0) - COALESCE(o.outgoing_pyusd, 0)) DESC) AS net_activity_rank
-    //     FROM Incoming i
-    //     FULL OUTER JOIN Outgoing o
-    //     ON i.address = o.address
-    //     ORDER BY net_activity DESC
-    //     LIMIT 10;
-    //   `;
-    // };
-
-    // const getHoldersByTokenAddress = () => {};
-
-    // const getHoldersCountByTokenAddress = () => {};
-
     return {
       getTxnCountByToAddresses,
       getTransferCountByTokenAddresses,
-      // getAddressActivity,
-      // getHoldersByTokenAddress,
-      // getHoldersCountByTokenAddress,
     };
   })();
 
