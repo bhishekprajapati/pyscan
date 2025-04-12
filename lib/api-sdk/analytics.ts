@@ -24,9 +24,11 @@ import type {
 } from "@/app/api/public/mainnet/analytics/volumes/transfers/route";
 
 export function createMainnetAnalytics(_URL: PathMakerFn) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   type GetTopHoldersParams = {};
   const getTopHolders = async (
     params: GetTopHoldersParams,
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     opts: BaseFetcherOptions = {},
   ) => {
     const url = _URL("/api/public/mainnet/analytics/top-holders");
@@ -49,9 +51,10 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   const getHolderCounts = async (opts: BaseFetcherOptions = {}) => {
     const url = _URL("/api/public/mainnet/analytics/holders/counts");
-    return fetcher<any>(url, {
+    return fetcher<unknown>(url, {
       ...opts,
     });
   };

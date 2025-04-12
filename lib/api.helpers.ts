@@ -196,6 +196,7 @@ export const auth = <R extends NextResponse<unknown>, TParams = TDefaultParams>(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type InferApiResponse<THandler extends (...args: any[]) => any> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   THandler extends (...args: any[]) => Promise<NextResponse<infer R>>
     ? R
     : never;

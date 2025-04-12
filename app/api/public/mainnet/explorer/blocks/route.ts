@@ -5,7 +5,8 @@ export type BlocksApiResponse = InferApiResponse<typeof GET>;
 
 export const GET = api(async (req, res) => {
   const eth = bigquery.ethereum.mainnet;
-  const result = await eth.getBlocks(req.nextUrl.searchParams as any);
+  // @ts-expect-error dynamic
+  const result = await eth.getBlocks(req.nextUrl.searchParams);
 
   if (!result.success) {
     return res.error({

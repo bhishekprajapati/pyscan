@@ -10,7 +10,7 @@ export const GET = api(async (req, res) => {
   const query = req.nextUrl.searchParams;
   const eth = bigquery.ethereum.mainnet;
 
-  // @ts-expect-error
+  // @ts-expect-error dynamic
   const result = await eth.getTokenTransferCount({
     address: CONTRACT_ADDRESS,
     ...query,

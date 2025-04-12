@@ -1,5 +1,6 @@
 import type { ExecuteQueryApiResponse } from "@/app/api/queries/execute/route";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getPrivateMethods = () => {
   const queries = (() => {
     const exec = async (query: string, opts: BaseOptions = {}) => {

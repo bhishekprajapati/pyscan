@@ -31,7 +31,9 @@ const CopyButton: React.FC<CopyButtonProps> = (props) => {
     copy(text);
     setShowCheck(true);
     setTimeout(() => setShowCheck(false), 2000);
-    onCopyToast && addToast(onCopyToast);
+    if (onCopyToast) {
+      addToast(onCopyToast);
+    }
   };
 
   return (

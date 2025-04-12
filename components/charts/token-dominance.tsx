@@ -52,7 +52,7 @@ const TokenDominanceChart: React.FC<TokenDominanceProps> = (props) => {
               outerRadius="100%"
               stroke="none"
             >
-              {data.map((quote, i) => {
+              {data.map((quote) => {
                 const { color, symbol } = quote.token;
                 return (
                   <Cell

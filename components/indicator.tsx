@@ -1,4 +1,4 @@
-import { Chip, Tooltip } from "@heroui/react";
+import { Chip } from "@heroui/react";
 
 export const RealTimeIndicator = () => (
   <Chip variant="flat" className="rounded-md">

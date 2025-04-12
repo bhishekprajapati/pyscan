@@ -24,3 +24,5 @@ export const useLatestTokenTransfer = (tokenAddress: string) => {
 
   return { query };
 };
+
+export const useTransactions = () => {};

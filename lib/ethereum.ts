@@ -7,7 +7,6 @@ import env from "@/env";
 import { pick } from "remeda";
 import {
   Address,
-  Block,
   createPublicClient,
   formatUnits,
   Hash,
@@ -15,7 +14,6 @@ import {
   webSocket,
   InvalidParamsRpcError,
   isAddress,
-  Transaction,
 } from "viem";
 import { mainnet } from "viem/chains";
 import { BoundedStack } from "@/lib/stack";
@@ -325,7 +323,7 @@ export const createClient = (opts: CreateClientOption) => {
             .map((p) => p.value);
 
           // WARN: type mismatch
-          // @ts-expect-error
+          // @ts-expect-error fix this later
           const transfers: TokenTransferData[] = logsWithBlock.map(
             ({ log, block }) => ({
               address: log.address,

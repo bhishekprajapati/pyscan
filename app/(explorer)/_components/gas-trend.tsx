@@ -122,7 +122,7 @@ const getCachedGasTrend = async () => {
 const GasTrendChart = async () => {
   const fetcher = devOnly(getCachedGasTrend, getGasTrendDummyData);
   const data = await fetcher();
-  // @ts-expect-error
+  // @ts-expect-error fix this
   return <GasTrend {...data} />;
 };
 

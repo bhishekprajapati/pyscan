@@ -61,6 +61,7 @@ const PrimaryTokenSupply = async (props: PrimaryTokenSupplyProps) => {
 
 type PrimaryTokenHolderInfoProps = { tokenType: TokenType<string> };
 const PrimaryTokenHolderInfo = async (props: PrimaryTokenHolderInfoProps) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { tokenType } = props;
 
   return (
