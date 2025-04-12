@@ -31,7 +31,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL("/api/public/mainnet/analytics/top-holders");
+    const url = _URL("/mainnet/analytics/top-holders");
     return fetcher<GetTopHoldersApiResponse>(url, {
       ...opts,
     });
@@ -44,7 +44,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     params: GetTransfersCountParams,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL("/api/public/mainnet/analytics/transfer-counts");
+    const url = _URL("/mainnet/analytics/transfer-counts");
     url.searchParams.set("timeframe", params.timeframe);
     return fetcher<GetTransferCountsApiResponse>(url, {
       ...opts,
@@ -53,7 +53,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   const getHolderCounts = async (opts: BaseFetcherOptions = {}) => {
-    const url = _URL("/api/public/mainnet/analytics/holders/counts");
+    const url = _URL("/mainnet/analytics/holders/counts");
     return fetcher<unknown>(url, {
       ...opts,
     });
@@ -63,7 +63,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     query: PostTransactionCountSearchQuery,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL("/api/public/mainnet/analytics/transactions/counts");
+    const url = _URL("/mainnet/analytics/transactions/counts");
     return fetcher<PostTransactionCountsApiResponse>(url, {
       method: "POST",
       body: JSON.stringify(query),
@@ -75,7 +75,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     query: PostMintBurnSearchQuery,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL("/api/public/mainnet/analytics/volumes/mint-burn");
+    const url = _URL("/mainnet/analytics/volumes/mint-burn");
     return fetcher<PostMintBurnApiResponse>(url, {
       method: "POST",
       body: JSON.stringify(query),
@@ -87,7 +87,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     query: PostTokenTransferVolumeSearchQuery,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL("/api/public/mainnet/analytics/volumes/transfers");
+    const url = _URL("/mainnet/analytics/volumes/transfers");
     return fetcher<PostTokenTransferVolumeApiResponse>(url, {
       method: "POST",
       body: JSON.stringify(query),
@@ -99,9 +99,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     query: GetRecieverLeaderboardQuerySchema,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL(
-      "/api/public/mainnet/analytics/volumes/leaderboards/receivers",
-    );
+    const url = _URL("/mainnet/analytics/volumes/leaderboards/receivers");
     url.searchParams.set("tokenAddress", query.tokenAddress);
     return fetcher<GetRecieverLeaderboardApiResponse>(url, {
       method: "GET",
@@ -113,9 +111,7 @@ export function createMainnetAnalytics(_URL: PathMakerFn) {
     query: GetSenderLeaderboardQuerySchema,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL(
-      "/api/public/mainnet/analytics/volumes/leaderboards/senders",
-    );
+    const url = _URL("/mainnet/analytics/volumes/leaderboards/senders");
     url.searchParams.set("tokenAddress", query.tokenAddress);
     return fetcher<GetSenderLeaderboardApiResponse>(url, {
       method: "GET",

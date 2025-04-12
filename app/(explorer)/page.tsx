@@ -122,9 +122,6 @@ type PrimaryTokenLatestTransferTableProps = {
   tokenType: TokenType<string>;
 };
 
-/**
- * TODO: real-time update on client side
- */
 const PrimaryTokenLatestTransferTable = async (
   props: PrimaryTokenLatestTransferTableProps,
 ) => {
