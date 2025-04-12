@@ -141,3 +141,6 @@ export type PublicTimeframe = z.infer<
 export type PrivateTimeframe = z.infer<
   (typeof timeseriesFilters)["private"]
 >["timeframe"];
+
+export const pageLimit = z.enum(["10", "25", "50", "100"]);
+export const timestampCursor = z.string().datetime();

@@ -7,8 +7,7 @@ import type { BigQueryDate, BigQueryTimestamp } from "@google-cloud/bigquery";
 import { Address } from "viem";
 import analytics from "./analytics";
 import explorer from "./explorer";
-
-const limit = z.enum(["10", "25", "50", "100"]);
+import bytes from "bytes";
 
 export default function ethereumMainnet(query: QueryHandler) {
   const getTransactions = (() => {
@@ -209,74 +208,74 @@ export default function ethereumMainnet(query: QueryHandler) {
       },
     });
 
-  const getBlocks = (() => {
-    const schema = z.object({
-      limit: limit.default("25"),
-      cursor: z.string().datetime().default(new Date().toISOString()),
+  const getBlocks = async (limit: string, cursor: string) => {
+    const sql = `
+      WITH filtered_blocks AS (
+        SELECT *
+        FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.blocks
+        WHERE DATE(block_timestamp) >= DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH)
+        AND DATE(block_timestamp) < DATE_ADD(DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH), INTERVAL 1 MONTH)
+      )
+      SELECT
+        block_number,
+        block_timestamp,
+        transaction_count,
+        miner,
+        gas_used,
+        gas_limit,
+        base_fee_per_gas,
+        (SELECT COUNT(*) FROM filtered_blocks) AS total_rows
+      FROM filtered_blocks
+      WHERE (block_timestamp < TIMESTAMP(@cursor) OR @cursor IS NULL)
+      ORDER BY block_timestamp DESC
+      LIMIT @limit
+    `;
+
+    const result = await query({
+      query: sql,
+      params: {
+        limit: Number(limit),
+        cursor,
+      },
+      maximumBytesBilled: bytes("5GB")?.toString(),
     });
 
-    async function queryFn(param: z.infer<typeof schema>) {
-      const validation = schema.safeParse(param);
+    if (!result.success) return result;
 
-      if (!validation.success) {
-        return error({
-          reason: "validation-failed",
-          retry: true,
-          isInternal: false,
-          error: validation.error,
-        });
-      }
+    type TData = {
+      block_number: number;
+      block_timestamp: BigQueryTimestamp;
+      transaction_count: number;
+      miner: string;
+      gas_used: number;
+      gas_limit: number;
+      base_fee_per_gas: number;
+      total_rows: number;
+    };
 
-      const { data } = validation;
-      const { limit, cursor } = data;
+    const dataset = result.data[0] as TData[];
+    const pageSize = dataset.length;
+    const totalPages = Math.ceil((dataset.at(-1)?.total_rows ?? 0) / pageSize);
 
-      const result = await query({
-        query: `
-          SELECT
-            block_number,
-            block_timestamp,
-            transaction_count,
-            miner,
-            gas_used,
-            gas_limit,
-            base_fee_per_gas,
-          FROM bigquery-public-data.goog_blockchain_ethereum_mainnet_us.blocks
-          WHERE DATE(block_timestamp) >= 
-              DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH)
-            AND DATE(block_timestamp) < 
-              DATE_ADD(DATE_TRUNC(COALESCE(DATE(TIMESTAMP(@cursor)), CURRENT_DATE()), MONTH), INTERVAL 1 MONTH)
-            AND (block_timestamp < TIMESTAMP(@cursor) OR @cursor IS NULL)  -- Cursor logic
-          ORDER BY block_timestamp DESC
-          LIMIT @limit
-        `,
-        params: {
-          limit: Number(limit),
-          cursor,
-        },
-      });
+    const meta = {
+      cursor: dataset.at(-1)?.block_timestamp.value,
+      pageSize,
+      totalPages,
+    };
 
-      if (!result.success) return result;
+    const rows = dataset.map(({ block_timestamp, total_rows, ...rest }) => ({
+      ...rest,
+      block_timestamp: block_timestamp.value,
+    }));
 
-      type TData = {
-        block_number: number;
-        block_timestamp: {
-          value: string;
-        };
-        transaction_count: number;
-        miner: string;
-        gas_used: number;
-        gas_limit: number;
-        base_fee_per_gas: number;
-      };
-
-      return {
-        success: result.success,
-        data: result.data[0] as TData[],
-      };
-    }
-
-    return queryFn;
-  })();
+    return {
+      success: result.success,
+      data: {
+        rows,
+        meta,
+      },
+    };
+  };
 
   const getBlocksCount = async () => {
     const result = await query({

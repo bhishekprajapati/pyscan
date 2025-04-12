@@ -72,3 +72,47 @@ export const usePaginator = <T extends unknown[]>(
     },
   };
 };
+
+const useLimit = (defaultLimits = [10, 25, 50, 100]) => {
+  if (defaultLimits.length === 0) {
+    throw Error("Can't not be an empty default limits");
+  }
+  const [limits] = useState(defaultLimits);
+  const [limit, setLimit] = useState(defaultLimits[0]);
+  return {
+    limit,
+    limits,
+    setLimit: (lmt: number) => {
+      if (limits.includes(lmt)) {
+        setLimit(lmt);
+      }
+    },
+  };
+};
+
+const useCursor = <T>(defaultValue: T) => {
+  const [cursor, setCursor] = useState(defaultValue);
+  return {
+    cursor,
+    setCursor,
+  };
+};
+
+type UseCursorPaginatorOptions<T> = {
+  defaultLimits?: number[];
+  initialCursor?: T;
+};
+
+export const useCursorPaginator = <T>(opts?: UseCursorPaginatorOptions<T>) => {
+  const { defaultLimits, initialCursor } = opts ?? {};
+  const { limit, limits, setLimit } = useLimit(defaultLimits);
+  const { cursor, setCursor } = useCursor(initialCursor);
+
+  return {
+    cursor,
+    limit,
+    limits,
+    setLimit,
+    setCursor,
+  };
+};

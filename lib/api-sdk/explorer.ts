@@ -1,20 +1,21 @@
 import { BaseFetcherOptions, fetcher, PathMakerFn } from "./fetcher";
 
-import type { BlocksApiResponse } from "@/app/api/public/mainnet/explorer/blocks/route";
+import type {
+  BlocksApiResponse,
+  BlocksApiResponseQuery,
+} from "@/app/api/public/mainnet/explorer/blocks/route";
 import type { GetTransactionsApiResponse } from "@/app/api/public/mainnet/explorer/transactions/route";
 import type { GetLatestTokenTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/latest/route";
 import type { GetTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/route";
 
 export function createMainnetExplorer(_URL: PathMakerFn) {
-  type GetBlocksParams = {
-    limit?: "10" | "25" | "50" | "100";
-  };
   const getBlocks = (
-    params: GetBlocksParams = {},
+    query: BlocksApiResponseQuery,
     opts: BaseFetcherOptions = {},
   ) => {
     const url = _URL("/mainnet/explorer/blocks");
-    url.searchParams.set("limit", params?.limit ?? "10");
+    url.searchParams.set("limit", query.limit);
+    url.searchParams.set("cursor", query.cursor ?? "undefined");
     return fetcher<BlocksApiResponse>(url, {
       ...opts,
     });

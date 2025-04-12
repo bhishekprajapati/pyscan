@@ -12,7 +12,7 @@ import TimeAgo from "react-timeago";
 import { ErrorBoundary } from "react-error-boundary";
 
 import { FMono } from "../text";
-import { useBlocks } from "@/hooks/tables/blocks";
+import { useBlocks } from "@/hooks/explorer/blocks";
 import { AddressLink, BlockLink, BlockTransactionsLink } from "../links";
 import CopyButton from "../copy-button";
 
@@ -26,8 +26,8 @@ const columns = [
 ];
 
 const BTable = () => {
-  const query = useBlocks();
-  const data = query.data ?? [];
+  const { query } = useBlocks();
+  const data = query.data?.rows ?? [];
 
   return (
     <div className="m-4 overflow-hidden rounded-xl">
@@ -57,7 +57,7 @@ const BTable = () => {
                 </BlockLink>
               </TableCell>
               <TableCell>
-                <TimeAgo date={bk.block_timestamp.value} />
+                <TimeAgo date={bk.block_timestamp} />
               </TableCell>
               <TableCell>
                 <BlockTransactionsLink number={BigInt(bk.block_number)}>
