@@ -96,6 +96,25 @@ const getCachedUniqueReceiversUsers = cache(
   },
 );
 
+const getCachedHoldersGrowth = cache(
+  async (address: string) => {
+    const result =
+      await analytics.timeseries.getHolderGrowthByTokenAddress(address);
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+    return {
+      data: result.data,
+      timestamp: new Date().toISOString(),
+      frequency: revalidate["200GB"],
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["200GB"],
+  },
+);
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getDummyHolderGrowth = async (address: string) => ({
   data: [
@@ -181,7 +200,11 @@ export default function AnalyticsPage() {
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
-              fetcher={getDummyHolderGrowth}
+              fetcher={
+                process.env.NODE_ENV === "production"
+                  ? getCachedHoldersGrowth
+                  : getDummyHolderGrowth
+              }
               heading={
                 <>
                   <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}

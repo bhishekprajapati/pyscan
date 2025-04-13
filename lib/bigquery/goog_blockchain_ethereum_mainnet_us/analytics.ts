@@ -644,6 +644,112 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
+    const getHolderGrowthByTokenAddress = async (address: string) => {
+      const sql = `
+        DECLARE target_token_address STRING DEFAULT '${address}';
+        DECLARE null_address STRING DEFAULT '0x0000000000000000000000000000000000000000';
+        DECLARE report_start_date DATE DEFAULT DATE('2022-11-08');
+        DECLARE report_end_date DATE DEFAULT CURRENT_DATE();
+        IF report_start_date > report_end_date THEN
+          SET report_start_date = report_end_date;
+        END IF;
+        WITH
+        TransferMovements AS (
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            to_address AS holder_address,
+            CAST(value AS BIGNUMERIC) AS signed_amount
+          FROM bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE LOWER(token_address) = LOWER(target_token_address)
+            AND to_address != null_address
+            AND DATE(block_timestamp) >= report_start_date
+            AND DATE(block_timestamp) <= report_end_date
+          UNION ALL
+          SELECT
+            DATE(block_timestamp) AS activity_date,
+            from_address AS holder_address,
+            -CAST(value AS BIGNUMERIC) AS signed_amount
+          FROM bigquery-public-data.crypto_ethereum.token_transfers
+          WHERE LOWER(token_address) = LOWER(target_token_address)
+            AND from_address != null_address
+            AND DATE(block_timestamp) >= report_start_date
+            AND DATE(block_timestamp) <= report_end_date
+        ),
+        DailyNetChanges AS (
+          SELECT
+            activity_date,
+            holder_address,
+            SUM(signed_amount) AS net_change_on_date
+          FROM TransferMovements
+          GROUP BY activity_date, holder_address
+          HAVING SUM(signed_amount) != 0
+        ),
+        AddressBalanceHistory AS (
+          SELECT
+            activity_date,
+            holder_address,
+            net_change_on_date,
+            SUM(net_change_on_date) OVER (
+              PARTITION BY holder_address ORDER BY activity_date
+            ) AS balance_end_of_day
+          FROM DailyNetChanges
+        ),
+        DailyHolderDelta AS (
+          SELECT
+            activity_date,
+            SUM(
+              CASE
+                WHEN balance_end_of_day > 0 AND (balance_end_of_day - net_change_on_date) <= 0 THEN 1
+                WHEN balance_end_of_day <= 0 AND (balance_end_of_day - net_change_on_date) > 0 THEN -1
+                ELSE 0
+              END
+            ) AS net_holder_change_on_date
+          FROM AddressBalanceHistory
+          GROUP BY activity_date
+        ),
+        DateSeries AS (
+          SELECT calendar_date
+          FROM UNNEST(
+              CASE
+                  WHEN report_start_date <= report_end_date THEN GENERATE_DATE_ARRAY(report_start_date, report_end_date, INTERVAL 1 DAY)
+                  ELSE []
+              END
+          ) AS calendar_date
+        )
+        SELECT
+          d.calendar_date AS date,
+          SUM(COALESCE(delta.net_holder_change_on_date, 0)) OVER (
+            ORDER BY d.calendar_date
+          ) AS count
+        FROM DateSeries AS d
+        LEFT JOIN DailyHolderDelta AS delta
+          ON d.calendar_date = delta.activity_date
+        ORDER BY d.calendar_date;
+      `;
+
+      type TData = {
+        date: BigQueryDate;
+        count: number;
+      };
+
+      const result = await query({
+        query: sql,
+        useLegacySql: false,
+        maximumBytesBilled: bytes("200GB")?.toString(),
+      });
+
+      if (result.success) {
+        return {
+          success: result.success,
+          data: (result.data[0] as TData[]).map(({ date, count }) => ({
+            date: date.value,
+            count,
+          })),
+        };
+      }
+      return result;
+    };
+
     return {
       getTxnCount,
       getTxnCountByToAddress,
@@ -655,6 +761,7 @@ export default function analytics(query: QueryHandler) {
       getNewUsersByTokenAddress,
       getUniqueSendersByTokenAddress,
       getUniqueReceiversUsersByTokenAddress,
+      getHolderGrowthByTokenAddress,
     };
   })();
 
