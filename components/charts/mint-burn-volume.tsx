@@ -56,7 +56,12 @@ const TokenMintBurnVolume = () => {
     <Card>
       <CardHeader>
         <CardHeading>Mint Vs Burn of {token.getSymbol()}</CardHeading>
-        {data?.timestamp && <CardTimestamp date={new Date(data.timestamp)} />}
+        {data?.timestamp && (
+          <CardTimestamp
+            isRefreshing={query.isFetching}
+            date={new Date(data.timestamp)}
+          />
+        )}
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

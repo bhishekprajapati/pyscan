@@ -6,6 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardHeading,
+  CardTimestamp,
 } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
@@ -58,6 +59,12 @@ const TokenTransferVolume = () => {
     <Card className="h-full">
       <CardHeader>
         <CardHeading>Token Transfer Volume</CardHeading>
+        {data?.timestamp && (
+          <CardTimestamp
+            date={new Date(data.timestamp)}
+            isRefreshing={query.isFetching}
+          />
+        )}
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

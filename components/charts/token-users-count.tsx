@@ -9,7 +9,7 @@ import {
   CardTimestamp,
 } from "@/components/ui/card";
 import type { SerializedTokenData } from "@/lib/token";
-import { Divider } from "@heroui/react";
+import { Button, Divider, Tooltip as HTooltip } from "@heroui/react";
 import {
   Area,
   AreaChart,
@@ -133,6 +133,11 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
       <Divider />
       <CardFooter>
         <CurveTypeSelect {...register} />
+        <HTooltip content="In last 30 days">
+          <Button className="ms-auto" variant="flat">
+            30 D
+          </Button>
+        </HTooltip>
       </CardFooter>
     </Card>
   );

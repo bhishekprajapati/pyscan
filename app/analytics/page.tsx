@@ -184,8 +184,8 @@ export default function AnalyticsPage() {
               fetcher={getDummyHolderGrowth}
               heading={
                 <>
-                  <TokenLogo token={token.toJSON()} /> Holders Growth of{" "}
-                  {token.getSymbol()}
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  Holders Growth of {token.getSymbol()}
                 </>
               }
               tick={{
@@ -210,11 +210,10 @@ export default function AnalyticsPage() {
               fetcher={getCachedNewUsers}
               heading={
                 <>
-                  <TokenLogo token={token.toJSON()} /> New Users of{" "}
-                  {token.getSymbol()}
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  New Users of {token.getSymbol()}
                 </>
               }
-              freshness="(Last 30 Days)"
               area={{
                 stroke: "violet",
                 name: "New Users",
@@ -230,11 +229,10 @@ export default function AnalyticsPage() {
               fetcher={getCachedActiveUsers}
               heading={
                 <>
-                  <TokenLogo token={token.toJSON()} /> Active Users of{" "}
-                  {token.getSymbol()}
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  Active Users of {token.getSymbol()}
                 </>
               }
-              freshness="(Last 30 Days)"
               area={{
                 stroke: "#FBBF24",
                 name: "Active Users",
@@ -250,11 +248,10 @@ export default function AnalyticsPage() {
               fetcher={getCachedUniqueSendersUsers}
               heading={
                 <>
-                  <TokenLogo token={token.toJSON()} /> Unique Senders of{" "}
-                  {token.getSymbol()}
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  Unique Senders of {token.getSymbol()}
                 </>
               }
-              freshness="(Last 30 Days)"
               area={{
                 stroke: "#ff474c",
                 name: "Senders",
@@ -270,11 +267,10 @@ export default function AnalyticsPage() {
               fetcher={getCachedUniqueReceiversUsers}
               heading={
                 <>
-                  <TokenLogo token={token.toJSON()} /> Unique Receivers of{" "}
-                  {token.getSymbol()}
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  Unique Receivers of {token.getSymbol()}
                 </>
               }
-              freshness="(Last 30 Days)"
               area={{
                 stroke: "#10B981",
                 name: "Receivers",

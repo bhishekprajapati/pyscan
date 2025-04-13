@@ -11,7 +11,7 @@ import {
   TooltipProps,
   type CardProps as HCardProps,
 } from "@heroui/react";
-import { CircleHelp, LucideProps, ZapOff } from "lucide-react";
+import { CircleHelp, LucideProps, Zap, ZapOff } from "lucide-react";
 import type { FC } from "react";
 import TimeAgo from "react-timeago";
 import { FMono } from "../text";
@@ -37,11 +37,16 @@ type CardTimestampProps = {
   date: Date;
   /** Update frequency in seconds */
   frequency?: number;
+  /**
+   * @default false
+   */
+  isRefreshing?: boolean;
 };
 
 export const CardTimestamp: React.FC<CardTimestampProps> = ({
   date,
   frequency,
+  isRefreshing,
 }) => (
   <Tooltip
     content={
@@ -60,7 +65,17 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
       </div>
     }
   >
-    <ZapOff size={16} className="ms-auto text-warning" />
+    {isRefreshing ? (
+      <Zap
+        size={16}
+        className={cn(
+          "ms-auto text-warning",
+          isRefreshing ? "animate-pulse" : "",
+        )}
+      />
+    ) : (
+      <ZapOff size={16} className="ms-auto text-warning" />
+    )}
   </Tooltip>
 );
 

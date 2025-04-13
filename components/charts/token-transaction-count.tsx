@@ -15,7 +15,6 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
-  YAxis,
 } from "recharts";
 import CurveTypeSelect, {
   useSelectedCurveType,
