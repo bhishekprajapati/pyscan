@@ -9,7 +9,7 @@ import {
   CardTimestamp,
 } from "@/components/ui/card";
 import type { SerializedTokenData } from "@/lib/token";
-import { Button, Divider, Tooltip as HTooltip } from "@heroui/react";
+import { Divider } from "@heroui/react";
 import {
   Area,
   AreaChart,
@@ -38,11 +38,21 @@ export type TokenUsersCountChartProps = {
     dateOptions?: Intl.DateTimeFormatOptions;
   };
   area?: Pick<AreaProps, "stroke" | "name">;
+  footerEndContent?: React.ReactNode;
 };
 
 const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
-  const { data, timestamp, frequency, heading, freshness, token, tick, area } =
-    props;
+  const {
+    data,
+    timestamp,
+    frequency,
+    heading,
+    freshness,
+    token,
+    tick,
+    area,
+    footerEndContent,
+  } = props;
 
   const [curve, register] = useSelectedCurveType();
   const sorted = useMemo(
@@ -133,11 +143,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
       <Divider />
       <CardFooter>
         <CurveTypeSelect {...register} />
-        <HTooltip content="In last 30 days">
-          <Button className="ms-auto" variant="flat">
-            30 D
-          </Button>
-        </HTooltip>
+        {footerEndContent}
       </CardFooter>
     </Card>
   );

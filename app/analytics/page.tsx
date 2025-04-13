@@ -13,6 +13,7 @@ import { TokenLogo } from "@/components/token";
 import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import bigquery from "@/lib/bigquery";
 import { revalidate } from "@/utils/cache";
+import { Chip, Tooltip } from "@heroui/react";
 
 import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
@@ -221,6 +222,13 @@ export default function AnalyticsPage() {
                 stroke: "lightgreen",
                 name: "Holders",
               }}
+              footerEndContent={
+                <Tooltip content="Lifetime">
+                  <Chip className="ms-auto" variant="flat">
+                    ALL
+                  </Chip>
+                </Tooltip>
+              }
             />
           </Suspense>
         </ErrorBoundary>
@@ -241,6 +249,13 @@ export default function AnalyticsPage() {
                 stroke: "violet",
                 name: "New Users",
               }}
+              footerEndContent={
+                <Tooltip content="In last 30 days">
+                  <Chip className="ms-auto" variant="flat">
+                    30D
+                  </Chip>
+                </Tooltip>
+              }
             />
           </Suspense>
         </ErrorBoundary>
@@ -260,6 +275,13 @@ export default function AnalyticsPage() {
                 stroke: "#FBBF24",
                 name: "Active Users",
               }}
+              footerEndContent={
+                <Tooltip content="In last 30 days">
+                  <Chip className="ms-auto" variant="flat">
+                    30D
+                  </Chip>
+                </Tooltip>
+              }
             />
           </Suspense>
         </ErrorBoundary>
@@ -279,6 +301,13 @@ export default function AnalyticsPage() {
                 stroke: "#ff474c",
                 name: "Senders",
               }}
+              footerEndContent={
+                <Tooltip content="In last 30 days">
+                  <Chip className="ms-auto" variant="flat">
+                    30D
+                  </Chip>
+                </Tooltip>
+              }
             />
           </Suspense>
         </ErrorBoundary>
@@ -298,6 +327,13 @@ export default function AnalyticsPage() {
                 stroke: "#10B981",
                 name: "Receivers",
               }}
+              footerEndContent={
+                <Tooltip content="In last 30 days">
+                  <Chip className="ms-auto" variant="flat">
+                    30D
+                  </Chip>
+                </Tooltip>
+              }
             />
           </Suspense>
         </ErrorBoundary>
