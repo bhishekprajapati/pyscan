@@ -20,10 +20,16 @@ export type TokenUsersCountChartProps = {
   heading: string;
   freshness?: string;
   token: SerializedTokenData;
+  tick?: {
+    dateOptions?: Intl.DateTimeFormatOptions;
+  };
+  area?: {
+    stroke?: string;
+  };
 };
 
 const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
-  const { data, timestamp, heading, freshness, token } = props;
+  const { data, timestamp, heading, freshness, token, tick, area } = props;
 
   return (
     <Card>
@@ -45,7 +51,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
               tick={({ x, y, payload }) => {
                 const date = new Date(payload.value).toLocaleDateString(
                   "en-US",
-                  {
+                  tick?.dateOptions ?? {
                     month: "short",
                     day: "numeric",
                     hour: "numeric",
@@ -53,6 +59,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
                 );
                 return (
                   <text
+                    key={date}
                     x={x}
                     y={y + 10}
                     textAnchor="middle"
@@ -67,7 +74,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
             <Area
               type="step"
               dataKey="count"
-              stroke={token.colors.dark.background}
+              stroke={area?.stroke ?? token.colors.dark.background}
               strokeWidth={2}
               dot={false}
               fillOpacity={0.05}
