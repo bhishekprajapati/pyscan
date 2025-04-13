@@ -273,7 +273,7 @@ export default function analytics(query: QueryHandler) {
         params: {
           limit: limit * tokens.length,
         },
-        maximumBytesBilled: bytes("5GB")?.toString(),
+        maximumBytesBilled: bytes("10GB")?.toString(),
       });
 
       if (result.success) {
