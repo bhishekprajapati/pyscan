@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardHeading,
+  CardTimestamp,
+} from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
@@ -48,6 +54,7 @@ const MintBurnChart = () => {
     <Card>
       <CardHeader>
         <CardHeading>Mint Vs Burn</CardHeading>
+        {data?.timestamp && <CardTimestamp date={new Date(data.timestamp)} />}
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

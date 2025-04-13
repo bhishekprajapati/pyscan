@@ -11,10 +11,11 @@ import {
   TooltipProps,
   type CardProps as HCardProps,
 } from "@heroui/react";
-import { CircleHelp, LucideProps } from "lucide-react";
+import { CircleHelp, LucideProps, ZapOff } from "lucide-react";
 import type { FC } from "react";
 import TimeAgo from "react-timeago";
 import { FMono } from "../text";
+import ms from "ms";
 
 type CardProps = HCardProps;
 export const Card: FC<CardProps> = ({ className, ...rest }) => (
@@ -32,10 +33,35 @@ export const CardHeader: FC<CardHeaderProps> = ({ className, ...rest }) => (
   <HCardHeader className={"gap-2 " + className} {...rest} />
 );
 
-export const CardTimestamp = ({ date }: { date: Date }) => (
-  <FMono className="ms-auto transition-colors dark:text-default-200 group-hover:dark:text-default-400">
-    <TimeAgo date={date} />
-  </FMono>
+type CardTimestampProps = {
+  date: Date;
+  /** Update frequency in seconds */
+  frequency?: number;
+};
+
+export const CardTimestamp: React.FC<CardTimestampProps> = ({
+  date,
+  frequency,
+}) => (
+  <Tooltip
+    content={
+      <div className="ms-auto max-w-64 p-2">
+        <FMono className="mb-1">
+          Last Updated <TimeAgo date={date} />
+        </FMono>
+        {frequency && (
+          <div>
+            Updated Every:{" "}
+            {ms(frequency * 1000, {
+              long: true,
+            })}
+          </div>
+        )}
+      </div>
+    }
+  >
+    <ZapOff size={16} className="ms-auto text-warning" />
+  </Tooltip>
 );
 
 type CardHelpProps = {

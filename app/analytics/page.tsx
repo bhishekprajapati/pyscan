@@ -14,6 +14,7 @@ import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { revalidate } from "@/utils/cache";
+import { TokenLogo } from "@/components/token";
 
 const { analytics } = bigquery.ethereum.mainnet;
 
@@ -27,6 +28,7 @@ const getCachedNewUsers = cache(
     return {
       data: result.data,
       timestamp: new Date().toISOString(),
+      frequency: revalidate["10GB"],
     };
   },
   [],
@@ -45,6 +47,7 @@ const getCachedActiveUsers = cache(
     return {
       data: result.data,
       timestamp: new Date().toISOString(),
+      frequency: revalidate["10GB"],
     };
   },
   [],
@@ -63,6 +66,7 @@ const getCachedUniqueSendersUsers = cache(
     return {
       data: result.data,
       timestamp: new Date().toISOString(),
+      frequency: revalidate["5GB"],
     };
   },
   [],
@@ -81,6 +85,7 @@ const getCachedUniqueReceiversUsers = cache(
     return {
       data: result.data,
       timestamp: new Date().toISOString(),
+      frequency: revalidate["5GB"],
     };
   },
   [],
@@ -152,11 +157,16 @@ type PrimaryTokenUsersCountProps = {
   fetcher: (tokenAddress: string) => Promise<{
     data: TokenUsersCountChartProps["data"];
     timestamp: string;
+    frequency?: number;
   }>;
-} & Pick<TokenUsersCountChartProps, "heading" | "freshness" | "tick" | "area">;
+} & Omit<
+  TokenUsersCountChartProps,
+  "data" | "timestamp" | "frequency" | "token"
+>;
+
+const token = PRIMARY_TOKEN_TYPE;
 
 const PrimaryTokenUsersCount = async (props: PrimaryTokenUsersCountProps) => {
-  const token = PRIMARY_TOKEN_TYPE;
   const { fetcher, ...rest } = props;
   const result = await fetcher(token.getContractAddress());
   return <TokenUsersCountTable token={token.toJSON()} {...result} {...rest} />;
@@ -170,16 +180,21 @@ export default function AnalyticsPage() {
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
               fetcher={getDummyHolderGrowth}
-              heading="Holders Growth"
+              heading={
+                <>
+                  <TokenLogo token={token.toJSON()} /> Holders Growth of{" "}
+                  {token.getSymbol()}
+                </>
+              }
               tick={{
                 dateOptions: {
-                  day: "2-digit",
-                  month: "2-digit",
+                  month: "short",
                   year: "2-digit",
                 },
               }}
               area={{
                 stroke: "lightgreen",
+                name: "Holders",
               }}
             />
           </Suspense>
@@ -191,8 +206,17 @@ export default function AnalyticsPage() {
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
               fetcher={getCachedNewUsers}
-              heading="New Users"
+              heading={
+                <>
+                  <TokenLogo token={token.toJSON()} /> New Users of{" "}
+                  {token.getSymbol()}
+                </>
+              }
               freshness="(Last 30 Days)"
+              area={{
+                stroke: "violet",
+                name: "New Users",
+              }}
             />
           </Suspense>
         </ErrorBoundary>
@@ -202,8 +226,17 @@ export default function AnalyticsPage() {
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
               fetcher={getCachedActiveUsers}
-              heading="Active Users"
+              heading={
+                <>
+                  <TokenLogo token={token.toJSON()} /> Active Users of{" "}
+                  {token.getSymbol()}
+                </>
+              }
               freshness="(Last 30 Days)"
+              area={{
+                stroke: "#FBBF24",
+                name: "Active Users",
+              }}
             />
           </Suspense>
         </ErrorBoundary>
@@ -213,8 +246,17 @@ export default function AnalyticsPage() {
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
               fetcher={getCachedUniqueSendersUsers}
-              heading="Unique Senders"
+              heading={
+                <>
+                  <TokenLogo token={token.toJSON()} /> Unique Senders of{" "}
+                  {token.getSymbol()}
+                </>
+              }
               freshness="(Last 30 Days)"
+              area={{
+                stroke: "#ff474c",
+                name: "Senders",
+              }}
             />
           </Suspense>
         </ErrorBoundary>
@@ -224,8 +266,17 @@ export default function AnalyticsPage() {
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
               fetcher={getCachedUniqueReceiversUsers}
-              heading="Unique Receivers"
+              heading={
+                <>
+                  <TokenLogo token={token.toJSON()} /> Unique Receivers of{" "}
+                  {token.getSymbol()}
+                </>
+              }
               freshness="(Last 30 Days)"
+              area={{
+                stroke: "#10B981",
+                name: "Receivers",
+              }}
             />
           </Suspense>
         </ErrorBoundary>

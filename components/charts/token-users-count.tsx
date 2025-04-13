@@ -3,13 +3,26 @@
 import {
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   CardHeading,
   CardTimestamp,
 } from "@/components/ui/card";
 import type { SerializedTokenData } from "@/lib/token";
 import { Divider } from "@heroui/react";
-import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  AreaProps,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import CurveTypeSelect, {
+  useSelectedCurveType,
+} from "../select/curve-type-select";
+import { useMemo } from "react";
 
 export type TokenUsersCountChartProps = {
   data: {
@@ -17,31 +30,50 @@ export type TokenUsersCountChartProps = {
     count: number;
   }[];
   timestamp?: string | undefined;
-  heading: string;
+  frequency?: number;
+  heading: string | React.ReactNode;
   freshness?: string;
   token: SerializedTokenData;
   tick?: {
     dateOptions?: Intl.DateTimeFormatOptions;
   };
-  area?: {
-    stroke?: string;
-  };
+  area?: Pick<AreaProps, "stroke" | "name">;
 };
 
 const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
-  const { data, timestamp, heading, freshness, token, tick, area } = props;
+  const { data, timestamp, frequency, heading, freshness, token, tick, area } =
+    props;
+
+  const [curve, register] = useSelectedCurveType();
+  const sorted = useMemo(
+    () =>
+      data.sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      ),
+    [data],
+  );
 
   return (
     <Card>
       <CardHeader>
         <CardHeading>{heading}</CardHeading>
         {freshness && <span className="text-default-400">{freshness}</span>}
-        {timestamp && <CardTimestamp date={new Date(timestamp)} />}
+        {timestamp && (
+          <CardTimestamp date={new Date(timestamp)} frequency={frequency} />
+        )}
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
         <ResponsiveContainer width="100%" height={400}>
-          <AreaChart data={data}>
+          <AreaChart data={sorted}>
+            <YAxis
+              dataKey="count"
+              orientation="right"
+              axisLine={{
+                stroke: "#eeeeee50",
+                strokeWidth: 0.5,
+              }}
+            />
             <XAxis
               dataKey="date"
               axisLine={{
@@ -72,12 +104,13 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
               }}
             />
             <Area
-              type="step"
+              type={curve}
               dataKey="count"
-              stroke={area?.stroke ?? token.colors.dark.background}
+              stroke={token.colors.dark.background}
               strokeWidth={2}
               dot={false}
               fillOpacity={0.05}
+              {...area}
             />
             <Tooltip
               wrapperClassName="!bg-default-50 rounded-lg !border-none"
@@ -97,6 +130,10 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
           </AreaChart>
         </ResponsiveContainer>
       </CardBody>
+      <Divider />
+      <CardFooter>
+        <CurveTypeSelect {...register} />
+      </CardFooter>
     </Card>
   );
 };
