@@ -264,6 +264,7 @@ export default function ethereumMainnet(query: QueryHandler) {
       totalPages,
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rows = dataset.map(({ block_timestamp, total_rows, ...rest }) => ({
       ...rest,
       block_timestamp: block_timestamp.value,

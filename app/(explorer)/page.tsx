@@ -22,7 +22,7 @@ import { TokenType } from "@/lib/token";
 
 import { CardFooter, Chip, Divider } from "@heroui/react";
 import { ArrowRight } from "lucide-react";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -112,6 +112,50 @@ const PrimaryTokenInfo = (props: PrimaryTokenInfoProps) => {
     </Card>
   );
 };
+
+const getTokenDominanceCachedData = cache(
+  async function () {
+    const tokenTypes = ALL_TOKEN_TYPES;
+    const promises = await Promise.allSettled(
+      tokenTypes.map(async (tk) => {
+        const result = await getQuote([tk.getSymbol()]);
+        if (result.success) {
+          return {
+            token: tk,
+            quote: result.data[tk.getSymbol()],
+          };
+        }
+        throw Error(result.err.message);
+      }),
+    );
+
+    const result: TokenDominanceProps = {
+      data: promises
+        .filter((p) => p.status === "fulfilled")
+        .map((p) => {
+          const { quote, token } = p.value;
+          return {
+            quote: {
+              marketCapInUsd: quote[0].quote.USD.market_cap,
+            },
+            token: {
+              name: token.getName(),
+              symbol: token.getSymbol(),
+              color: token.getColors("dark"),
+              logo: token.getLogo(),
+            },
+          };
+        }),
+      timestamp: Date.now(),
+    };
+
+    return result;
+  },
+  [],
+  {
+    revalidate: 3600,
+  },
+);
 
 const TokenDominance = async () => {
   const result = await getTokenDominanceCachedData();
@@ -332,45 +376,4 @@ export default function Home() {
       </div>
     </div>
   );
-}
-
-async function getTokenDominanceCachedData() {
-  "use cache";
-  cacheLife("weeks");
-
-  const tokenTypes = ALL_TOKEN_TYPES;
-  const promises = await Promise.allSettled(
-    tokenTypes.map(async (tk) => {
-      const result = await getQuote([tk.getSymbol()]);
-      if (result.success) {
-        return {
-          token: tk,
-          quote: result.data[tk.getSymbol()],
-        };
-      }
-      throw Error(result.err.message);
-    }),
-  );
-
-  const result: TokenDominanceProps = {
-    data: promises
-      .filter((p) => p.status === "fulfilled")
-      .map((p) => {
-        const { quote, token } = p.value;
-        return {
-          quote: {
-            marketCapInUsd: quote[0].quote.USD.market_cap,
-          },
-          token: {
-            name: token.getName(),
-            symbol: token.getSymbol(),
-            color: token.getColors("dark"),
-            logo: token.getLogo(),
-          },
-        };
-      }),
-    timestamp: Date.now(),
-  };
-
-  return result;
 }

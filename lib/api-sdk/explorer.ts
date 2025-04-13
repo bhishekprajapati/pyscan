@@ -4,7 +4,6 @@ import type {
   BlocksApiResponse,
   BlocksApiResponseQuery,
 } from "@/app/api/public/mainnet/explorer/blocks/route";
-import type { GetTransactionsApiResponse } from "@/app/api/public/mainnet/explorer/transactions/route";
 import type { GetLatestTokenTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/latest/route";
 import type { GetTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/route";
 
@@ -24,7 +23,7 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   const getTransactions = async (params: {}, opts: BaseFetcherOptions = {}) => {
     const url = _URL("/mainnet/explorer/transactions");
-    return fetcher<GetTransactionsApiResponse>(url, { ...opts });
+    return fetcher<unknown>(url, { ...opts });
   };
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type

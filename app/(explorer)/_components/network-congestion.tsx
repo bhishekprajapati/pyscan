@@ -1,16 +1,14 @@
 import bigquery from "@/lib/bigquery";
 import NetworkCongestionChart from "@/components/charts/network-congestion";
-import { cacheLife } from "next/dist/server/use-cache/cache-life";
 import { devOnly } from "@/utils/dev";
 import { BigQueryDate } from "@google-cloud/bigquery";
+import { unstable_cache as cache } from "next/cache";
+import { revalidate } from "@/utils/cache";
 
-const getCachedCongestionData = async () => {
-  "use cache";
-  cacheLife("weeks");
-
-  // Query Cost: ~9GB
-  const [data] = await bigquery.client.query({
-    query: `
+const getCachedCongestionData = cache(
+  async () => {
+    const [data] = await bigquery.client.query({
+      query: `
         WITH PyusdTxns AS (
       SELECT
         transaction_hash,
@@ -46,33 +44,43 @@ const getCachedCongestionData = async () => {
     GROUP BY p.tx_date
     ORDER BY p.tx_date DESC;
     `,
-  });
+    });
 
-  type TData = {
-    tx_date: BigQueryDate;
-    total_pyusd_txns: number;
-    total_gas_used: number;
-    avg_gas_price_gwei: number;
-  };
+    type TData = {
+      tx_date: BigQueryDate;
+      total_pyusd_txns: number;
+      total_gas_used: number;
+      avg_gas_price_gwei: number;
+    };
 
-  return {
-    data: (data as TData[]).map(
-      ({ tx_date, total_pyusd_txns, avg_gas_price_gwei, total_gas_used }) => ({
-        date: tx_date.value,
-        txnCount: total_pyusd_txns,
-        /**
-         * In gwei
-         */
-        avgGasPrice: avg_gas_price_gwei,
-        /**
-         * In gwei
-         */
-        gasUsed: total_gas_used,
-      }),
-    ),
-    timestamp: Date.now(),
-  };
-};
+    return {
+      data: (data as TData[]).map(
+        ({
+          tx_date,
+          total_pyusd_txns,
+          avg_gas_price_gwei,
+          total_gas_used,
+        }) => ({
+          date: tx_date.value,
+          txnCount: total_pyusd_txns,
+          /**
+           * In gwei
+           */
+          avgGasPrice: avg_gas_price_gwei,
+          /**
+           * In gwei
+           */
+          gasUsed: total_gas_used,
+        }),
+      ),
+      timestamp: Date.now(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["10GB"],
+  },
+);
 
 const getDummyCongestionData = async (): ReturnType<
   typeof getCachedCongestionData

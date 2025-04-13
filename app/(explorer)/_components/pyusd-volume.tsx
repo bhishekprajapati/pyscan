@@ -1,24 +1,23 @@
 import PyusdVolumeChart from "@/components/charts/pyusd-volume";
 import bigquery from "@/lib/bigquery";
 import { pyusd } from "@/lib/coinmarketcap";
+import { revalidate } from "@/utils/cache";
 import { devOnly } from "@/utils/dev";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { unstable_cache as cache } from "next/cache";
 
-const getCachedVolumeData = async () => {
-  "use cache";
-  cacheLife("weeks");
+const getCachedVolumeData = cache(
+  async () => {
+    const result = await pyusd.getQuote();
+    if (!result.success) {
+      throw Error(result.err.message);
+    }
 
-  const result = await pyusd.getQuote();
-  if (!result.success) {
-    throw Error(result.err.message);
-  }
+    const { quote } = result.data.PYUSD[0];
+    const { client } = bigquery;
 
-  const { quote } = result.data.PYUSD[0];
-  const { client } = bigquery;
-
-  // Query Cost: ~9GB
-  const [data] = await client.query({
-    query: `
+    // Query Cost: ~9GB
+    const [data] = await client.query({
+      query: `
       WITH WeeklyTransfers AS (
         SELECT
           DATE_TRUNC(DATE(block_timestamp), WEEK) AS week_start,
@@ -39,27 +38,32 @@ const getCachedVolumeData = async () => {
         total_pyusd_transferred
       FROM WeeklyTransfers;    
     `,
-  });
+    });
 
-  type TData = {
-    week_start: string;
-    total_transactions: number;
-    total_pyusd_transferred: number;
-  };
+    type TData = {
+      week_start: string;
+      total_transactions: number;
+      total_pyusd_transferred: number;
+    };
 
-  return {
-    data: (data as TData[]).map(
-      ({ week_start, total_transactions, total_pyusd_transferred }) => ({
-        date: week_start,
-        txnCount: total_transactions,
-        vol: total_pyusd_transferred,
-        timeframe: "week",
-      }),
-    ),
-    price: quote.USD.price,
-    timestamp: Date.now(),
-  };
-};
+    return {
+      data: (data as TData[]).map(
+        ({ week_start, total_transactions, total_pyusd_transferred }) => ({
+          date: week_start,
+          txnCount: total_transactions,
+          vol: total_pyusd_transferred,
+          timeframe: "week",
+        }),
+      ),
+      price: quote.USD.price,
+      timestamp: Date.now(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["10GB"],
+  },
+);
 
 const getDummyVolumeData = async (): ReturnType<
   typeof getCachedVolumeData

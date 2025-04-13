@@ -1,4 +1,4 @@
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import { unstable_cache as cache } from "next/cache";
 import { omit } from "remeda";
 
 import bigquery from "@/lib/bigquery";
@@ -87,37 +87,42 @@ const getGasTrendDummyData = () => ({
 });
 
 const eth = bigquery.ethereum.mainnet;
-const getCachedGasTrend = async () => {
-  "use cache";
-  cacheLife("gasTrend");
 
-  const network = await eth.getNetworkGasTrend();
-  if (!network.success) {
-    throw Error(network.reason);
-  }
+const getCachedGasTrend = cache(
+  async () => {
+    const network = await eth.getNetworkGasTrend();
+    if (!network.success) {
+      throw Error(network.reason);
+    }
 
-  const pyusd = await eth.getPyusdGasTrend();
-  if (!pyusd.success) {
-    throw Error(pyusd.reason);
-  }
+    const pyusd = await eth.getPyusdGasTrend();
+    if (!pyusd.success) {
+      throw Error(pyusd.reason);
+    }
 
-  return {
-    data: network.data
-      .map(({ tx_date, ...networkGasRecord }) => {
-        const pyusdGasRecord = pyusd.data.find(
-          ({ tx_date: pyusd_tx_date }) => pyusd_tx_date.value === tx_date.value,
-        );
-        if (!pyusdGasRecord) return undefined;
-        return {
-          tx_date: tx_date.value,
-          network: networkGasRecord,
-          pyusd: omit(pyusdGasRecord, ["tx_date"]),
-        };
-      })
-      .filter(Boolean),
-    timestamp: Date.now(),
-  };
-};
+    return {
+      data: network.data
+        .map(({ tx_date, ...networkGasRecord }) => {
+          const pyusdGasRecord = pyusd.data.find(
+            ({ tx_date: pyusd_tx_date }) =>
+              pyusd_tx_date.value === tx_date.value,
+          );
+          if (!pyusdGasRecord) return undefined;
+          return {
+            tx_date: tx_date.value,
+            network: networkGasRecord,
+            pyusd: omit(pyusdGasRecord, ["tx_date"]),
+          };
+        })
+        .filter(Boolean),
+      timestamp: Date.now(),
+    };
+  },
+  [],
+  {
+    revalidate: 6 * 3600,
+  },
+);
 
 const GasTrendChart = async () => {
   const fetcher = devOnly(getCachedGasTrend, getGasTrendDummyData);

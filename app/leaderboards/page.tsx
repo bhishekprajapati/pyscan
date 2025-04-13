@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { ComponentErrorFallback } from "@/components/errors";
 import { SuspendedComponentFallback } from "@/components/fallback";
 import LeaderboardTable, {

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import TransactionCount from "@/components/charts/transactions/count";
 import MintBurnChart from "@/components/charts/volumes/mint-burn";
 import TokenTransferVolume from "@/components/charts/volumes/token-value";
@@ -8,72 +10,86 @@ import TokenUsersCountTable, {
 } from "@/components/charts/token-users-count";
 import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import bigquery from "@/lib/bigquery";
-import { unstable_cacheLife } from "next/cache";
+import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { revalidate } from "@/utils/cache";
 
 const { analytics } = bigquery.ethereum.mainnet;
 
-const getCachedNewUsers = async (address: string) => {
-  "use cache";
-  unstable_cacheLife("weeks");
+const getCachedNewUsers = cache(
+  async (address: string) => {
+    const result =
+      await analytics.timeseries.getNewUsersByTokenAddress(address);
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+    return {
+      data: result.data,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["10GB"],
+  },
+);
 
-  const result = await analytics.timeseries.getNewUsersByTokenAddress(address);
-  if (!result.success) {
-    throw Error(result.reason);
-  }
-  return {
-    data: result.data,
-    timestamp: new Date().toISOString(),
-  };
-};
+const getCachedActiveUsers = cache(
+  async (address: string) => {
+    const result =
+      await analytics.timeseries.getActiveUsersByTokenAddress(address);
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+    return {
+      data: result.data,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["10GB"],
+  },
+);
 
-const getCachedActiveUsers = async (address: string) => {
-  "use cache";
-  unstable_cacheLife("weeks");
+const getCachedUniqueSendersUsers = cache(
+  async (address: string) => {
+    const result =
+      await analytics.timeseries.getUniqueSendersByTokenAddress(address);
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+    return {
+      data: result.data,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["5GB"],
+  },
+);
 
-  const result =
-    await analytics.timeseries.getActiveUsersByTokenAddress(address);
-  if (!result.success) {
-    throw Error(result.reason);
-  }
-  return {
-    data: result.data,
-    timestamp: new Date().toISOString(),
-  };
-};
+const getCachedUniqueReceiversUsers = cache(
+  async (address: string) => {
+    const result =
+      await analytics.timeseries.getUniqueReceiversUsersByTokenAddress(address);
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+    return {
+      data: result.data,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  [],
+  {
+    revalidate: revalidate["5GB"],
+  },
+);
 
-const getCachedUniqueSendersUsers = async (address: string) => {
-  "use cache";
-  unstable_cacheLife("weeks");
-
-  const result =
-    await analytics.timeseries.getUniqueSendersByTokenAddress(address);
-  if (!result.success) {
-    throw Error(result.reason);
-  }
-  return {
-    data: result.data,
-    timestamp: new Date().toISOString(),
-  };
-};
-
-const getCachedUniqueReceiversUsers = async (address: string) => {
-  "use cache";
-  unstable_cacheLife("weeks");
-
-  const result =
-    await analytics.timeseries.getUniqueReceiversUsersByTokenAddress(address);
-  if (!result.success) {
-    throw Error(result.reason);
-  }
-  return {
-    data: result.data,
-    timestamp: new Date().toISOString(),
-  };
-};
-
-const getCachedHolderGrowth = async (address: string) => {};
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getDummyHolderGrowth = async (address: string) => ({
   data: [
     { date: "2024-04-14", count: 1023 },
