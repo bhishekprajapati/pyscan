@@ -234,7 +234,7 @@ export default function AnalyticsPage() {
         </ErrorBoundary>
       </div>
 
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
@@ -260,7 +260,7 @@ export default function AnalyticsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
@@ -286,7 +286,7 @@ export default function AnalyticsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
@@ -312,7 +312,7 @@ export default function AnalyticsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <PrimaryTokenUsersCount
@@ -338,14 +338,14 @@ export default function AnalyticsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <TokenTransferVolume />
           </Suspense>
         </ErrorBoundary>
       </div>
-      <div className="lg:col-span-4">
+      <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
             <TokenTransactionCount />
