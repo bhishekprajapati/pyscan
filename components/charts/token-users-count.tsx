@@ -6,6 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardHeading,
+  CardHelp,
   CardTimestamp,
 } from "@/components/ui/card";
 import type { SerializedTokenData } from "@/lib/token";
@@ -39,6 +40,7 @@ export type TokenUsersCountChartProps = {
   };
   area?: Pick<AreaProps, "stroke" | "name">;
   footerEndContent?: React.ReactNode;
+  helpText?: string;
 };
 
 const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
@@ -52,6 +54,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
     tick,
     area,
     footerEndContent,
+    helpText,
   } = props;
 
   const [curve, register] = useSelectedCurveType();
@@ -71,6 +74,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
         {timestamp && (
           <CardTimestamp date={new Date(timestamp)} frequency={frequency} />
         )}
+        {helpText && <CardHelp tooltipProps={{ content: helpText }} />}
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

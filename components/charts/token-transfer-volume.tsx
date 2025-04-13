@@ -6,6 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardHeading,
+  CardHelp,
   CardTimestamp,
 } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
@@ -65,6 +66,12 @@ const TokenTransferVolume = () => {
             isRefreshing={query.isFetching}
           />
         )}
+        <CardHelp
+          tooltipProps={{
+            content:
+              "Token Transfer Volume shows the total amount of PYUSD moved between addresses over time. Use this to track network activity and compare PYUSD’s usage with other stablecoins like USDT, USDC, or DAI.",
+          }}
+        />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

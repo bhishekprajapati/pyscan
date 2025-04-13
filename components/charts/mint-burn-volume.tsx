@@ -5,6 +5,7 @@ import {
   CardBody,
   CardHeader,
   CardHeading,
+  CardHelp,
   CardTimestamp,
 } from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
@@ -62,6 +63,12 @@ const TokenMintBurnVolume = () => {
             date={new Date(data.timestamp)}
           />
         )}
+        <CardHelp
+          tooltipProps={{
+            content:
+              "Mint vs Burn Volume shows the total amount of PYUSD minted and burned over time. This helps track supply changes — mints increase circulation, while burns reduce it — giving insight into issuance and redemption trends.",
+          }}
+        />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">

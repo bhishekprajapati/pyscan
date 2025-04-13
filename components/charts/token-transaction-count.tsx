@@ -2,7 +2,13 @@
 
 import TimeframeSelect from "@/components/select/timeframe-select";
 import TokenSelect from "@/components/select/token-select";
-import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardHeading,
+  CardHelp,
+} from "@/components/ui/card";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import { useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTransactionCounts } from "@/hooks/transactions";
@@ -45,6 +51,12 @@ const TokenTransactionCount = () => {
       <CardHeader>
         <CardHeading>Transaction Count</CardHeading>
         <span className="ms-auto" />
+        <CardHelp
+          tooltipProps={{
+            content:
+              "Token Transaction Count tracks the number of on-chain transfers for the selected token. Use it to compare activity levels across different stablecoins and understand usage patterns beyond just volume.",
+          }}
+        />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
