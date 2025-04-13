@@ -289,8 +289,8 @@ export default function analytics(query: QueryHandler) {
       return result;
     };
 
-    const getTokenTransferVolumeByTokenAddress = async (
-      tokenAddress: string,
+    const getTokenTransferVolumeByTokenAddresses = async (
+      tokens: { address: string; label: string }[],
       filter: Filter,
     ) => {
       const { timeframe, limit } = filter;
@@ -302,42 +302,46 @@ export default function analytics(query: QueryHandler) {
       const result = await query({
         query: `
           SELECT
-            TIMESTAMP_TRUNC(block_timestamp, ${unit}) as timestamp,
             COUNT(*) AS tx_count,
             SUM(SAFE_CAST(value AS BIGNUMERIC)) AS total_value,
+            TIMESTAMP_TRUNC(block_timestamp, ${unit}) as timestamp,
+            CASE
+              ${tokens.map(({ address, label }) => `WHEN LOWER(token_address) = '${address.toLowerCase()}' THEN '${label}'`).join(" ")}
+            END AS label
           FROM
             bigquery-public-data.crypto_ethereum.token_transfers
           WHERE
-            LOWER(token_address) = LOWER(@tokenAddress) AND
+            LOWER(token_address) IN (${tokens.map(({ address }) => `'${address.toLowerCase()}'`).join(",")}) AND
             block_timestamp BETWEEN TIMESTAMP('${start}') AND TIMESTAMP ('${end}')
           GROUP BY
-            timestamp
+            timestamp, label
           ORDER BY
             timestamp DESC   
           LIMIT @limit
         `,
         params: {
-          tokenAddress,
-          limit,
+          limit: limit * tokens.length,
         },
         useLegacySql: false,
-        maximumBytesBilled: bytes("5GB")?.toString(),
+        maximumBytesBilled: bytes("10GB")?.toString(),
       });
 
       type TData = {
         timestamp: BigQueryTimestamp;
         tx_count: number;
         total_value: string;
+        label: string;
       };
 
       if (result.success) {
         return {
           success: result.success,
           data: (result.data[0] as TData[]).map(
-            ({ timestamp, total_value, tx_count }) => ({
+            ({ timestamp, total_value, tx_count, label }) => ({
               timestamp: timestamp.value,
               totalValue: total_value,
               txCount: tx_count,
+              label,
             }),
           ),
         };
@@ -755,7 +759,7 @@ export default function analytics(query: QueryHandler) {
       getTxnCountByToAddress,
       getGasUsageByToAddress,
       getMintAndBurnVolumeByTokenAddress,
-      getTokenTransferVolumeByTokenAddress,
+      getTokenTransferVolumeByTokenAddresses,
       getTokenTransferCountByTokenAddresses,
       getActiveUsersByTokenAddress,
       getNewUsersByTokenAddress,

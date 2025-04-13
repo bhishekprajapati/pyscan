@@ -20,3 +20,15 @@ export const primaryTokenAddressSchema = z
   .refine((address) => isPrimaryTokenAddress(address), {
     message: "Unsupported token address",
   });
+
+export const primaryOrSecondaryTokenAddressSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .refine(
+    (address) =>
+      isPrimaryTokenAddress(address) || isSecondaryTokenAddress(address),
+    {
+      message: "Unsupported token address",
+    },
+  );

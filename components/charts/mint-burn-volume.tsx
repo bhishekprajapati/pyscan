@@ -3,11 +3,13 @@
 import {
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   CardHeading,
   CardHelp,
   CardTimestamp,
 } from "@/components/ui/card";
+import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
@@ -23,17 +25,20 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import TimeframeSelect from "../select/timeframe-select";
 
 // TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
 // TODO: add timeframe
 
 const TokenMintBurnVolume = () => {
   const token = usePrimaryTokenType();
+  const [tf, registerTimeframe] = useSelectedTimeframe("1d");
+  const lmt = useTimeframeMaxLimit(tf);
   const { query } = useMintBurnVol({
     tokenAddress: token.getContractAddress(),
     filter: {
-      timeframe: "1d",
-      limit: 30,
+      timeframe: tf,
+      limit: lmt,
     },
   });
 
@@ -71,7 +76,7 @@ const TokenMintBurnVolume = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="p-0">
+      <CardBody className="h-[25rem] p-0">
         {data && (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={data.data}>
@@ -132,6 +137,10 @@ const TokenMintBurnVolume = () => {
           </ResponsiveContainer>
         )}
       </CardBody>
+      <Divider />
+      <CardFooter className="justify-end">
+        <TimeframeSelect variant="bordered" {...registerTimeframe} />
+      </CardFooter>
     </Card>
   );
 };

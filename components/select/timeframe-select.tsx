@@ -36,7 +36,7 @@ const TimeframeSelect = (props: TimeframeSelectProps) => {
 
   return (
     <Select
-      className={cn("w-24", className)}
+      className={cn("w-28", className)}
       disabledKeys={disabledKeys}
       items={options}
       defaultSelectedKeys={defaultSelectedKeys}

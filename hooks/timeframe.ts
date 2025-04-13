@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  TimeframeOption,
-  TimeframeSelectProps,
-} from "@/components/select/timeframe-select";
+import type { TimeframeSelectProps } from "@/components/select/timeframe-select";
 import type {
   PrivateTimeframe,
   PublicTimeframe,
@@ -11,65 +8,30 @@ import type {
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
-const DEFAULT_SELECTED_PUBLIC_TIMEFRAME: PublicTimeframe = "1d";
-const DEFAULT_SELECTED_PRIVATE_TIMEFRAME: PrivateTimeframe = "6h";
-
-type Timeframe = PublicTimeframe | PrivateTimeframe;
+const DEFAULT_SELECTED_PUBLIC_TIMEFRAME: PublicTimeframe = "1h";
+const DEFAULT_SELECTED_PRIVATE_TIMEFRAME: PrivateTimeframe = "1h";
 
 const MAX_LIMITS = {
-  "5m": 25,
-  "15m": 25,
-  "30m": 25,
-  "1h": 25,
-  "3h": 10,
-  "6h": 10,
-  "12h": 10,
-  "1d": 10,
+  "1h": 30,
+  "1d": 30,
   "1w": 4,
   "1M": 1,
 } as const;
 
+type Timeframe = keyof typeof MAX_LIMITS;
+
 export const useTimeframes = () => {
   const pub: { key: PublicTimeframe; label: string }[] = [
-    {
-      key: "1d",
-      label: "1 Day",
-    },
-    {
-      key: "1w",
-      label: "1 Week",
-    },
-  ];
-
-  const pri: { key: PrivateTimeframe; label: string }[] = [
-    // TODO: backend bigquery queries needs fizing inorder to make these timeframe work
-    // {
-    //   key: "5m",
-    //   label: "5 Min",
-    // },
-    // {
-    //   key: "15m",
-    //   label: "15 Min",
-    // },
-    // {
-    //   key: "30m",
-    //   label: "30 Min",
-    // },
     {
       key: "1h",
       label: "1 Hour",
     },
+  ];
+
+  const pri: { key: PrivateTimeframe; label: string }[] = [
     {
-      key: "3h",
-      label: "3 Hours",
-    },
-    {
-      key: "6h",
-      label: "6 Hours",
-    },
-    {
-      key: "12h",
-      label: "12 Hours",
+      key: "1h",
+      label: "1 Hour",
     },
     {
       key: "1d",
@@ -93,23 +55,27 @@ export const useTimeframes = () => {
   } as const;
 };
 
+// Dropping this idea
+// I wanted to support multiple timeframes
+// but only few are allowed for anonymous users
+// and full access for authenticated user
+// It does not matter now since I'm caching bigquery
+// calls aggresively on server anyway so this doesn't make sense
+// and also I'm running out of time
+// but this code stays here for no reason
+// until i do something about it in future
+
 export const useTimeframeSelectOptions = () => {
   const timeframes = useTimeframes();
   const session = useSession();
-  const options =
-    session.status === "authenticated"
-      ? timeframes.private.map(({ key, label }) => ({
-          key,
-          label,
-          defaultSelected: key === DEFAULT_SELECTED_PRIVATE_TIMEFRAME,
-          disabled: false,
-        }))
-      : timeframes.private.map(({ key, label }) => ({
-          key,
-          label,
-          defaultSelected: key === DEFAULT_SELECTED_PUBLIC_TIMEFRAME,
-          disabled: key === "1d" || key === "1w" ? false : true,
-        }));
+  const options: TimeframeSelectProps["options"] = timeframes.private.map(
+    ({ key, label }) => ({
+      key,
+      label,
+      defaultSelected: key === "1h",
+      disabled: false,
+    }),
+  );
 
   return {
     options,
@@ -124,15 +90,18 @@ export const useTimeframeSelectOptions = () => {
  *
  * @returns [selectedOptions, registerProps]
  */
-export const useSelectedTimeframe = () => {
+export const useSelectedTimeframe = (defaultTF?: Timeframe) => {
   const { options, defaultTimeframe } = useTimeframeSelectOptions();
-  const [selected, setSelected] = useState<Timeframe>(defaultTimeframe);
+  const [selected, setSelected] = useState<Timeframe>(
+    defaultTF ?? defaultTimeframe,
+  );
 
   const register: Pick<TimeframeSelectProps, "options" | "onSelectionChange"> =
     {
       options,
-      onSelectionChange: ({ currentKey }) => {
-        setSelected(currentKey as Timeframe);
+
+      onSelectionChange: (set) => {
+        setSelected(Array.from(set)[0] as Timeframe);
       },
     };
 

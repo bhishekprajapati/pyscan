@@ -9,7 +9,7 @@ import {
   CardHelp,
   CardTimestamp,
 } from "@/components/ui/card";
-import { usePrimaryTokenType } from "@/hooks/tokens";
+import { usePrimaryTokenType, useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
 import { formatNumber } from "@/utils/chart";
@@ -26,33 +26,47 @@ import {
 import CurveTypeSelect, {
   useSelectedCurveType,
 } from "../select/curve-type-select";
+import TimeframeSelect from "../select/timeframe-select";
+import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
+import TokenSelect from "../select/token-select";
+import { formatUnits } from "viem";
+import { groupBy } from "lodash";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
-  const color = token.getColors("dark").background;
+  const [curve, registerCurve] = useSelectedCurveType();
+  const [tf, registerTimeframe] = useSelectedTimeframe();
+  const [tks, registerToken] = useSelectedTokenTypes();
+  const lmt = useTimeframeMaxLimit(tf);
+
   const { query } = useTokenTransferVol({
-    tokenAddress: token.getContractAddress(),
+    tokenAddresses: tks.map((tk) => ({
+      address: tk.getContractAddress(),
+      label: tk.getSymbol(),
+    })),
     filter: {
-      timeframe: "1d",
-      limit: 15,
+      timeframe: tf,
+      limit: lmt,
     },
   });
-  const [curve, registerCurve] = useSelectedCurveType();
 
-  // TODO: add timeframe
-  // TODO: account price in usd
   const data = useMemo(() => {
-    if (!query.data) return query.data;
+    if (!query.data) return undefined;
     const { dataset, timestamp } = query.data;
     return {
       timestamp,
-      dataset: dataset
-        .map(({ timestamp, totalValue, txCount }) => ({
-          timestamp: new Date(timestamp),
-          totalValue: token.applySubunits(totalValue),
-          txCount,
-        }))
-        .sort(sortByDate),
+      dataset: Object.entries(
+        groupBy(dataset, ({ timestamp }) => timestamp),
+      ).map(([timestamp, tokens]) => {
+        const labels: Record<string, number> = {};
+        tokens.forEach(({ label, totalValue }) => {
+          const tk = tks.find((tk) => tk.getSymbol() === label);
+          if (tk) {
+            labels[label] = tk.applySubunits(totalValue);
+          }
+        });
+        return { timestamp, ...labels };
+      }),
     };
   }, [query.data, token]);
 
@@ -74,15 +88,9 @@ const TokenTransferVolume = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="p-0">
+      <CardBody className="h-[25rem] p-0">
         <ResponsiveContainer height={400}>
           <AreaChart data={data?.dataset ?? []}>
-            <defs>
-              <linearGradient id="vol" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor={color} stopOpacity={0.09} />
-                <stop offset="95%" stopColor={color} stopOpacity={0.05} />
-              </linearGradient>
-            </defs>
             <XAxis
               dataKey="timestamp"
               axisLine={{
@@ -112,7 +120,6 @@ const TokenTransferVolume = () => {
               }}
             />
             <YAxis
-              dataKey="totalValue"
               orientation="right"
               axisLine={{
                 stroke: "#eeeeee50",
@@ -125,21 +132,28 @@ const TokenTransferVolume = () => {
               wrapperClassName="!bg-default-50 rounded-lg !border-none"
               cursor={false}
               labelFormatter={(label: string) => new Date(label).toDateString()}
+              formatter={(value: number) => formatNumber(value)}
             />
-            <Area
-              type={curve}
-              dataKey="totalValue"
-              stroke={color}
-              strokeWidth={2}
-              fill="url(#vol)"
-              fillOpacity={1}
-            />
+            {tks.map((tk) => (
+              <Area
+                key={tk.getSymbol()}
+                type={curve}
+                name={tk.getName()}
+                dataKey={tk.getSymbol()}
+                stroke={tk.getColors("dark").background}
+                strokeWidth={2}
+                dot={false}
+                fillOpacity={0.05}
+              />
+            ))}
           </AreaChart>
         </ResponsiveContainer>
       </CardBody>
       <Divider />
-      <CardFooter>
-        <CurveTypeSelect {...registerCurve} />
+      <CardFooter className="gap-2">
+        <CurveTypeSelect className="me-auto" {...registerCurve} />
+        <TimeframeSelect variant="bordered" {...registerTimeframe} />
+        <TokenSelect {...registerToken} />
       </CardFooter>
     </Card>
   );

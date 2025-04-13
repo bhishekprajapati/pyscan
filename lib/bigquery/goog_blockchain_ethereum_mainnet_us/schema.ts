@@ -114,22 +114,11 @@ export const timeseriesFilters = (() => {
     /**
      * For public endpoints
      */
-    public: z.discriminatedUnion("timeframe", [$1d, $1w]),
+    public: z.discriminatedUnion("timeframe", [$1h]),
     /**
      * For private endpoints
      */
-    private: z.discriminatedUnion("timeframe", [
-      $5m,
-      $15m,
-      $30m,
-      $1h,
-      $3h,
-      $6h,
-      $12h,
-      $1d,
-      $1w,
-      $1M,
-    ]),
+    private: z.discriminatedUnion("timeframe", [$1h, $1d, $1w, $1M]),
     parsetimeframe,
   };
 })();

@@ -90,7 +90,7 @@ export const CardHelp: React.FC<CardHelpProps> = (props) => {
   const { className: iClassName, ...iRest } = iconProps ?? {};
 
   return (
-    <Tooltip className={cn("max-w-64 bg-default-50", tClassName)} {...tRest}>
+    <Tooltip className={cn("max-w-64 p-2", tClassName)} {...tRest}>
       <CircleHelp
         className={cn("dark:text-default-200", iClassName)}
         size={16}

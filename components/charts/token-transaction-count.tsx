@@ -21,10 +21,12 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
 import CurveTypeSelect, {
   useSelectedCurveType,
 } from "../select/curve-type-select";
+import { formatNumber } from "@/utils/chart";
 
 const TokenTransactionCount = () => {
   const [tf, registerTimeframes] = useSelectedTimeframe();
@@ -49,7 +51,7 @@ const TokenTransactionCount = () => {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardHeading>Transaction Count</CardHeading>
+        <CardHeading>Transfer Transaction Count</CardHeading>
         <span className="ms-auto" />
         <CardHelp
           tooltipProps={{
@@ -59,7 +61,7 @@ const TokenTransactionCount = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="p-0">
+      <CardBody className="h-[25rem] p-0">
         {query.data && (
           <ResponsiveContainer width="100%" height={400}>
             {query.data && query.data.type === "any" ? (
@@ -68,6 +70,14 @@ const TokenTransactionCount = () => {
               </LineChart>
             ) : (
               <AreaChart data={query.data.dataset}>
+                <YAxis
+                  orientation="right"
+                  axisLine={{
+                    stroke: "#eeeeee50",
+                    strokeWidth: 0.5,
+                  }}
+                  tickFormatter={(v) => formatNumber(v)}
+                />
                 <XAxis
                   dataKey="timestamp"
                   axisLine={{
@@ -136,7 +146,7 @@ const TokenTransactionCount = () => {
           variant="bordered"
           {...registerTimeframes}
         />
-        <TokenSelect variant="bordered" {...registerTokens} />
+        <TokenSelect {...registerTokens} />
       </CardFooter>
     </Card>
   );

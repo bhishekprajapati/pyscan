@@ -85,10 +85,17 @@ export const useSelectedTokenTypes = () => {
   ] as TokenType<string>[]);
 
   const register: TokenSelectProps = {
+    placeholder: selected.map((tk) => tk.getName()).join(),
     options: selectables.status === "loaded" ? selectables.options : [],
     onSelectionChange(selection) {
-      // TODO: fix this
-      console.log(selection);
+      const set = selection as Set<string>;
+      const tokens = [PRIMARY_TOKEN_TYPE, ...SECONDARY_TOKEN_TYPES].filter(
+        (tk) => set.has(tk.getSymbol()),
+      );
+      if (!set.has(PRIMARY_TOKEN_TYPE.getSymbol())) {
+        tokens.push(PRIMARY_TOKEN_TYPE);
+      }
+      setSelected(tokens);
     },
   };
 

@@ -197,40 +197,24 @@ const PrimaryTokenUsersCount = async (props: PrimaryTokenUsersCountProps) => {
 export default function AnalyticsPage() {
   return (
     <div className="m-4 grid auto-rows-auto gap-4 lg:grid-cols-12">
+      <div className="lg:col-span-6">
+        <ErrorBoundary fallback={<ComponentErrorFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
+            <TokenTransferVolume />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+      <div className="lg:col-span-6">
+        <ErrorBoundary fallback={<ComponentErrorFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
+            <TokenTransactionCount />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
       <div className="lg:col-span-12">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <PrimaryTokenUsersCount
-              fetcher={
-                process.env.NODE_ENV === "production"
-                  ? getCachedHoldersGrowth
-                  : getDummyHolderGrowth
-              }
-              heading={
-                <>
-                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
-                  Holders Growth of {token.getSymbol()}
-                </>
-              }
-              tick={{
-                dateOptions: {
-                  month: "short",
-                  year: "2-digit",
-                },
-              }}
-              area={{
-                stroke: "lightgreen",
-                name: "Holders",
-              }}
-              footerEndContent={
-                <Tooltip content="Lifetime">
-                  <Chip className="ms-auto" variant="flat">
-                    ALL
-                  </Chip>
-                </Tooltip>
-              }
-              helpText="Holders Growth shows how the number of unique PYUSD wallet holders has changed over time. A rising trend indicates growing adoption and wider distribution across addresses."
-            />
+            <TokenMintBurnVolume />
           </Suspense>
         </ErrorBoundary>
       </div>
@@ -289,6 +273,45 @@ export default function AnalyticsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
+
+      <div className="lg:col-span-12">
+        <ErrorBoundary fallback={<ComponentErrorFallback />}>
+          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
+            <PrimaryTokenUsersCount
+              fetcher={
+                process.env.NODE_ENV === "production"
+                  ? getCachedHoldersGrowth
+                  : getDummyHolderGrowth
+              }
+              heading={
+                <>
+                  <TokenLogo className="me-2 h-4 w-4" token={token.toJSON()} />{" "}
+                  Holders Growth of {token.getSymbol()}
+                </>
+              }
+              tick={{
+                dateOptions: {
+                  month: "short",
+                  year: "2-digit",
+                },
+              }}
+              area={{
+                stroke: "lightgreen",
+                name: "Holders",
+              }}
+              footerEndContent={
+                <Tooltip content="Lifetime">
+                  <Chip className="ms-auto" variant="flat">
+                    ALL
+                  </Chip>
+                </Tooltip>
+              }
+              helpText="Holders Growth shows how the number of unique PYUSD wallet holders has changed over time. A rising trend indicates growing adoption and wider distribution across addresses."
+            />
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
@@ -340,27 +363,6 @@ export default function AnalyticsPage() {
               }
               helpText="Unique Receivers shows the number of distinct wallet addresses that received PYUSD during the selected period. It reflects how widely the token is being distributed or accepted."
             />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-      <div className="lg:col-span-6">
-        <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <TokenTransferVolume />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-      <div className="lg:col-span-6">
-        <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <TokenTransactionCount />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-      <div className="lg:col-span-12">
-        <ErrorBoundary fallback={<ComponentErrorFallback />}>
-          <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <TokenMintBurnVolume />
           </Suspense>
         </ErrorBoundary>
       </div>
