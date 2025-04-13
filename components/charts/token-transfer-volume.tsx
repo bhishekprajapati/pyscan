@@ -32,7 +32,7 @@ import { groupBy } from "lodash";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
-  const [curve, registerCurve] = useSelectedCurveType();
+  const [curve, registerCurve] = useSelectedCurveType("step");
   const [tf, registerTimeframe] = useSelectedTimeframe();
   const [tks, registerToken] = useSelectedTokenTypes();
   const lmt = useTimeframeMaxLimit(tf);
