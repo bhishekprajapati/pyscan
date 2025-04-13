@@ -1,4 +1,4 @@
-import { cn, Select, SelectItem, SelectSection } from "@heroui/react";
+import { cn, Select, SelectItem } from "@heroui/react";
 import { ChartSpline } from "lucide-react";
 import { useState } from "react";
 import { CurveType } from "recharts/types/shape/Curve";

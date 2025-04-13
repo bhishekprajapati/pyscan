@@ -1,1 +1,1 @@
-pnpm format && pnpm --filter=scanner lint
+pnpm format && pnpm lint && pnpm --filter=scanner lint
