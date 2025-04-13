@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { usePrimaryTokenType, useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
-import { sortByDate } from "@/utils";
 import { formatNumber } from "@/utils/chart";
 import { Divider } from "@heroui/react";
 import { useMemo } from "react";
@@ -29,7 +28,6 @@ import CurveTypeSelect, {
 import TimeframeSelect from "../select/timeframe-select";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import TokenSelect from "../select/token-select";
-import { formatUnits } from "viem";
 import { groupBy } from "lodash";
 
 const TokenTransferVolume = () => {
