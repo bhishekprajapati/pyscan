@@ -1,9 +1,16 @@
 "use client";
 
-import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  CardHeading,
+} from "@/components/ui/card";
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
+import { formatNumber } from "@/utils/chart";
 import { Divider } from "@heroui/react";
 import { useMemo } from "react";
 import {
@@ -14,6 +21,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import CurveTypeSelect, {
+  useSelectedCurveType,
+} from "../select/curve-type-select";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
@@ -25,6 +35,7 @@ const TokenTransferVolume = () => {
       limit: 15,
     },
   });
+  const [curve, registerCurve] = useSelectedCurveType();
 
   // TODO: add timeframe
   // TODO: account price in usd
@@ -58,8 +69,43 @@ const TokenTransferVolume = () => {
                 <stop offset="95%" stopColor={color} stopOpacity={0.05} />
               </linearGradient>
             </defs>
-            <XAxis dataKey="timestamp" hide />
-            <YAxis hide />
+            <XAxis
+              dataKey="timestamp"
+              axisLine={{
+                stroke: "#eeeeee50",
+                strokeWidth: 0.5,
+              }}
+              tick={({ x, y, payload }) => {
+                const date = new Date(payload.value).toLocaleDateString(
+                  "en-US",
+                  {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                  },
+                );
+                return (
+                  <text
+                    x={x}
+                    y={y + 15}
+                    textAnchor="middle"
+                    fill="#aaa"
+                    fontSize={12}
+                  >
+                    {date}
+                  </text>
+                );
+              }}
+            />
+            <YAxis
+              dataKey="totalValue"
+              orientation="right"
+              axisLine={{
+                stroke: "#eeeeee50",
+                strokeWidth: 0.5,
+              }}
+              tickFormatter={(v) => formatNumber(v)}
+            />
             <Tooltip
               separator=" "
               wrapperClassName="!bg-default-50 rounded-lg !border-none"
@@ -67,7 +113,7 @@ const TokenTransferVolume = () => {
               labelFormatter={(label: string) => new Date(label).toDateString()}
             />
             <Area
-              type="monotone"
+              type={curve}
               dataKey="totalValue"
               stroke={color}
               strokeWidth={2}
@@ -77,6 +123,10 @@ const TokenTransferVolume = () => {
           </AreaChart>
         </ResponsiveContainer>
       </CardBody>
+      <Divider />
+      <CardFooter>
+        <CurveTypeSelect {...registerCurve} />
+      </CardFooter>
     </Card>
   );
 };

@@ -6,7 +6,7 @@ import { Card, CardBody, CardHeader, CardHeading } from "@/components/ui/card";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import { useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTransactionCounts } from "@/hooks/transactions";
-import { Divider } from "@heroui/react";
+import { CardFooter, Divider } from "@heroui/react";
 import {
   Area,
   AreaChart,
@@ -15,12 +15,17 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
+import CurveTypeSelect, {
+  useSelectedCurveType,
+} from "../select/curve-type-select";
 
-const TransactionCount = () => {
+const TokenTransactionCount = () => {
   const [tf, registerTimeframes] = useSelectedTimeframe();
   const [tokens, registerTokens] = useSelectedTokenTypes();
   const limit = useTimeframeMaxLimit(tf);
+  const [curve, registerCurve] = useSelectedCurveType("step");
 
   const { query } = useTransactionCounts({
     type: "transfers",
@@ -41,8 +46,6 @@ const TransactionCount = () => {
       <CardHeader>
         <CardHeading>Transaction Count</CardHeading>
         <span className="ms-auto" />
-        <TimeframeSelect variant="bordered" {...registerTimeframes} />
-        <TokenSelect variant="bordered" {...registerTokens} />
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
@@ -85,7 +88,7 @@ const TransactionCount = () => {
                 {tokens.map((tk) => (
                   <Area
                     key={tk.getSymbol()}
-                    type="step"
+                    type={curve}
                     name={tk.getName()}
                     dataKey={tk.getSymbol()}
                     stroke={tk.getColors("dark").background}
@@ -114,8 +117,18 @@ const TransactionCount = () => {
           </ResponsiveContainer>
         )}
       </CardBody>
+      <Divider />
+      <CardFooter className="gap-2">
+        <CurveTypeSelect {...registerCurve} />
+        <TimeframeSelect
+          className="ms-auto"
+          variant="bordered"
+          {...registerTimeframes}
+        />
+        <TokenSelect variant="bordered" {...registerTokens} />
+      </CardFooter>
     </Card>
   );
 };
 
-export default TransactionCount;
+export default TokenTransactionCount;

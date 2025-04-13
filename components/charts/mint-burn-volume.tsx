@@ -10,6 +10,7 @@ import {
 import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
+import { formatNumber } from "@/utils/chart";
 import { Divider } from "@heroui/react";
 import { useMemo } from "react";
 import {
@@ -19,12 +20,13 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
 
 // TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
 // TODO: add timeframe
 
-const MintBurnChart = () => {
+const TokenMintBurnVolume = () => {
   const token = usePrimaryTokenType();
   const { query } = useMintBurnVol({
     tokenAddress: token.getContractAddress(),
@@ -53,7 +55,7 @@ const MintBurnChart = () => {
   return (
     <Card>
       <CardHeader>
-        <CardHeading>Mint Vs Burn</CardHeading>
+        <CardHeading>Mint Vs Burn of {token.getSymbol()}</CardHeading>
         {data?.timestamp && <CardTimestamp date={new Date(data.timestamp)} />}
       </CardHeader>
       <Divider />
@@ -61,9 +63,18 @@ const MintBurnChart = () => {
         {data && (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={data.data}>
+              <YAxis
+                domain={["dataMin", "dataMax"]}
+                orientation="right"
+                axisLine={{
+                  stroke: "#eeeeee50",
+                  strokeWidth: 0.5,
+                }}
+                tickFormatter={(v) => formatNumber(v)}
+              />
               <XAxis
                 dataKey="timestamp"
-                tickCount={6}
+                tickCount={12}
                 axisLine={{
                   stroke: "#eeeeee50",
                   strokeWidth: 0.5,
@@ -100,6 +111,7 @@ const MintBurnChart = () => {
                   });
                 }}
                 cursor={false}
+                formatter={(value: number) => formatNumber(value)}
               />
               <Bar dataKey="minted" stroke="lightgreen" fill="lightgreen" />
               <ReferenceLine y={0} stroke="#eeeeee50" strokeWidth={1} />
@@ -111,4 +123,4 @@ const MintBurnChart = () => {
     </Card>
   );
 };
-export default MintBurnChart;
+export default TokenMintBurnVolume;

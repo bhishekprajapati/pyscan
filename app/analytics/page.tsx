@@ -1,20 +1,22 @@
 export const dynamic = "force-dynamic";
 
-import TransactionCount from "@/components/charts/transactions/count";
-import MintBurnChart from "@/components/charts/volumes/mint-burn";
-import TokenTransferVolume from "@/components/charts/volumes/token-value";
-import { ComponentErrorFallback } from "@/components/errors";
-import { SuspendedComponentFallback } from "@/components/fallback";
+import TokenMintBurnVolume from "@/components/charts/mint-burn-volume";
+import TokenTransactionCount from "@/components/charts/token-transaction-count";
+import TokenTransferVolume from "@/components/charts/token-transfer-volume";
 import TokenUsersCountTable, {
   TokenUsersCountChartProps,
 } from "@/components/charts/token-users-count";
+import { ComponentErrorFallback } from "@/components/errors";
+import { SuspendedComponentFallback } from "@/components/fallback";
+import { TokenLogo } from "@/components/token";
+
 import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import bigquery from "@/lib/bigquery";
+import { revalidate } from "@/utils/cache";
+
 import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { revalidate } from "@/utils/cache";
-import { TokenLogo } from "@/components/token";
 
 const { analytics } = bigquery.ethereum.mainnet;
 
@@ -291,14 +293,14 @@ export default function AnalyticsPage() {
       <div className="lg:col-span-4">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <TransactionCount />
+            <TokenTransactionCount />
           </Suspense>
         </ErrorBoundary>
       </div>
       <div className="lg:col-span-12">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
-            <MintBurnChart />
+            <TokenMintBurnVolume />
           </Suspense>
         </ErrorBoundary>
       </div>

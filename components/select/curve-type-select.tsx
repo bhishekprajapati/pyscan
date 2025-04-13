@@ -3,8 +3,8 @@ import { ChartSpline } from "lucide-react";
 import { useState } from "react";
 import { CurveType } from "recharts/types/shape/Curve";
 
-export function useSelectedCurveType() {
-  const [type, setType] = useState<CurveType>("monotone");
+export function useSelectedCurveType(defaultCurve: CurveType = "monotone") {
+  const [type, setType] = useState<CurveType>(defaultCurve);
   const options: CurveTypeSelectProps["options"] = [
     {
       key: "basis",
