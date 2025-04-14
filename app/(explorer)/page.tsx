@@ -30,7 +30,6 @@ import GasTrendChart from "./_components/gas-trend";
 import NetworkCongestion from "./_components/network-congestion";
 import PyusdVolume from "./_components/pyusd-volume";
 import LatestBlockTable from "@/components/tables/latest-blocks";
-import LatestTransactionTable from "@/components/tables/latest-transactions";
 
 const eth = bigquery.ethereum.mainnet;
 
@@ -261,39 +260,6 @@ const LatestBlocks = async () => {
   );
 };
 
-/**
- * TODO: real-time update on client side
- */
-const LatestTransactions = async () => {
-  const results = await ethereum.mainnet.getLatestTransactions();
-  if (!results.success) return <>errro occured</>;
-  const { txns, timestamp } = results.data;
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardHeading>Latest Transactions</CardHeading>
-      </CardHeader>
-      <Divider />
-      <CardBody className="p-0">
-        <LatestTransactionTable txns={txns} blockTimestamp={timestamp} />
-      </CardBody>
-      <Divider />
-      <CardFooter>
-        <LinkButton href="/transactions" variant="light" className="group">
-          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
-            View All Transactions
-          </span>
-          <ArrowRight
-            size={16}
-            className="dark:text-gray-400 dark:group-hover:text-secondary"
-          />
-        </LinkButton>
-      </CardFooter>
-    </Card>
-  );
-};
-
 export default function Home() {
   return (
     <div className="m-2 grid auto-rows-max gap-2 sm:m-4 sm:grid-cols-2 sm:gap-4 lg:grid-cols-12">
@@ -361,16 +327,6 @@ export default function Home() {
             fallback={<SuspendedComponentFallback className="h-[59rem]" />}
           >
             <LatestBlocks />
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-
-      <div className="overflow-hidden sm:col-span-2 lg:col-span-12">
-        <ErrorBoundary
-          fallback={<ComponentErrorFallback className="h-[59rem]" />}
-        >
-          <Suspense fallback={<SuspendedComponentFallback />}>
-            <LatestTransactions />
           </Suspense>
         </ErrorBoundary>
       </div>
