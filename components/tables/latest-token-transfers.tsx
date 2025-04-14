@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@heroui/react";
 import BoringAvatar from "boring-avatars";
-import { ArrowRight, Eye } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import CopyButton from "../copy-button";
 import { AddressLink } from "../links";
 import { FMono, TextTruncate } from "../text";

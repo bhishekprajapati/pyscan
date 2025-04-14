@@ -6,7 +6,6 @@ import TokenDominanceChart, {
 import CopyButton from "@/components/copy-button";
 import { ComponentErrorFallback } from "@/components/errors";
 import { SuspendedComponentFallback } from "@/components/fallback";
-import { RealTimeIndicator } from "@/components/indicator";
 import LatestTokenTransferTable from "@/components/tables/latest-token-transfers";
 import { FMono, TextTruncate } from "@/components/text";
 import { TokenLogo } from "@/components/token";

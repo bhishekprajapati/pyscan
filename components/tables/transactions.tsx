@@ -175,8 +175,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
 
   useEffect(() => {
     if (query.data) {
-      console.log(query.data.meta);
-      setTotalPages((p) => query.data.meta.totalPages);
+      setTotalPages(() => query.data.meta.totalPages);
     }
   }, [query.data]);
 
