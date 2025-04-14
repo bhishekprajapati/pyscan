@@ -41,6 +41,7 @@ export const Paginator: React.FC<PaginatorProps> = (props) => {
         </div>
       )}
       <Button
+        variant="faded"
         className="ms-auto"
         onPress={paginator.toFirstPage}
         isDisabled={paginator.isFirstPage}
@@ -48,6 +49,7 @@ export const Paginator: React.FC<PaginatorProps> = (props) => {
         First
       </Button>
       <Button
+        variant="faded"
         onPress={paginator.prevPage}
         isIconOnly
         isDisabled={paginator.isFirstPage}
@@ -58,13 +60,18 @@ export const Paginator: React.FC<PaginatorProps> = (props) => {
         Page {paginator.page} of {paginator.totalPages}
       </Chip>
       <Button
+        variant="faded"
         onPress={paginator.nextPage}
         isDisabled={paginator.isLastPage}
         isIconOnly
       >
         <ChevronRight size={16} />
       </Button>
-      <Button onPress={paginator.toLastPage} isDisabled={paginator.isLastPage}>
+      <Button
+        variant="faded"
+        onPress={paginator.toLastPage}
+        isDisabled={paginator.isLastPage}
+      >
         Last
       </Button>
     </div>

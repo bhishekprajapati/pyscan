@@ -77,6 +77,7 @@ const BlockTransactionsTable = ({
               A total of {data.length} transaction found
             </CardHeading>
             <DownloadButton
+              variant="faded"
               key={`${paginator.page}-${paginator.pageSize}`}
               className="ms-auto"
               data={paginator.pageData}
@@ -105,14 +106,16 @@ const BlockTransactionsTable = ({
                 {paginator.pageData.map((tx) => (
                   <TableRow key={tx.hash}>
                     <TableCell>
-                      <FMono>
-                        <TextTruncate className="w-56">
-                          <TransactionLink hash={tx.hash}>
-                            {tx.hash}
-                          </TransactionLink>
-                        </TextTruncate>
-                      </FMono>
-                      <CopyButton text={tx.hash} />
+                      <div className="flex items-center gap-2">
+                        <FMono>
+                          <TextTruncate className="w-56">
+                            <TransactionLink hash={tx.hash}>
+                              {tx.hash}
+                            </TransactionLink>
+                          </TextTruncate>
+                        </FMono>
+                        <CopyButton text={tx.hash} />
+                      </div>
                     </TableCell>
                     {/* <TableCell>{tx.method}</TableCell> */}
                     <TableCell>{tx.blockNumber}</TableCell>
@@ -120,24 +123,32 @@ const BlockTransactionsTable = ({
                       <TimeAgo date={new Date(Number(tx.age) * 1000)} />
                     </TableCell>
                     <TableCell>
-                      <FMono>
-                        <TextTruncate>
-                          <AddressLink address={tx.from}>{tx.from}</AddressLink>
-                        </TextTruncate>
-                      </FMono>
-                      <CopyButton text={tx.from} />
+                      <div className="flex items-center gap-2">
+                        <FMono>
+                          <TextTruncate>
+                            <AddressLink address={tx.from}>
+                              {tx.from}
+                            </AddressLink>
+                          </TextTruncate>
+                        </FMono>
+                        <CopyButton text={tx.from} />
+                      </div>
                     </TableCell>
                     <TableCell>
-                      {tx.to && (
-                        <>
-                          <FMono>
-                            <TextTruncate>
-                              <AddressLink address={tx.to}>{tx.to}</AddressLink>
-                            </TextTruncate>
-                          </FMono>
-                          <CopyButton text={tx.to} />
-                        </>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {tx.to && (
+                          <>
+                            <FMono>
+                              <TextTruncate>
+                                <AddressLink address={tx.to}>
+                                  {tx.to}
+                                </AddressLink>
+                              </TextTruncate>
+                            </FMono>
+                            <CopyButton text={tx.to} />
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <WeiToEther wei={tx.amount} />
@@ -148,6 +159,7 @@ const BlockTransactionsTable = ({
               </TableBody>
             </Table>
           </CardBody>
+          <Divider />
           <CardFooter className="block">
             <Paginator paginator={paginator} />
           </CardFooter>
