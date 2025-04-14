@@ -1,6 +1,10 @@
 import { BaseFetcherOptions, fetcher, PathMakerFn } from "./fetcher";
 
 import type {
+  ExecuteQueryApiResponse,
+  ExecuteQuerySchema,
+} from "@/app/api/private/queries/route";
+import type {
   BlocksApiResponse,
   BlocksApiResponseQuery,
 } from "@/app/api/public/mainnet/explorer/blocks/route";
@@ -63,10 +67,23 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
     });
   };
 
+  const execQuery = async (
+    query: ExecuteQuerySchema,
+    opts: BaseFetcherOptions = {},
+  ) => {
+    const url = _URL("/queries");
+    return fetcher<ExecuteQueryApiResponse>(url, {
+      method: "POST",
+      body: JSON.stringify(query),
+      ...opts,
+    });
+  };
+
   return {
     getBlocks,
     getTransactions,
     getWalletTransactions,
     getLatestTokenTransfers,
+    execQuery,
   };
 }

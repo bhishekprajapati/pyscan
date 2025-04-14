@@ -2,7 +2,6 @@
 
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
-import DataExplorer from "@/components/sql-query/data-explorer";
 import QueryResult from "@/components/sql-query/query-result";
 import SqlEditor, {
   type SqlEditorProps,
@@ -11,10 +10,10 @@ import { useMutation } from "@tanstack/react-query";
 import api from "@/lib/api-sdk";
 import { makeMutationFn } from "@/utils/tanstack";
 import { useState } from "react";
+import { addToast } from "@heroui/react";
 
 const useQueryExecutor = () => {
-  // @ts-expect-error fix
-  const fn = makeMutationFn(api.private.queries.exec);
+  const fn = makeMutationFn(api.private.explorer.execQuery);
   const mutation = useMutation({
     mutationKey: ["queries", "exec"],
     mutationFn: fn,
@@ -34,44 +33,47 @@ const QueryStudio: React.FC<QueryStudioProps> = (props) => {
   const { editorProps } = props;
   const [query, setQuery] = useState("");
   const executor = useQueryExecutor();
-
-  // TODO: add error boundary
+  const [results, setResults] = useState<unknown[] | undefined>(undefined);
 
   return (
     <div className="m-4 h-[calc(100dvh-6.5rem)]">
-      <PanelGroup className="h-full gap-2" direction="horizontal">
-        <Panel minSize={20} defaultSize={25}>
-          <DataExplorer />
+      <PanelGroup className="h-full gap-2" direction="vertical">
+        <Panel defaultSize={75} minSize={25}>
+          <SqlEditor
+            {...editorProps}
+            onChange={(q) => setQuery(q)}
+            runButtonProps={{
+              isLoading: executor.isPending,
+              onPress: () => {
+                executor.exec(
+                  {
+                    query,
+                  },
+                  {
+                    onSuccess: (data) => {
+                      setResults(data);
+                    },
+                    onError: (e) =>
+                      addToast({
+                        description: e.message,
+                        color: "danger",
+                      }),
+                  },
+                );
+              },
+            }}
+            error={
+              executor.error
+                ? {
+                    message: executor.error.message,
+                  }
+                : undefined
+            }
+          />
         </Panel>
         <PanelResizeHandle />
-        <Panel className="h-full" defaultSize={75} minSize={50}>
-          <PanelGroup className="h-full gap-2" direction="vertical">
-            <Panel defaultSize={75} minSize={25}>
-              <SqlEditor
-                {...editorProps}
-                onChange={(q) => setQuery(q)}
-                runButtonProps={{
-                  isLoading: executor.isPending,
-                  onPress: () =>
-                    executor.exec(query, {
-                      onSuccess: console.log,
-                      onError: console.error,
-                    }),
-                }}
-                error={
-                  executor.error
-                    ? {
-                        message: executor.error.message,
-                      }
-                    : undefined
-                }
-              />
-            </Panel>
-            <PanelResizeHandle />
-            <Panel defaultSize={25} minSize={15}>
-              <QueryResult />
-            </Panel>
-          </PanelGroup>
+        <Panel defaultSize={25} minSize={15}>
+          <QueryResult result={results} />
         </Panel>
       </PanelGroup>
     </div>

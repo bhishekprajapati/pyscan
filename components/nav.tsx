@@ -18,7 +18,7 @@ const Nav = () => (
     </li>
     <SignedInClientOnly>
       <li>
-        <Link href="/queries">My Queries</Link>
+        <Link href="/studio">Studio</Link>
       </li>
     </SignedInClientOnly>
   </ul>

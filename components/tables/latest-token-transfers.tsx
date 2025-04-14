@@ -72,78 +72,80 @@ const LatestTokenTransferTable: React.FC<Props> = ({
   );
 
   return (
-    <Table
-      aria-label={`latest ${token.getName()} token transfers`}
-      className={tableClassName}
-      classNames={tableClassNames}
-      removeWrapper
-    >
-      <TableHeader columns={columns}>
-        {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
-      </TableHeader>
-      <TableBody>
-        {txns.map((txn) => (
-          <TableRow className="group" key={txn.key}>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <BoringAvatar name={txn.from_address} size={24} />
-                <AddressLink address={txn.from_address}>
-                  <TextTruncate>
-                    <FMono>{txn.from_address}</FMono>
-                  </TextTruncate>
-                </AddressLink>
-                <CopyButton text={txn.from_address} />
-              </div>
-            </TableCell>
-            <TableCell>
-              <span className="flex h-6 w-6 items-center justify-center rounded-full border border-blue-700/15 bg-blue-700/10">
-                <ArrowRight size={12} className="text-blue-700" />
-              </span>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-2">
-                <AddressLink address={txn.to_address}>
-                  <TextTruncate>
-                    <FMono>{txn.to_address}</FMono>
-                  </TextTruncate>
-                </AddressLink>
-                <CopyButton text={txn.from_address} />
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="text-sm">
-                <Timestamp
-                  stamp={txn.block_timestamp.toString()}
-                  icon={false}
-                  string={false}
-                />
-              </div>
-            </TableCell>
-            <TableCell>
-              <Chip
-                variant="bordered"
-                className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
-              >
-                {price === undefined ? (
-                  <span className="text-success-700">
-                    <FMono>{token.applySubunits(txn.quantity)} </FMono>
-                    <span className="text-sm">{token.getSymbol()}</span>
-                  </span>
-                ) : (
-                  <FMono className="text-success-700">
-                    $
-                    {(token.applySubunits(txn.quantity) * price).toFixed(
-                      token.getSubunits(),
-                    )}{" "}
-                    USD
-                  </FMono>
-                )}
-              </Chip>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="overflow-auto">
+      <Table
+        aria-label={`latest ${token.getName()} token transfers`}
+        className={tableClassName}
+        classNames={tableClassNames}
+        removeWrapper
+      >
+        <TableHeader columns={columns}>
+          {(col) => <TableColumn key={col.uid}>{col.name}</TableColumn>}
+        </TableHeader>
+        <TableBody>
+          {txns.map((txn) => (
+            <TableRow className="group" key={txn.key}>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <BoringAvatar name={txn.from_address} size={24} />
+                  <AddressLink address={txn.from_address}>
+                    <TextTruncate>
+                      <FMono>{txn.from_address}</FMono>
+                    </TextTruncate>
+                  </AddressLink>
+                  <CopyButton text={txn.from_address} />
+                </div>
+              </TableCell>
+              <TableCell>
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-blue-700/15 bg-blue-700/10">
+                  <ArrowRight size={12} className="text-blue-700" />
+                </span>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <AddressLink address={txn.to_address}>
+                    <TextTruncate>
+                      <FMono>{txn.to_address}</FMono>
+                    </TextTruncate>
+                  </AddressLink>
+                  <CopyButton text={txn.from_address} />
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="text-sm">
+                  <Timestamp
+                    stamp={txn.block_timestamp.toString()}
+                    icon={false}
+                    string={false}
+                  />
+                </div>
+              </TableCell>
+              <TableCell>
+                <Chip
+                  variant="bordered"
+                  className="rounded-lg shadow-xl shadow-background/50 dark:border-gray-700/75"
+                >
+                  {price === undefined ? (
+                    <span className="text-success-700">
+                      <FMono>{token.applySubunits(txn.quantity)} </FMono>
+                      <span className="text-sm">{token.getSymbol()}</span>
+                    </span>
+                  ) : (
+                    <FMono className="text-success-700">
+                      $
+                      {(token.applySubunits(txn.quantity) * price).toFixed(
+                        token.getSubunits(),
+                      )}{" "}
+                      USD
+                    </FMono>
+                  )}
+                </Chip>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

@@ -20,7 +20,7 @@ const AppNavBar = ({ slotInput }: { slotInput?: React.ReactNode }) => {
           </LinkButton>
         </div>
         <div className="border-e border-e-divider p-4">
-          <div className="rounded-lg bg-zinc-900 p-1">
+          <div className="hidden rounded-lg bg-zinc-900 p-1 sm:block">
             <Chip
               color="default"
               startContent={<Fuel size={16} className="me-1" />}
@@ -46,7 +46,10 @@ const AppNavBar = ({ slotInput }: { slotInput?: React.ReactNode }) => {
             </Chip>
           </div>
         </div>
-        <Nav />
+        <div className="hidden md:block">
+          <Nav />
+        </div>
+        <span className="ms-auto" />
         <PathOnly matcher="/">
           <span className="hidden md:inline-block">
             <Chip variant="dot" color="success" className="me-4">

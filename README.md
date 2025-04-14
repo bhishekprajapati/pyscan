@@ -1,3 +1,9 @@
+**NOTE**: Please consider logging via google on the app to use all the features.
+
+1. Charts have limited features for unauthenticated users.
+2. Query studio is only available to authenticated users.
+   With max 100MB per query and max 10 query executions per day restrictions.
+
 ## 📌 Foreword
 
 I didn’t want to start this project at first — I was too unsure about diving into something so unfamiliar. But as time passed, the idea stuck with me, and eventually, I felt motivated to build it out.
@@ -92,7 +98,7 @@ The goal was to **focus on functionality and product thinking first**, and I bel
 
 ## ✨ Key Features
 
-This app covers **three major quadrants** to help users gain deep insights into the PayPal USD (PYUSD) ecosystem:
+This app covers **four major quadrants** to help users gain deep insights into the PayPal USD (PYUSD) ecosystem:
 
 ### 🧭 1. Explorer
 
@@ -129,7 +135,13 @@ Discover the top players in the PYUSD ecosystem (tracked over the last 30 days):
 - 🔥 **Top Burners** — addresses involved in burning the most PYUSD.
 - 💰 **Top Holders** — addresses holding the largest PYUSD balances.
 
-## 📸 Screenshots
+### 4. 🧠 Power Mode: Custom SQL Queries
+
+Advanced users can now unlock full analytical power using the Custom Query quadrant. Write your own SQL queries on-chain PYUSD data, extract customized insights, and download the result as raw JSON.
+
+🔍 Ideal for power users, researchers, or compliance teams
+🧾 Instant download of result data in JSON format
+🔒 Read-only queries with BigQuery backend
 
 ---
 

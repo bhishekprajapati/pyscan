@@ -78,6 +78,9 @@ const error = (() => {
     validation_error: "Bad input",
     authentication_required: "You are unautenticated",
     internal_server_error: "Something went wrong on the server",
+    email_not_found: "action aborted due to no email",
+    query_limit_exceeded:
+      "Query limited exceeded. Only 100MB free byte scanned allowed per query and only 10 queries allowed each day.",
   };
 
   type TErrorName = keyof typeof errorNames;

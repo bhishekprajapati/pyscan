@@ -151,6 +151,18 @@ const SqlEditor: React.FC<SqlEditorProps> = (props) => {
             </span>
           </Tooltip>
         )}
+        <div>
+          Sample Query
+          <CopyButton
+            text={`
+-- To get number of token transfers happened of PYUSD in last 1 DAY 
+SELECT COUNT(*) AS tx_count
+FROM bigquery-public-data.crypto_ethereum.token_transfers
+WHERE LOWER(token_address) = LOWER('0x6c3ea9036406852006290770bedfcaba0e23a0e8')
+   AND block_timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 1 DAY)
+            `}
+          />
+        </div>
         {maxLength && <CharBalance max={maxLength} current={sqlQuery.length} />}
         <Button
           {...runButtonProps}
