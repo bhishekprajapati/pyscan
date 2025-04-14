@@ -50,7 +50,7 @@ export default function RootLayout({
         )}
       >
         <Providers>
-          <div className="sticky top-0 z-50">
+          <div className="sticky top-0 z-50 border-s border-divider">
             <NextTopLoader height={1} color="#AAFF00" showSpinner={false} />
             <AppNavBar slotInput={<SearchInput />} />
           </div>
