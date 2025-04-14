@@ -6,6 +6,7 @@ import NextTopLoader from "nextjs-toploader";
 
 import "./globals.css";
 import { Providers } from "./providers";
+import SearchInput from "@/components/search";
 
 const serif = Space_Grotesk({
   subsets: ["latin"],
@@ -40,7 +41,7 @@ export default function RootLayout({
         <Providers>
           <div className="sticky top-0 z-50">
             <NextTopLoader height={1} color="#AAFF00" showSpinner={false} />
-            <AppNavBar />
+            <AppNavBar slotInput={<SearchInput />} />
           </div>
           <div>
             {children}

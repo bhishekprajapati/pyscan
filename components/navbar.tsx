@@ -8,7 +8,7 @@ import { PathOnly } from "./path";
 import { EthGasFee, Quote } from "./pyusd";
 import LinkButton from "./ui/link-button";
 
-const AppNavBar = () => {
+const AppNavBar = ({ slotInput }: { slotInput?: React.ReactNode }) => {
   return (
     <nav className="border-y border-y-divider bg-background/75 backdrop-blur-xl">
       <header className="flex items-center">
@@ -54,6 +54,7 @@ const AppNavBar = () => {
             </Chip>
           </span>
         </PathOnly>
+        {slotInput}
         <RenderUserAvatar />
       </header>
     </nav>

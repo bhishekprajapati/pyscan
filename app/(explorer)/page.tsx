@@ -96,6 +96,7 @@ const PrimaryTokenInfo = (props: PrimaryTokenInfoProps) => {
             </TextTruncate>
             <CopyButton
               value={address}
+              text={address}
               tooltipText={`Copy ${tokenType.getSymbol()} contract address`}
             />
           </p>
