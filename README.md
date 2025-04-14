@@ -10,6 +10,8 @@ This is my first real Web3 app. I gave it everything I had.
 
 **I genuinely hope this app serves a real need out there.**
 
+[Watch Demo Video](./demo.mp4)
+
 ---
 
 ## 👨‍💻 Team Members
