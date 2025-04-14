@@ -104,6 +104,9 @@ This app covers **three major quadrants** to help users gain deep insights into 
 - Browse **historical PYUSD transactions**.
 - View **historical transactions** for a specific wallet address.
 - Check **PYUSD balance** of any wallet address.
+- Download Table Data: Export table data to CSV format directly from the page for easier offline analysis.
+- Calendar Date Filter: Use a calendar date selector to filter transactions in the data tables based on specific timeframes.
+- Efficient Pagination: Paginated terabytes of on-chain transaction data to ensure smooth and fast browsing without compromising performance.
 
 ### 📊 2. Analytics
 
@@ -113,6 +116,7 @@ This app covers **three major quadrants** to help users gain deep insights into 
 - Understand **market adoption** of PYUSD through holder growth metrics.
 - Track **growth of new holders** and **active users** over time.
 - Analyze **unique senders** and **receivers** to assess transaction diversity.
+- Download Chart Data: Export chart data in CSV format for different timeframes to analyze trends offline.
 
 ### 🏆 3. Leaderboards
 
