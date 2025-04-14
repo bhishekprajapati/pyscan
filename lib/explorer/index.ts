@@ -26,3 +26,31 @@ export const getCachedTransactionByTokenAddress = cache(
     revalidate: 15 * 60, // 15 mins
   },
 );
+
+export const getCachedWalletTransactionByTokenAddress = cache(
+  async (
+    address: string,
+    tokenAddress: string,
+    opts: { limit: number; page: number; date: Date },
+  ) => {
+    const result =
+      await bigquery.ethereum.mainnet.explorer.getTransactionByTokenAddressOfAddress(
+        tokenAddress,
+        address,
+        opts,
+      );
+
+    if (!result.success) {
+      throw Error(result.reason);
+    }
+
+    return {
+      ...result.data,
+      timestamp: new Date().toISOString(),
+    };
+  },
+  [],
+  {
+    revalidate: 15 * 60, // 15 mins
+  },
+);

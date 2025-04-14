@@ -2,12 +2,13 @@ export const dynamic = "force-dynamic";
 
 import CopyButton from "@/components/copy-button";
 import { AddressLink } from "@/components/links";
+import WalletTransactionsTable from "@/components/tables/wallet-transactions";
 import { TokenLogo } from "@/components/token";
 import LinkButton from "@/components/ui/link-button";
 import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import ethereum, { isAddress } from "@/lib/ethereum";
 
-import { Chip, Code, Skeleton } from "@heroui/react";
+import { Chip, Code, Divider, Skeleton } from "@heroui/react";
 import BoringAvatar from "boring-avatars";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { Suspense } from "react";
@@ -46,14 +47,17 @@ const Balance = async ({ address }: { address: string }) => {
   const result = await ethereum.mainnet.getBalance(address);
   if (!result.success) return <></>;
   return (
-    <Chip
-      variant="faded"
-      startContent={
-        <TokenLogo token={PRIMARY_TOKEN_TYPE.toJSON()} className="h-4 w-4" />
-      }
-    >
-      {PRIMARY_TOKEN_TYPE.applySubunits(result.data.toString())} PYUSD
-    </Chip>
+    <div className="flex items-center gap-2">
+      Balance:{" "}
+      <Chip
+        variant="faded"
+        startContent={
+          <TokenLogo token={PRIMARY_TOKEN_TYPE.toJSON()} className="h-4 w-4" />
+        }
+      >
+        {PRIMARY_TOKEN_TYPE.applySubunits(result.data.toString())} PYUSD
+      </Chip>
+    </div>
   );
 };
 
@@ -99,8 +103,11 @@ const AddressPage: FC = async ({ params }) => {
           </Suspense>
         </div>
       </header>
-
-      <div className="m-4"></div>
+      <Divider />
+      <WalletTransactionsTable
+        tokenData={PRIMARY_TOKEN_TYPE.toJSON()}
+        address={id}
+      />
     </section>
   );
 };

@@ -9,6 +9,10 @@ import type {
   GetTransactionQuerySchema,
 } from "@/app/api/public/mainnet/explorer/transactions/route";
 import type { GetLatestTokenTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/latest/route";
+import type {
+  GetWalletTransactionApiResponse,
+  GetWalletTransactionQuerySchema,
+} from "@/app/api/public/mainnet/explorer/transactions/wallet/[id]/route";
 
 export function createMainnetExplorer(_URL: PathMakerFn) {
   const getBlocks = (
@@ -35,6 +39,18 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
     return fetcher<GetTransactionApiResponse>(url, { ...opts });
   };
 
+  const getWalletTransactions = async (
+    query: GetWalletTransactionQuerySchema & { address: string },
+    opts: BaseFetcherOptions = {},
+  ) => {
+    const url = _URL(`/mainnet/explorer/transactions/wallet/${query.address}`);
+    url.searchParams.set("tokenAddress", query.tokenAddress);
+    url.searchParams.set("date", query.date.toISOString());
+    url.searchParams.set("limit", query.limit.toString());
+    url.searchParams.set("page", query.page.toString());
+    return fetcher<GetWalletTransactionApiResponse>(url, { ...opts });
+  };
+
   const getLatestTokenTransfers = async (
     tokenAddress: string,
     opts: BaseFetcherOptions = {},
@@ -50,6 +66,7 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
   return {
     getBlocks,
     getTransactions,
+    getWalletTransactions,
     getLatestTokenTransfers,
   };
 }
