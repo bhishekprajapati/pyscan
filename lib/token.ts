@@ -1,3 +1,5 @@
+import Decimal from "decimal.js";
+
 type TokenTypeData<T> = {
   name: string;
   symbol: T;
@@ -35,7 +37,8 @@ export class TokenType<T extends string = string> {
   }
 
   applySubunits(value: string) {
-    return Number(value) / Math.pow(10, this.config.subunits);
+    const d = new Decimal(value);
+    return d.div(Math.pow(10, this.config.subunits)).toNumber();
   }
 
   format(value: string) {

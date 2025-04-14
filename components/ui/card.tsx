@@ -34,7 +34,7 @@ export const CardHeader: FC<CardHeaderProps> = ({ className, ...rest }) => (
 );
 
 type CardTimestampProps = {
-  date: Date;
+  date?: Date;
   /** Update frequency in seconds */
   frequency?: number;
   /**
@@ -63,9 +63,11 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
     }
   >
     <span className="inline-flex items-center gap-2">
-      <FMono className="mb-1 text-sm dark:text-gray-500">
-        Last Updated <TimeAgo date={date} />
-      </FMono>
+      {date && (
+        <FMono className="mb-1 text-sm dark:text-gray-500">
+          Last Updated <TimeAgo date={date} />
+        </FMono>
+      )}
       {isRefreshing ? (
         <Zap
           size={16}

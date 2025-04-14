@@ -2,6 +2,8 @@
 
 import api from "@/lib/api-sdk";
 import { isServer, useQuery } from "@tanstack/react-query";
+import { usePrimaryTokenType } from "../tokens";
+import type { GetTransactionQuerySchema } from "@/app/api/public/mainnet/explorer/transactions/route";
 
 export const useLatestTokenTransfer = (tokenAddress: string) => {
   const query = useQuery({
@@ -25,4 +27,16 @@ export const useLatestTokenTransfer = (tokenAddress: string) => {
   return { query };
 };
 
-export const useTransactions = () => {};
+export const useTransactions = (query: GetTransactionQuerySchema) => {
+  return useQuery({
+    queryKey: ["mainnet", "transactions", query],
+    queryFn: async ({ signal }) => {
+      const res = await api.public.explorer.getTransactions(query, { signal });
+      if (!res.ok) {
+        throw Error(res.error.message);
+      }
+      return res.data;
+    },
+    enabled: !isServer,
+  });
+};

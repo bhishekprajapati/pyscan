@@ -26,7 +26,6 @@ const columns = [
   col("To", "to"),
   col("Time", "timestamp"),
   col("Amount", "Amount"),
-  col("", "eye"),
 ];
 
 type Props = {
@@ -139,11 +138,6 @@ const LatestTokenTransferTable: React.FC<Props> = ({
                     USD
                   </FMono>
                 )}
-              </Chip>
-            </TableCell>
-            <TableCell>
-              <Chip variant="bordered" className="rounded-md border-divider">
-                <Eye size={16} />
               </Chip>
             </TableCell>
           </TableRow>

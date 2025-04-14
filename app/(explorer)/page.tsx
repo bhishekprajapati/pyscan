@@ -189,7 +189,20 @@ const PrimaryTokenLatestTransferTable = async (
         <TokenLogo token={tokenType.toJSON()} className="me-2" />
         <CardHeading>{tokenType.getSymbol()} Token Transfers</CardHeading>
         <span className="ms-auto" />
-        <RealTimeIndicator />
+        <LinkButton
+          className="hover:text-primary"
+          // @ts-expect-error dynamic
+          href={
+            `/transactions/tokens/${tokenType.getContractAddress()}` as string
+          }
+          variant="faded"
+        >
+          View All
+          <ArrowRight
+            size={16}
+            className="dark:text-gray-400 dark:group-hover:text-primary"
+          />
+        </LinkButton>
       </CardHeader>
       <Divider />
       <CardBody className="p-0">
@@ -202,25 +215,6 @@ const PrimaryTokenLatestTransferTable = async (
           price={price}
         />
       </CardBody>
-      <Divider />
-      <CardFooter>
-        <LinkButton
-          // @ts-expect-error dynamic
-          href={
-            `/transactions/tokens/${tokenType.getContractAddress()}` as string
-          }
-          variant="light"
-          className="group"
-        >
-          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
-            View All {tokenType.getSymbol()} Transfers
-          </span>
-          <ArrowRight
-            size={16}
-            className="dark:text-gray-400 dark:group-hover:text-secondary"
-          />
-        </LinkButton>
-      </CardFooter>
     </Card>
   );
 };

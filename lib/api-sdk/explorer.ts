@@ -4,8 +4,11 @@ import type {
   BlocksApiResponse,
   BlocksApiResponseQuery,
 } from "@/app/api/public/mainnet/explorer/blocks/route";
+import type {
+  GetTransactionApiResponse,
+  GetTransactionQuerySchema,
+} from "@/app/api/public/mainnet/explorer/transactions/route";
 import type { GetLatestTokenTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/latest/route";
-import type { GetTransferApiResponse } from "@/app/api/public/mainnet/explorer/transactions/tokens/[id]/route";
 
 export function createMainnetExplorer(_URL: PathMakerFn) {
   const getBlocks = (
@@ -20,23 +23,16 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
     });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  const getTransactions = async (params: {}, opts: BaseFetcherOptions = {}) => {
-    const url = _URL("/mainnet/explorer/transactions");
-    return fetcher<unknown>(url, { ...opts });
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  const getTransfers = async (
-    params: { tokenAddress: string },
+  const getTransactions = async (
+    query: GetTransactionQuerySchema,
     opts: BaseFetcherOptions = {},
   ) => {
-    const url = _URL(
-      `/mainnet/explorer/transactions/tokens/${params.tokenAddress}`,
-    );
-    return fetcher<GetTransferApiResponse>(url, {
-      ...opts,
-    });
+    const url = _URL("/mainnet/explorer/transactions");
+    url.searchParams.set("tokenAddress", query.tokenAddress);
+    url.searchParams.set("date", query.date.toISOString());
+    url.searchParams.set("limit", query.limit.toString());
+    url.searchParams.set("page", query.page.toString());
+    return fetcher<GetTransactionApiResponse>(url, { ...opts });
   };
 
   const getLatestTokenTransfers = async (
@@ -54,7 +50,6 @@ export function createMainnetExplorer(_URL: PathMakerFn) {
   return {
     getBlocks,
     getTransactions,
-    getTransfers,
     getLatestTokenTransfers,
   };
 }
