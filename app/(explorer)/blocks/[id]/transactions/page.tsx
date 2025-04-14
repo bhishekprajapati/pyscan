@@ -1,6 +1,11 @@
 import BlockTransactionsTable from "@/components/tables/block-transactions";
 import ethereum from "@/lib/ethereum";
+import { Metadata } from "next";
 import { pick } from "remeda";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Block Transactions",
+};
 
 const BlockTransactionsPage = async ({ params }: PageProps<{ id: string }>) => {
   const { id } = await params;

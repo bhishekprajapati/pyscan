@@ -15,9 +15,14 @@ import {
   Info,
   LoaderCircle,
 } from "lucide-react";
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { BlockNumber } from "viem";
 import { z } from "zod";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Block",
+};
 
 const BlockFinalityStatus = async ({ number }: { number: BlockNumber }) => {
   const result = await ethereum.mainnet.getIsBlockFinalized(number);

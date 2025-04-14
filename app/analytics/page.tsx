@@ -14,10 +14,15 @@ import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import bigquery from "@/lib/bigquery";
 import { revalidate } from "@/utils/cache";
 import { Chip, Tooltip } from "@heroui/react";
+import { Metadata } from "next";
 
 import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Analytics",
+};
 
 const { analytics } = bigquery.ethereum.mainnet;
 

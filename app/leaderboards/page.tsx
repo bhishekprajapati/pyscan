@@ -12,9 +12,14 @@ import {
   getCachedTopReceiversByTokenAddress,
   getCachedTopSendersByTokenAddress,
 } from "@/lib/leaderboards";
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { formatUnits } from "viem";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Leaderboards",
+};
 
 type LeaderBoardProps = Pick<LeaderboardTableProps, "freshness" | "heading"> & {
   fetcher: (tokenAddress: string) => Promise<{

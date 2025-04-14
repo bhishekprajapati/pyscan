@@ -11,7 +11,12 @@ import ObjectKeys from "@/components/ui/object-keys";
 import ethereum from "@/lib/ethereum";
 import { Chip, Code, Textarea, Tooltip } from "@heroui/react";
 import { Check, X } from "lucide-react";
+import { Metadata } from "next";
 import { Hash } from "viem";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Transaction",
+};
 
 type Transaction = Extract<
   Awaited<ReturnType<typeof ethereum.mainnet.getTransaction>>,

@@ -11,8 +11,13 @@ import ethereum, { isAddress } from "@/lib/ethereum";
 import { Chip, Code, Divider, Skeleton } from "@heroui/react";
 import BoringAvatar from "boring-avatars";
 import { SquareArrowOutUpRight } from "lucide-react";
+import { Metadata } from "next";
 import { Suspense } from "react";
 import { Address } from "viem";
+
+export const metadata: Metadata = {
+  title: "Pyscan | Address",
+};
 
 const EnsInfo = async ({ address }: { address: Address }) => {
   const result = await ethereum.mainnet.getEnsInfo(address);

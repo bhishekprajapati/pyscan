@@ -7,6 +7,12 @@ import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { Providers } from "./providers";
 import SearchInput from "@/components/search";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Paypal USD Explorer",
+  description: "Pyscan Observability & Analytics Tool",
+};
 
 const serif = Space_Grotesk({
   subsets: ["latin"],
@@ -30,6 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body
         className={cn(
           "mx-auto max-w-screen-2xl border-x border-x-divider antialiased",
