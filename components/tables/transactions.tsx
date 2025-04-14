@@ -22,6 +22,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Tooltip,
 } from "@heroui/react";
 import { parseDate } from "@internationalized/date";
 import {
@@ -30,15 +31,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowRight, CalendarSearch, Download } from "lucide-react";
+import { ArrowRight, CalendarSearch, Columns3, Download } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import TimeAgo from "react-timeago";
 import CopyButton from "../copy-button";
+import DownloadButton from "../download-button";
 import { AddressLink, BlockLink, TransactionLink } from "../links";
 import TablePaginator from "../table-paginator";
 import { FMono, TextTruncate } from "../text";
 import { tableClassNames } from "../ui/table";
-import DownloadButton from "../download-button";
 
 type Transaction = ArrayType<
   NonNullable<ReturnType<typeof useTransactions>["data"]>["data"]
@@ -153,6 +154,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
   const [date, setDate] = useState(new Date());
   const { base, table, thead, tbody, tr, th, td } = hTable({});
 
+  const [columnVisibility, setColumnVisibility] = useState({});
+
   const { setTotalPages, ...pagination } = usePaginator({
     initialPage: 1,
     initialPageSize: 10,
@@ -171,7 +174,11 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
   const rTable = useReactTable({
     columns,
     data,
+    state: {
+      columnVisibility,
+    },
     getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
   });
 
   useEffect(() => {
@@ -183,7 +190,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
   return (
     <div className="m-2">
       <Card>
-        <CardHeader>
+        <CardHeader className="gap-2">
           <TokenLogo token={token.toJSON()} className="h-5 w-5" />
           <CardHeading>{token.getSymbol()} Transactions</CardHeading>
           <CardTimestamp
@@ -202,24 +209,59 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
               <Download size={16} /> Download Page Data
             </DownloadButton>
           )}
-          <Popover placement="right">
-            <PopoverTrigger>
-              <Button variant="faded" isIconOnly>
-                <CalendarSearch size={16} />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <Calendar
-                aria-label="Date (Uncontrolled)"
-                // @ts-expect-error ....
-                value={getISODate(date)}
-                onChange={(d) => {
-                  // @ts-expect-error ....
-                  setDate(new Date(d.toString()));
-                }}
-              />
-            </PopoverContent>
-          </Popover>
+          <Tooltip content="Select a date to filter transactions">
+            <span>
+              <Popover placement="right">
+                <PopoverTrigger>
+                  <Button variant="faded" isIconOnly>
+                    <CalendarSearch size={16} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Calendar
+                    aria-label="Date (Uncontrolled)"
+                    // @ts-expect-error ....
+                    value={getISODate(date)}
+                    onChange={(d) => {
+                      // @ts-expect-error ....
+                      setDate(new Date(d.toString()));
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </span>
+          </Tooltip>
+          <Tooltip content="Column Visibility Selector">
+            <span className="inline-block">
+              <Popover placement="right">
+                <PopoverTrigger>
+                  <Button variant="faded" isIconOnly>
+                    <Columns3 size={16} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="flex flex-col gap-2">
+                    {rTable.getAllColumns().map((column) => {
+                      const header = column.columnDef.header;
+                      if (!header) return <></>;
+                      return (
+                        <div key={column.id}>
+                          <span className="inline-block w-40">
+                            {header as string}
+                          </span>
+                          <input
+                            type="checkbox"
+                            checked={column.getIsVisible()}
+                            onChange={column.getToggleVisibilityHandler()}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </span>
+          </Tooltip>
         </CardHeader>
         <Divider />
         <CardBody className="p-0">
