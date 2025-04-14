@@ -75,25 +75,6 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
     <Card>
       <CardHeader>
         <CardHeading>{heading}</CardHeading>
-        {filename && (
-          <HTooltip
-            className="max-w-32"
-            content="Download chart data in csv, the csv file can be imported in google sheets also"
-          >
-            <span className="inline-block">
-              <DownloadButton
-                className="ms-auto"
-                data={data}
-                filename={`${filename}.csv`}
-                isIconOnly
-                size="sm"
-                variant="faded"
-              >
-                <Download size={16} />
-              </DownloadButton>
-            </span>
-          </HTooltip>
-        )}
         {freshness && <span className="text-default-400">{freshness}</span>}
         {timestamp && (
           <CardTimestamp date={new Date(timestamp)} frequency={frequency} />
@@ -179,7 +160,26 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
         </ResponsiveContainer>
       </CardBody>
       <Divider />
-      <CardFooter>
+      <CardFooter className="gap-4">
+        {filename && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data}
+                filename={`${filename}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         <CurveTypeSelect {...register} />
         {footerEndContent}
       </CardFooter>

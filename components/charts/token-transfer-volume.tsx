@@ -75,25 +75,6 @@ const TokenTransferVolume = () => {
     <Card className="h-full">
       <CardHeader>
         <CardHeading>Token Transfer Volume</CardHeading>
-        {data?.dataset && (
-          <HTooltip
-            className="max-w-32"
-            content="Download chart data in csv, the csv file can be imported in google sheets also"
-          >
-            <span className="inline-block">
-              <DownloadButton
-                className="ms-auto"
-                data={data.dataset}
-                filename={`token-transfer-volume-data-${tks.map((tk) => tk.getSymbol()).join("-")}.csv`}
-                isIconOnly
-                size="sm"
-                variant="faded"
-              >
-                <Download size={16} />
-              </DownloadButton>
-            </span>
-          </HTooltip>
-        )}
         {data?.timestamp && (
           <CardTimestamp
             date={new Date(data.timestamp)}
@@ -181,6 +162,25 @@ const TokenTransferVolume = () => {
       </CardBody>
       <Divider />
       <CardFooter className="gap-2">
+        {data?.dataset && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data.dataset}
+                filename={`token-transfer-volume-data-${tks.map((tk) => tk.getSymbol()).join("-")}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         <CurveTypeSelect className="me-auto" {...registerCurve} />
         <TimeframeSelect variant="bordered" {...registerTimeframe} />
         <TokenSelect {...registerToken} />

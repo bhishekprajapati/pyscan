@@ -51,9 +51,6 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
   <Tooltip
     content={
       <div className="max-w-64 p-2">
-        <FMono className="mb-1">
-          Last Updated <TimeAgo date={date} />
-        </FMono>
         {frequency && (
           <div>
             Updated Every:{" "}
@@ -65,14 +62,19 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
       </div>
     }
   >
-    {isRefreshing ? (
-      <Zap
-        size={16}
-        className={cn("text-warning", isRefreshing ? "animate-pulse" : "")}
-      />
-    ) : (
-      <ZapOff size={16} className="text-warning" />
-    )}
+    <span className="inline-flex items-center gap-2">
+      <FMono className="mb-1 text-sm dark:text-gray-500">
+        Last Updated <TimeAgo date={date} />
+      </FMono>
+      {isRefreshing ? (
+        <Zap
+          size={16}
+          className={cn("text-warning", isRefreshing ? "animate-pulse" : "")}
+        />
+      ) : (
+        <ZapOff size={16} className="text-warning" />
+      )}
+    </span>
   </Tooltip>
 );
 

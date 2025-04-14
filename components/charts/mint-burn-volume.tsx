@@ -62,25 +62,6 @@ const TokenMintBurnVolume = () => {
     <Card>
       <CardHeader>
         <CardHeading>Mint Vs Burn of {token.getSymbol()}</CardHeading>
-        {data?.data && (
-          <HTooltip
-            className="max-w-32"
-            content="Download chart data in csv, the csv file can be imported in google sheets also"
-          >
-            <span className="inline-block">
-              <DownloadButton
-                className="ms-auto"
-                data={data.data}
-                filename={`mint-burn-volume-data-${token.getSymbol()}.csv`}
-                isIconOnly
-                size="sm"
-                variant="faded"
-              >
-                <Download size={16} />
-              </DownloadButton>
-            </span>
-          </HTooltip>
-        )}
         {data?.timestamp && (
           <CardTimestamp
             isRefreshing={query.isFetching}
@@ -167,7 +148,26 @@ const TokenMintBurnVolume = () => {
         )}
       </CardBody>
       <Divider />
-      <CardFooter className="justify-end">
+      <CardFooter className="justify-between">
+        {data?.data && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data.data}
+                filename={`mint-burn-volume-data-${token.getSymbol()}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         <TimeframeSelect variant="bordered" {...registerTimeframe} />
       </CardFooter>
     </Card>

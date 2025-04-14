@@ -55,25 +55,6 @@ const TokenTransactionCount = () => {
       <CardHeader>
         <CardHeading>Transfer Transaction Count</CardHeading>
         {query.data?.timestamp && (
-          <HTooltip
-            className="max-w-32"
-            content="Download chart data in csv, the csv file can be imported in google sheets also"
-          >
-            <span className="inline-block">
-              <DownloadButton
-                className="ms-auto"
-                data={query.data.dataset}
-                filename={`transfer-transaction-count-data-${tokens.map((tk) => tk.getSymbol()).join("-")}.csv`}
-                isIconOnly
-                size="sm"
-                variant="faded"
-              >
-                <Download size={16} />
-              </DownloadButton>
-            </span>
-          </HTooltip>
-        )}
-        {query.data?.timestamp && (
           <CardTimestamp
             date={new Date(query.data.timestamp)}
             isRefreshing={query.isFetching}
@@ -176,6 +157,25 @@ const TokenTransactionCount = () => {
       </CardBody>
       <Divider />
       <CardFooter className="gap-2">
+        {query.data?.timestamp && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={query.data.dataset}
+                filename={`transfer-transaction-count-data-${tokens.map((tk) => tk.getSymbol()).join("-")}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         <CurveTypeSelect {...registerCurve} />
         <TimeframeSelect
           className="ms-auto"
