@@ -8,6 +8,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import SearchInput from "@/components/search";
 import { Metadata } from "next";
+import PClarity from "@/components/clarity";
 
 export const metadata: Metadata = {
   title: "Paypal USD Explorer",
@@ -38,6 +39,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <PClarity />
       </head>
       <body
         className={cn(
