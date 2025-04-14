@@ -204,6 +204,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
                 // @ts-expect-error ....
                 value={getISODate(date)}
                 onChange={(d) => {
+                  // @ts-expect-error ....
                   setDate(new Date(d.toString()));
                 }}
               />
