@@ -12,11 +12,12 @@ import {
 import { usePrimaryTokenType, useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTokenTransferVol } from "@/hooks/volume";
 import { formatNumber } from "@/utils/chart";
-import { Divider } from "@heroui/react";
+import { Divider, Tooltip as HTooltip } from "@heroui/react";
 import { useMemo } from "react";
 import {
   Area,
   AreaChart,
+  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -29,6 +30,8 @@ import TimeframeSelect from "../select/timeframe-select";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import TokenSelect from "../select/token-select";
 import { groupBy } from "lodash";
+import DownloadButton from "../download-button";
+import { Download } from "lucide-react";
 
 const TokenTransferVolume = () => {
   const token = usePrimaryTokenType();
@@ -72,6 +75,25 @@ const TokenTransferVolume = () => {
     <Card className="h-full">
       <CardHeader>
         <CardHeading>Token Transfer Volume</CardHeading>
+        {data?.dataset && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data.dataset}
+                filename={`token-transfer-volume-data-${tks.map((tk) => tk.getSymbol()).join("-")}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         {data?.timestamp && (
           <CardTimestamp
             date={new Date(data.timestamp)}
@@ -86,7 +108,12 @@ const TokenTransferVolume = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="h-[25rem] p-0">
+      <CardBody className="relative h-[25rem] p-0">
+        <img
+          src="/logo.png"
+          className="absolute left-[50%] top-[50%] w-[40%] -translate-x-[50%] -translate-y-[50%] opacity-5"
+          alt="watermark"
+        />
         <ResponsiveContainer height={400}>
           <AreaChart data={data?.dataset ?? []}>
             <XAxis
@@ -144,6 +171,11 @@ const TokenTransferVolume = () => {
                 fillOpacity={0.05}
               />
             ))}
+            <CartesianGrid
+              stroke="#eeeeee25"
+              strokeWidth="0.5"
+              strokeDasharray="3 3"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </CardBody>

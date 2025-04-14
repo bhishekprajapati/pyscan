@@ -8,14 +8,16 @@ import {
   CardHeader,
   CardHeading,
   CardHelp,
+  CardTimestamp,
 } from "@/components/ui/card";
 import { useSelectedTimeframe, useTimeframeMaxLimit } from "@/hooks/timeframe";
 import { useSelectedTokenTypes } from "@/hooks/tokens";
 import { useTransactionCounts } from "@/hooks/transactions";
-import { CardFooter, Divider } from "@heroui/react";
+import { CardFooter, Divider, Tooltip as HTooltip } from "@heroui/react";
 import {
   Area,
   AreaChart,
+  CartesianGrid,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -27,6 +29,8 @@ import CurveTypeSelect, {
   useSelectedCurveType,
 } from "../select/curve-type-select";
 import { formatNumber } from "@/utils/chart";
+import DownloadButton from "../download-button";
+import { Download } from "lucide-react";
 
 const TokenTransactionCount = () => {
   const [tf, registerTimeframes] = useSelectedTimeframe();
@@ -46,13 +50,35 @@ const TokenTransactionCount = () => {
     })),
   });
 
-  // TODO: fix chart un-mounting when query key changes
-
   return (
     <Card className="h-full">
       <CardHeader>
         <CardHeading>Transfer Transaction Count</CardHeading>
-        <span className="ms-auto" />
+        {query.data?.timestamp && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={query.data.dataset}
+                filename={`transfer-transaction-count-data-${tokens.map((tk) => tk.getSymbol()).join("-")}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
+        {query.data?.timestamp && (
+          <CardTimestamp
+            date={new Date(query.data.timestamp)}
+            isRefreshing={query.isFetching}
+          />
+        )}
         <CardHelp
           tooltipProps={{
             content:
@@ -61,7 +87,12 @@ const TokenTransactionCount = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="h-[25rem] p-0">
+      <CardBody className="relative h-[25rem] p-0">
+        <img
+          src="/logo.png"
+          className="absolute left-[50%] top-[50%] w-[40%] -translate-x-[50%] -translate-y-[50%] opacity-5"
+          alt="watermark"
+        />
         {query.data && (
           <ResponsiveContainer width="100%" height={400}>
             {query.data && query.data.type === "any" ? (
@@ -132,6 +163,11 @@ const TokenTransactionCount = () => {
                     strokeWidth: 1,
                     strokeDasharray: "5 5",
                   }}
+                />
+                <CartesianGrid
+                  stroke="#eeeeee25"
+                  strokeWidth="0.5"
+                  strokeDasharray="3 3"
                 />
               </AreaChart>
             )}

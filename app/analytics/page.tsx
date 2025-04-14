@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import TokenMintBurnVolume from "@/components/charts/mint-burn-volume";
 import TokenTransactionCount from "@/components/charts/token-transaction-count";
 import TokenTransferVolume from "@/components/charts/token-transfer-volume";
-import TokenUsersCountTable, {
+import TokenUsersCountChart, {
   TokenUsersCountChartProps,
 } from "@/components/charts/token-users-count";
 import { ComponentErrorFallback } from "@/components/errors";
@@ -191,7 +191,7 @@ const token = PRIMARY_TOKEN_TYPE;
 const PrimaryTokenUsersCount = async (props: PrimaryTokenUsersCountProps) => {
   const { fetcher, ...rest } = props;
   const result = await fetcher(token.getContractAddress());
-  return <TokenUsersCountTable token={token.toJSON()} {...result} {...rest} />;
+  return <TokenUsersCountChart token={token.toJSON()} {...result} {...rest} />;
 };
 
 export default function AnalyticsPage() {
@@ -242,10 +242,12 @@ export default function AnalyticsPage() {
                 </Tooltip>
               }
               helpText="Tracks the number of first-time wallet addresses that received PYUSD within the selected time range. It reflects onboarding activity and user growth over time."
+              filename={`new-users-${token.getSymbol()}`}
             />
           </Suspense>
         </ErrorBoundary>
       </div>
+
       <div className="lg:col-span-6">
         <ErrorBoundary fallback={<ComponentErrorFallback />}>
           <Suspense fallback={<SuspendedComponentFallback className="h-72" />}>
@@ -269,6 +271,7 @@ export default function AnalyticsPage() {
                 </Tooltip>
               }
               helpText="Active Users represents the number of unique addresses that sent or received PYUSD during the selected period. It indicates actual usage and engagement with the token."
+              filename={`active-users-${token.getSymbol()}`}
             />
           </Suspense>
         </ErrorBoundary>
@@ -307,6 +310,7 @@ export default function AnalyticsPage() {
                 </Tooltip>
               }
               helpText="Holders Growth shows how the number of unique PYUSD wallet holders has changed over time. A rising trend indicates growing adoption and wider distribution across addresses."
+              filename={`holders-growth-${token.getSymbol()}`}
             />
           </Suspense>
         </ErrorBoundary>
@@ -335,6 +339,7 @@ export default function AnalyticsPage() {
                 </Tooltip>
               }
               helpText="Unique Senders counts the distinct wallet addresses that initiated PYUSD transfers during the selected time frame. It highlights how many users are actively spending or moving the token."
+              filename={`unique-senders-${token.getSymbol()}`}
             />
           </Suspense>
         </ErrorBoundary>
@@ -362,6 +367,7 @@ export default function AnalyticsPage() {
                 </Tooltip>
               }
               helpText="Unique Receivers shows the number of distinct wallet addresses that received PYUSD during the selected period. It reflects how widely the token is being distributed or accepted."
+              filename={`unique-receivers-${token.getSymbol()}`}
             />
           </Suspense>
         </ErrorBoundary>

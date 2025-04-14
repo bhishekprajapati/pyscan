@@ -50,6 +50,7 @@ export const POST = api(async (req, { data, error }) => {
       return data({
         type: query.type,
         dataset: result.data,
+        timestamp: Date.now(),
       });
   }
 
@@ -63,6 +64,7 @@ export const POST = api(async (req, { data, error }) => {
       return data({
         type: query.type,
         dataset: result.data,
+        timestamp: Date.now(),
       });
   }
 

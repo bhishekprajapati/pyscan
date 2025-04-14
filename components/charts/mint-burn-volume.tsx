@@ -14,11 +14,12 @@ import { usePrimaryTokenType } from "@/hooks/tokens";
 import { useMintBurnVol } from "@/hooks/volume";
 import { sortByDate } from "@/utils";
 import { formatNumber } from "@/utils/chart";
-import { Divider } from "@heroui/react";
+import { Divider, Tooltip as HTooltip } from "@heroui/react";
 import { useMemo } from "react";
 import {
   Bar,
   BarChart,
+  CartesianGrid,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -26,9 +27,8 @@ import {
   YAxis,
 } from "recharts";
 import TimeframeSelect from "../select/timeframe-select";
-
-// TODO: build a custom hook to fetch primary token price in usd to show mint burn volume in usd
-// TODO: add timeframe
+import DownloadButton from "../download-button";
+import { Download } from "lucide-react";
 
 const TokenMintBurnVolume = () => {
   const token = usePrimaryTokenType();
@@ -62,6 +62,25 @@ const TokenMintBurnVolume = () => {
     <Card>
       <CardHeader>
         <CardHeading>Mint Vs Burn of {token.getSymbol()}</CardHeading>
+        {data?.data && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data.data}
+                filename={`mint-burn-volume-data-${token.getSymbol()}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         {data?.timestamp && (
           <CardTimestamp
             isRefreshing={query.isFetching}
@@ -76,7 +95,12 @@ const TokenMintBurnVolume = () => {
         />
       </CardHeader>
       <Divider />
-      <CardBody className="h-[25rem] p-0">
+      <CardBody className="relative h-[25rem] p-0">
+        <img
+          src="/logo.png"
+          className="absolute left-[50%] top-[50%] w-[40%] max-w-96 -translate-x-[50%] -translate-y-[50%] opacity-[0.04]"
+          alt="watermark"
+        />
         {data && (
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={data.data}>
@@ -133,6 +157,11 @@ const TokenMintBurnVolume = () => {
               <Bar dataKey="minted" stroke="lightgreen" fill="lightgreen" />
               <ReferenceLine y={0} stroke="#eeeeee50" strokeWidth={1} />
               <Bar dataKey="burnt" stroke="#FFB3B3" fill="#FFB3B3" />
+              <CartesianGrid
+                stroke="#eeeeee25"
+                strokeWidth="0.5"
+                strokeDasharray="3 3"
+              />
             </BarChart>
           </ResponsiveContainer>
         )}

@@ -20,6 +20,7 @@ export const useTransactionCounts = (opts: PostTransactionCountSearchQuery) => {
       if (txns.type === "transfers") {
         const group = groupBy(txns.dataset, ({ timestamp }) => timestamp);
         return {
+          timestamp: txns.timestamp,
           type: txns.type,
           dataset: Object.entries(group)
             .map(([timestamp, tokens]) => {

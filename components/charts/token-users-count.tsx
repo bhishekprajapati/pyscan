@@ -10,11 +10,12 @@ import {
   CardTimestamp,
 } from "@/components/ui/card";
 import type { SerializedTokenData } from "@/lib/token";
-import { Divider } from "@heroui/react";
+import { Divider, Tooltip as HTooltip } from "@heroui/react";
 import {
   Area,
   AreaChart,
   AreaProps,
+  CartesianGrid,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -24,6 +25,8 @@ import CurveTypeSelect, {
   useSelectedCurveType,
 } from "../select/curve-type-select";
 import { useMemo } from "react";
+import DownloadButton from "../download-button";
+import { Download } from "lucide-react";
 
 export type TokenUsersCountChartProps = {
   data: {
@@ -41,6 +44,7 @@ export type TokenUsersCountChartProps = {
   area?: Pick<AreaProps, "stroke" | "name">;
   footerEndContent?: React.ReactNode;
   helpText?: string;
+  filename?: string;
 };
 
 const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
@@ -55,6 +59,7 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
     area,
     footerEndContent,
     helpText,
+    filename,
   } = props;
 
   const [curve, register] = useSelectedCurveType();
@@ -70,6 +75,25 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
     <Card>
       <CardHeader>
         <CardHeading>{heading}</CardHeading>
+        {filename && (
+          <HTooltip
+            className="max-w-32"
+            content="Download chart data in csv, the csv file can be imported in google sheets also"
+          >
+            <span className="inline-block">
+              <DownloadButton
+                className="ms-auto"
+                data={data}
+                filename={`${filename}.csv`}
+                isIconOnly
+                size="sm"
+                variant="faded"
+              >
+                <Download size={16} />
+              </DownloadButton>
+            </span>
+          </HTooltip>
+        )}
         {freshness && <span className="text-default-400">{freshness}</span>}
         {timestamp && (
           <CardTimestamp date={new Date(timestamp)} frequency={frequency} />
@@ -77,7 +101,12 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
         {helpText && <CardHelp tooltipProps={{ content: helpText }} />}
       </CardHeader>
       <Divider />
-      <CardBody className="p-0">
+      <CardBody className="relative p-0">
+        <img
+          src="/logo.png"
+          className="absolute left-[50%] top-[50%] w-[40%] max-w-96 -translate-x-[50%] -translate-y-[50%] opacity-[0.04]"
+          alt="watermark"
+        />
         <ResponsiveContainer width="100%" height={400}>
           <AreaChart data={sorted}>
             <YAxis
@@ -140,6 +169,11 @@ const TokenUsersCountChart: React.FC<TokenUsersCountChartProps> = (props) => {
                 strokeWidth: 1,
                 strokeDasharray: "5 5",
               }}
+            />
+            <CartesianGrid
+              stroke="#eeeeee25"
+              strokeWidth="0.5"
+              strokeDasharray="3 3"
             />
           </AreaChart>
         </ResponsiveContainer>

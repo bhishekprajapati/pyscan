@@ -30,7 +30,7 @@ export const Card: FC<CardProps> = ({ className, ...rest }) => (
 
 type CardHeaderProps = React.ComponentPropsWithoutRef<typeof HCardHeader>;
 export const CardHeader: FC<CardHeaderProps> = ({ className, ...rest }) => (
-  <HCardHeader className={"gap-2 " + className} {...rest} />
+  <HCardHeader className={"gap-4 " + className} {...rest} />
 );
 
 type CardTimestampProps = {
@@ -50,7 +50,7 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
 }) => (
   <Tooltip
     content={
-      <div className="ms-auto max-w-64 p-2">
+      <div className="max-w-64 p-2">
         <FMono className="mb-1">
           Last Updated <TimeAgo date={date} />
         </FMono>
@@ -68,13 +68,10 @@ export const CardTimestamp: React.FC<CardTimestampProps> = ({
     {isRefreshing ? (
       <Zap
         size={16}
-        className={cn(
-          "ms-auto text-warning",
-          isRefreshing ? "animate-pulse" : "",
-        )}
+        className={cn("text-warning", isRefreshing ? "animate-pulse" : "")}
       />
     ) : (
-      <ZapOff size={16} className="ms-auto text-warning" />
+      <ZapOff size={16} className="text-warning" />
     )}
   </Tooltip>
 );
@@ -104,7 +101,7 @@ type CardHeadingProps = React.HTMLProps<HTMLHeadingElement>;
 export const CardHeading: FC<CardHeadingProps> = ({ className, ...rest }) => (
   <h2
     className={cn(
-      "text-default-foreground/50 transition-colors group-hover:text-primary",
+      "me-auto text-default-foreground/50 transition-colors group-hover:text-primary",
       className,
     )}
     {...rest}
