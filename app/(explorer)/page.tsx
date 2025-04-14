@@ -19,7 +19,7 @@ import { getQuote } from "@/lib/coinmarketcap";
 import ethereum from "@/lib/ethereum";
 import { TokenType } from "@/lib/token";
 
-import { CardFooter, Chip, Divider, Tooltip } from "@heroui/react";
+import { Chip, Divider, Tooltip } from "@heroui/react";
 import { ArrowRight, Zap } from "lucide-react";
 import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
@@ -240,18 +240,6 @@ const LatestBlocks = async () => {
           <LatestBlockTable blocks={blocks} />
         </div>
       </CardBody>
-      <Divider />
-      <CardFooter>
-        <LinkButton href="/blocks" variant="light" className="group">
-          <span className="font-serif uppercase dark:text-gray-400 dark:group-hover:text-secondary">
-            View All Blocks
-          </span>
-          <ArrowRight
-            size={16}
-            className="dark:text-gray-400 dark:group-hover:text-secondary"
-          />
-        </LinkButton>
-      </CardFooter>
     </Card>
   );
 };
