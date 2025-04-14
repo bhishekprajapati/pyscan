@@ -19,8 +19,8 @@ import { getQuote } from "@/lib/coinmarketcap";
 import ethereum from "@/lib/ethereum";
 import { TokenType } from "@/lib/token";
 
-import { CardFooter, Chip, Divider } from "@heroui/react";
-import { ArrowRight } from "lucide-react";
+import { CardFooter, Chip, Divider, Tooltip } from "@heroui/react";
+import { ArrowRight, Zap } from "lucide-react";
 import { unstable_cache as cache } from "next/cache";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -188,6 +188,9 @@ const PrimaryTokenLatestTransferTable = async (
         <TokenLogo token={tokenType.toJSON()} className="me-2" />
         <CardHeading>{tokenType.getSymbol()} Token Transfers</CardHeading>
         <span className="ms-auto" />
+        <Tooltip content="Real Time Streaming...">
+          <Zap size={16} className="animate-pulse text-warning" />
+        </Tooltip>
         <LinkButton
           className="hover:text-primary"
           // @ts-expect-error dynamic
