@@ -349,8 +349,25 @@ export const createClient = (opts: CreateClientOption) => {
       process.on("SIGTERM", unwatch);
     }
 
+    const getBalance = async (address: string) => {
+      try {
+        const balance = await client.readContract({
+          address: CONTRACT_ADDRESS,
+          abi,
+          functionName: "balanceOf",
+          args: [address as Address],
+        });
+        return data(balance);
+      } catch {
+        return error({
+          name: "unknown",
+        });
+      }
+    };
+
     return {
       httpClient: client,
+      getBalance,
       getName,
       getSymbol,
       getDecimals,

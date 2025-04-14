@@ -2,8 +2,9 @@ export const dynamic = "force-dynamic";
 
 import CopyButton from "@/components/copy-button";
 import { AddressLink } from "@/components/links";
-import { Tabs } from "@/components/tabs";
+import { TokenLogo } from "@/components/token";
 import LinkButton from "@/components/ui/link-button";
+import { PRIMARY_TOKEN_TYPE } from "@/constants/stablecoins";
 import ethereum, { isAddress } from "@/lib/ethereum";
 
 import { Chip, Code, Skeleton } from "@heroui/react";
@@ -41,19 +42,18 @@ const EnsInfo = async ({ address }: { address: Address }) => {
   );
 };
 
-const AddressOverview = async () => {
+const Balance = async ({ address }: { address: string }) => {
+  const result = await ethereum.mainnet.getBalance(address);
+  if (!result.success) return <></>;
   return (
-    <ul className="flex flex-col gap-4 md:flex-row md:[&>*]:flex-1">
-      <li>
-        <article className="rounded-xl bg-default p-32"></article>
-      </li>
-      <li>
-        <article className="rounded-xl bg-default p-32"></article>
-      </li>
-      <li>
-        <article className="rounded-xl bg-default p-32"></article>
-      </li>
-    </ul>
+    <Chip
+      variant="faded"
+      startContent={
+        <TokenLogo token={PRIMARY_TOKEN_TYPE.toJSON()} className="h-4 w-4" />
+      }
+    >
+      {PRIMARY_TOKEN_TYPE.applySubunits(result.data.toString())} PYUSD
+    </Chip>
   );
 };
 
@@ -94,36 +94,13 @@ const AddressPage: FC = async ({ params }) => {
           <Suspense fallback={<Skeleton className="h-6 w-40 rounded-full" />}>
             <EnsInfo address={id} />
           </Suspense>
+          <Suspense>
+            <Balance address={id} />
+          </Suspense>
         </div>
       </header>
 
-      <div className="m-4">
-        <AddressOverview />
-      </div>
-
-      <div className="m-4">
-        <Tabs
-          list={
-            [
-              // {
-              //   key: "Transactions",
-              //   title: "Transactions",
-              //   tab: <AddressTransactionTable address={id} />,
-              // },
-              // {
-              //   key: "Internal Transactions",
-              //   title: "Internal Transactions",
-              //   tab: <AddressInternalTransactionTable address={id} />,
-              // },
-              // {
-              //   key: "Token Transfers",
-              //   title: "Token Transfers",
-              //   tab: <AddressTokenTransferTable address={id} />,
-              // },
-            ]
-          }
-        />
-      </div>
+      <div className="m-4"></div>
     </section>
   );
 };
