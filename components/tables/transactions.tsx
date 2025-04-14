@@ -30,7 +30,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowRight, CalendarSearch } from "lucide-react";
+import { ArrowRight, CalendarSearch, Download } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import TimeAgo from "react-timeago";
 import CopyButton from "../copy-button";
@@ -38,6 +38,7 @@ import { AddressLink, BlockLink, TransactionLink } from "../links";
 import TablePaginator from "../table-paginator";
 import { FMono, TextTruncate } from "../text";
 import { tableClassNames } from "../ui/table";
+import DownloadButton from "../download-button";
 
 type Transaction = ArrayType<
   NonNullable<ReturnType<typeof useTransactions>["data"]>["data"]
@@ -183,7 +184,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
     <div className="m-2">
       <Card>
         <CardHeader>
-          <TokenLogo token={token.toJSON()} />
+          <TokenLogo token={token.toJSON()} className="h-5 w-5" />
           <CardHeading>{token.getSymbol()} Transactions</CardHeading>
           <CardTimestamp
             date={
@@ -192,9 +193,18 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({ tokenData }) => {
             isRefreshing={query.isFetching}
             frequency={15 * 60}
           />
+          {query.data && (
+            <DownloadButton
+              data={query.data.data}
+              filename={`pyusd-transaction-${date.toDateString()}`}
+              variant="faded"
+            >
+              <Download size={16} /> Download Page Data
+            </DownloadButton>
+          )}
           <Popover placement="right">
             <PopoverTrigger>
-              <Button isIconOnly>
+              <Button variant="faded" isIconOnly>
                 <CalendarSearch size={16} />
               </Button>
             </PopoverTrigger>

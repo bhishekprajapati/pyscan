@@ -55,22 +55,33 @@ const TablePaginator: React.FC<TablePaginatorProps> = (props) => {
         <span>Records</span>
       </div>
       <Button
+        variant="faded"
         className="ms-auto"
         onPress={onFirstPress}
         isDisabled={isFirstPage}
       >
         First
       </Button>
-      <Button onPress={onPrevPress} isDisabled={isFirstPage} isIconOnly>
+      <Button
+        variant="faded"
+        onPress={onPrevPress}
+        isDisabled={isFirstPage}
+        isIconOnly
+      >
         <ChevronLeft size={16} />
       </Button>
       <Chip className="rounded-lg bg-default/50 p-4 outline outline-default">
         Page {page} of {totalPages}
       </Chip>
-      <Button onPress={onNextPress} isDisabled={isLastPage} isIconOnly>
+      <Button
+        variant="faded"
+        onPress={onNextPress}
+        isDisabled={isLastPage}
+        isIconOnly
+      >
         <ChevronRight size={16} />
       </Button>
-      <Button onPress={onLastPress} isDisabled={isLastPage}>
+      <Button variant="faded" onPress={onLastPress} isDisabled={isLastPage}>
         Last
       </Button>
     </div>
