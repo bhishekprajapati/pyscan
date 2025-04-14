@@ -1,5 +1,5 @@
-import { Chip, Input, Skeleton } from "@heroui/react";
-import { Fuel, Search } from "lucide-react";
+import { Chip, Skeleton } from "@heroui/react";
+import { Fuel } from "lucide-react";
 import { Suspense } from "react";
 
 import { RenderUserAvatar } from "./auth/user";
@@ -7,18 +7,6 @@ import Nav from "./nav";
 import { PathOnly } from "./path";
 import { EthGasFee, Quote } from "./pyusd";
 import LinkButton from "./ui/link-button";
-
-const SearchInput = () => {
-  return (
-    <Input
-      startContent={<Search size={16} />}
-      variant="flat"
-      color="default"
-      className="hidden w-[25%] md:flex"
-      placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
-    />
-  );
-};
 
 const AppNavBar = () => {
   return (
@@ -65,9 +53,6 @@ const AppNavBar = () => {
               Eth - Mainnet
             </Chip>
           </span>
-        </PathOnly>
-        <PathOnly matcher="/">
-          <SearchInput />
         </PathOnly>
         <RenderUserAvatar />
       </header>

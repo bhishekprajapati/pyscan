@@ -31,7 +31,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         className={cn(
-          "border-x border-x-divider antialiased",
+          "mx-auto max-w-screen-2xl border-x border-x-divider antialiased",
           serif.variable,
           sans.variable,
           mono.variable,

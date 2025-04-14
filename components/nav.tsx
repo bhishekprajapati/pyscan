@@ -4,7 +4,7 @@ import Link from "next/link";
 import { SignedInClientOnly } from "./auth/client";
 
 const Nav = () => (
-  <ul className="me-auto hidden gap-4 border-e border-e-divider p-4 md:flex">
+  <ul className="me-auto hidden gap-4 p-4 md:flex">
     <li>
       <Link color="foreground" href="/">
         Explorer
